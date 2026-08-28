@@ -8,6 +8,7 @@ import {
   UserSession,
 } from '../types';
 import { KINDU_HEALTH_AREAS } from './kinduGeography';
+import { CRITICAL_TEST_OBSERVATIONS } from './cartographyData';
 
 export const INITIAL_USER_SESSIONS: UserSession[] = [
   {
@@ -54,11 +55,11 @@ export const INITIAL_USER_SESSIONS: UserSession[] = [
   },
 ];
 
-// Helper to generate initial health records (2023-2024)
+// Helper to generate initial health records (2023-2025)
 function generateInitialHealthRecords(): HealthRecord[] {
   const records: HealthRecord[] = [];
   let recordCounter = 1;
-  const years = [2023, 2024];
+  const years = [2023, 2024, 2025];
 
   // Seasonality rainfall weight for malaria / typhoid in Kindu (1=dry, 2.5=peak rain)
   const seasonalMultiplier = [1.1, 1.0, 1.8, 2.2, 1.5, 0.8, 0.7, 0.9, 1.6, 2.1, 2.5, 2.0];
@@ -290,11 +291,11 @@ export const INITIAL_CLIMATE_SOURCES: ClimateSource[] = [
   }
 ];
 
-// Helper for initial climate records (2023-2024)
+// Helper for initial climate records (2023-2025)
 function generateInitialClimateRecords(): ClimateRecord[] {
   const records: ClimateRecord[] = [];
   let recordCounter = 1;
-  const years = [2023, 2024];
+  const years = [2023, 2024, 2025];
 
   const rainBaseline = [115, 105, 178, 195, 140, 45, 30, 65, 150, 210, 245, 190];
   const tempAvgBaseline = [25.8, 26.2, 26.5, 26.4, 26.1, 25.4, 25.2, 25.8, 26.3, 26.2, 25.9, 25.7];
@@ -369,6 +370,7 @@ function generateInitialClimateRecords(): ClimateRecord[] {
 
 // Initial Environmental Observations with STRICT Validity Dates and Historical Status V1.2
 export const INITIAL_ENVIRONMENTAL_OBS: EnvironmentalObservation[] = [
+  ...CRITICAL_TEST_OBSERVATIONS,
   // 1. Eau stagnante actuelle
   {
     id: 'ENV-000001',

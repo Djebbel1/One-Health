@@ -38,22 +38,20 @@ export const CrossDomainRelationsSection: React.FC = () => {
   const [isAddingLink, setIsAddingLink] = useState(false);
   const [targetGeoId, setTargetGeoId] = useState('AS-001');
   const [targetPeriodId, setTargetPeriodId] = useState('P-2024-04');
-  const [spatialMatch, setSpatialMatch] = useState<'EXACT' | 'PROXIMITY_BUFFER' | 'HEALTH_AREA_CONTAINED'>('HEALTH_AREA_CONTAINED');
-  const [lagMonths, setLagMonths] = useState<number>(0);
-  const [linkQuality, setLinkQuality] = useState<'HIGH' | 'MEDIUM' | 'LOW'>('HIGH');
+  const [lagMonths, setLagMonths] = useState<0 | 1 | 2 | 3>(0);
+  const [linkQuality, setLinkQuality] = useState<'EXCELLENT' | 'BON' | 'APPROXIMATIF' | 'INCERTAIN'>('BON');
   const [linkNotes, setLinkNotes] = useState('');
 
   const handleCreateHealthClimateLink = (e: React.FormEvent) => {
     e.preventDefault();
     const newLink: HealthClimateLink = {
       link_id: `LNK-HC-${Date.now().toString().slice(-4)}`,
-      health_record_id: `SAN-${Math.floor(Math.random() * 900000 + 100000)}`,
-      climate_record_id: `CLI-000001`,
-      geo_id: targetGeoId,
+      health_area_id: targetGeoId,
       period_id: targetPeriodId,
-      lag_months: lagMonths,
+      health_record_reference: `SAN-${Math.floor(Math.random() * 900000 + 100000)}`,
+      climate_record_reference: `CLI-000001`,
+      temporal_lag: lagMonths,
       link_quality: linkQuality,
-      spatial_scale_match: 'PROXY_CITY_LEVEL',
       notes: linkNotes || 'Liaison spatio-temporelle créée avec décalage (lag)',
     };
     addHealthClimateLink(newLink);
@@ -85,7 +83,7 @@ export const CrossDomainRelationsSection: React.FC = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs shadow-xs transition"
           >
             <Plus className="w-4 h-4" />
-            Créer une Liaison
+            Créer une Liaison Santé-Climat
           </button>
         </div>
 
@@ -137,12 +135,12 @@ export const CrossDomainRelationsSection: React.FC = () => {
               <thead>
                 <tr className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                   <th className="py-3 px-4">Code Liaison</th>
-                  <th className="py-3 px-4">Enreg. Santé</th>
-                  <th className="py-3 px-4">Obs. Environnement</th>
-                  <th className="py-3 px-4">Unité Spatiale (Aire)</th>
+                  <th className="py-3 px-4">Réf. Santé</th>
+                  <th className="py-3 px-4">Réf. Environnement</th>
+                  <th className="py-3 px-4">Aire de Santé</th>
                   <th className="py-3 px-4">Période</th>
-                  <th className="py-3 px-4">Appariement Spatial</th>
                   <th className="py-3 px-4">Qualité</th>
+                  <th className="py-3 px-4">Notes</th>
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
@@ -153,26 +151,24 @@ export const CrossDomainRelationsSection: React.FC = () => {
                       {link.link_id}
                     </td>
                     <td className="py-3 px-4 font-mono text-rose-700">
-                      {link.health_record_id}
+                      {link.health_record_reference}
                     </td>
                     <td className="py-3 px-4 font-mono text-emerald-700">
-                      {link.env_observation_id}
+                      {link.environment_record_reference}
                     </td>
                     <td className="py-3 px-4 font-semibold text-slate-800">
-                      {link.geo_id}
+                      {link.health_area_id}
                     </td>
                     <td className="py-3 px-4 text-slate-600">
                       {link.period_id}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600">
-                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold text-slate-700">
-                        {link.spatial_match_type}
-                      </span>
                     </td>
                     <td className="py-3 px-4">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
                         {link.link_quality}
                       </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-500">
+                      {link.notes || '—'}
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button
@@ -198,12 +194,12 @@ export const CrossDomainRelationsSection: React.FC = () => {
               <thead>
                 <tr className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                   <th className="py-3 px-4">Code Liaison</th>
-                  <th className="py-3 px-4">Enreg. Santé</th>
-                  <th className="py-3 px-4">Série Climat</th>
-                  <th className="py-3 px-4">Unité Spatiale</th>
+                  <th className="py-3 px-4">Réf. Santé</th>
+                  <th className="py-3 px-4">Réf. Climat</th>
+                  <th className="py-3 px-4">Aire de Santé</th>
                   <th className="py-3 px-4">Période</th>
                   <th className="py-3 px-4 text-center">Décalage (Lag)</th>
-                  <th className="py-3 px-4">Échelle Spatiale</th>
+                  <th className="py-3 px-4">Qualité</th>
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
@@ -214,24 +210,26 @@ export const CrossDomainRelationsSection: React.FC = () => {
                       {link.link_id}
                     </td>
                     <td className="py-3 px-4 font-mono text-rose-700">
-                      {link.health_record_id}
+                      {link.health_record_reference}
                     </td>
                     <td className="py-3 px-4 font-mono text-cyan-700">
-                      {link.climate_record_id}
+                      {link.climate_record_reference}
                     </td>
                     <td className="py-3 px-4 font-semibold text-slate-800">
-                      {link.geo_id}
+                      {link.health_area_id}
                     </td>
                     <td className="py-3 px-4 text-slate-600">
                       {link.period_id}
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-                        {link.lag_months === 0 ? 'Lag 0 (Même mois)' : `Lag ${link.lag_months} mois`}
+                        {link.temporal_lag === 0 ? 'Lag 0 (Même mois)' : `Lag ${link.temporal_lag} mois`}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-500 text-[11px]">
-                      {link.spatial_scale_match}
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                        {link.link_quality}
+                      </span>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button
@@ -257,8 +255,9 @@ export const CrossDomainRelationsSection: React.FC = () => {
               <thead>
                 <tr className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                   <th className="py-3 px-4">Code Liaison</th>
-                  <th className="py-3 px-4">Série Climat</th>
-                  <th className="py-3 px-4">Obs. Environnement</th>
+                  <th className="py-3 px-4">Réf. Climat</th>
+                  <th className="py-3 px-4">Réf. Environnement</th>
+                  <th className="py-3 px-4">Unité Géo</th>
                   <th className="py-3 px-4">Période</th>
                   <th className="py-3 px-4">Qualité</th>
                   <th className="py-3 px-4">Notes</th>
@@ -272,10 +271,13 @@ export const CrossDomainRelationsSection: React.FC = () => {
                       {link.link_id}
                     </td>
                     <td className="py-3 px-4 font-mono text-cyan-700">
-                      {link.climate_record_id}
+                      {link.climate_reference}
                     </td>
                     <td className="py-3 px-4 font-mono text-emerald-700">
-                      {link.env_observation_id}
+                      {link.environment_reference}
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-slate-800">
+                      {link.location_id}
                     </td>
                     <td className="py-3 px-4 text-slate-600">
                       {link.period_id}
@@ -351,7 +353,7 @@ export const CrossDomainRelationsSection: React.FC = () => {
                   <label className="font-semibold text-slate-700 block mb-1">Décalage Temporel (Lag)</label>
                   <select
                     value={lagMonths}
-                    onChange={(e) => setLagMonths(parseInt(e.target.value, 10))}
+                    onChange={(e) => setLagMonths(parseInt(e.target.value, 10) as any)}
                     className="w-full p-2 border border-slate-200 rounded-xl font-mono"
                   >
                     <option value={0}>Lag 0 (Même mois)</option>
@@ -368,9 +370,10 @@ export const CrossDomainRelationsSection: React.FC = () => {
                     onChange={(e) => setLinkQuality(e.target.value as any)}
                     className="w-full p-2 border border-slate-200 rounded-xl"
                   >
-                    <option value="HIGH">Élevée (Directe)</option>
-                    <option value="MEDIUM">Moyenne (Proxy)</option>
-                    <option value="LOW">Faible (Estimée)</option>
+                    <option value="EXCELLENT">Excellente</option>
+                    <option value="BON">Bonne</option>
+                    <option value="APPROXIMATIF">Approximatif</option>
+                    <option value="INCERTAIN">Incertain</option>
                   </select>
                 </div>
               </div>
@@ -408,3 +411,4 @@ export const CrossDomainRelationsSection: React.FC = () => {
     </div>
   );
 };
+

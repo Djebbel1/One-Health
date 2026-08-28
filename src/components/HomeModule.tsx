@@ -160,6 +160,93 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Card V1.13: Diagnostic Scientifique, Disponibilité & Préparation Analytique */}
+          <div
+            onClick={() => onNavigate('DIAGNOSTIC_SCIENTIFIQUE')}
+            className="group bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-xl p-5 border border-indigo-500/50 hover:border-indigo-400 hover:shadow-xl transition cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-slate-950 transition">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-indigo-400/20 text-indigo-300 border border-indigo-400/40 text-[10px] font-black rounded-full">
+                  NOUVEAU V1.13
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-indigo-300 transition">
+                  Diagnostic Scientifique & Disponibilité
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Réponses aux 10 questions de recherche, matrices temporelles/géographiques (2018–2026), traçabilité des proxies historiques et préparation analytique sans invention de données.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-indigo-300">
+              <span>Matrices 4D, Scénario Kasuku & Modèles A/B/C</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card V1.12: Intégration Multi-Sources & Préparation des Données */}
+          <div
+            onClick={() => onNavigate('SOURCES_ET_IMPORTS_V112')}
+            className="group bg-gradient-to-br from-teal-950 via-slate-900 to-teal-900 text-white rounded-xl p-5 border border-teal-500/40 hover:border-teal-400 hover:shadow-xl transition cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-slate-950 transition">
+                  <Database className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-teal-400/20 text-teal-300 border border-teal-400/40 text-[10px] font-black rounded-full">
+                  NOUVEAU V1.12
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-teal-300 transition">
+                  Intégration Multi-Sources & Imports
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Imports Excel/CSV (Santé, Climat, Env, Communautaire), matrice de disponibilité (2018–2026), réconciliation des synonymes et traçabilité RAW immuable.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-teal-300">
+              <span>Pipeline RAW→CLEANED & Règle Manquant != 0</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 0: V1.11 Module Enquêtes Opérationnelles & Supervision */}
+          <div
+            onClick={() => onNavigate('ENQUETES_OPERATIONNELLES_V111')}
+            className="group bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-xl p-5 border border-emerald-500/40 hover:border-emerald-400 hover:shadow-xl transition cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition">
+                  <Database className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-bold rounded-full">
+                  NOUVEAU V1.11
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-emerald-300 transition">
+                  Enquêtes Terrain & Supervision
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Concepteur de questionnaires 7 sections avec versions immuables, collecte mobile géolocalisée, et supervision avec traçabilité intégrale.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-emerald-300">
+              <span>Formulaires versionnés & Contrôle RAW→CLEANED</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
           {/* Card 1: Collecte Enquêtes Ménages */}
           <div
             onClick={() => onNavigate('SURVEY')}
@@ -283,28 +370,138 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
           {/* Card 7: Contrôle & Harmonisation V1.5 */}
           <div
             onClick={() => onNavigate('CONTROLE_HARMONISATION')}
-            className="group bg-gradient-to-br from-teal-900 to-slate-900 text-white rounded-xl p-5 border border-teal-700/60 hover:border-teal-400 hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+            className="group bg-white rounded-xl p-5 border border-slate-200 hover:border-teal-500 hover:shadow-md transition cursor-pointer flex flex-col justify-between"
           >
             <div className="space-y-3">
-              <div className="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-slate-950 transition">
+              <div className="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-bold text-white text-base group-hover:text-teal-300 transition">
+                  <h3 className="font-bold text-slate-900 text-base group-hover:text-teal-700 transition">
                     Harmonisation & Contrôle V1.5
                   </h3>
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-teal-500/30 text-teal-200 border border-teal-400/30 uppercase">
-                    NOUVEAU
-                  </span>
                 </div>
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                   Contrôle qualité multidimensionnel (0-100), résolution des doublons, matrice spatio-temporelle unifiée et dictionnaire global des variables.
                 </p>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-700 flex items-center justify-between text-xs font-semibold text-teal-300">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-teal-700">
               <span>Readiness Score & 4 Domaines</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 8: Base Spatio-Temporelle V1.7 */}
+          <div
+            onClick={() => onNavigate('BASE_SPATIO_TEMPORELLE')}
+            className="group bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 text-white rounded-xl p-5 border border-emerald-500/40 hover:border-emerald-400 hover:shadow-xl transition cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-bold text-white text-base group-hover:text-emerald-300 transition">
+                    Base Spatio-Temporelle V1.7
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Structure de données intégrée : Espace (10 Aires) + Temps (36 Mois) + Santé + Climat + Environnement + WASH.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-300">
+              <span>Matrice 10×12, Lags M-1/M-2 & Exports</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 9: Qualité, Normalisation & Dataset V1.8 */}
+          <div
+            onClick={() => onNavigate('DATA_QUALITY_V18')}
+            className="group bg-gradient-to-br from-teal-950 via-slate-900 to-slate-950 text-white rounded-xl p-5 border border-teal-500/50 hover:border-teal-400 hover:shadow-xl transition cursor-pointer flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-slate-950 transition">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-500/20 text-teal-300 border border-teal-400/40 uppercase tracking-wider">
+                  V1.8 — VALIDÉE (12/12 TESTS)
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-teal-300 transition">
+                  Contrôle Qualité, Normalisation &amp; Préparation du Dataset V1.8
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed max-w-4xl">
+                  Chaîne complète de transformation : <strong>RAW_DATA &rarr; CLEAN_DATA &rarr; ANALYSIS_DATASET</strong>. Conservation absolue des données sources, distinction formelle Zéro vs NULL, isolation multicritère des doublons, calcul certifié d'incidence et journal d'audit immuable (TRANSFORMATION_LOG).
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-teal-300">
+              <span>9 Écrans Dédiés, Dictionnaire 26 Variables &amp; Rapport de Faisabilité</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 10: V1.9 — Analyse Exploratoire Spatio-Temporelle */}
+          <div
+            onClick={() => onNavigate('SPATIOTEMPORAL_EXPLORATION_V19')}
+            className="group bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 text-white rounded-xl p-5 border border-emerald-500/50 hover:border-emerald-400 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase tracking-wider">
+                  V1.9 — ANALYSE SPATIO-TEMPORELLE
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-emerald-300 transition flex items-center gap-2">
+                  <span>🔬 Analyse Exploratoire Spatio-Temporelle (V1.9)</span>
+                </h3>
+                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed max-w-4xl">
+                  Exploration rigoureuse avant modélisation : tendances chronologiques (Mann-Kendall), profils saisonniers, corrélations climat-maladies (Spearman &amp; Pearson avec IC 95% et p-valeurs), décalages temporels (Lags 0 à 3 mois), clusters spatiaux (Moran's I &amp; LISA), matrice de complétude et rapport scientifique automatique en 10 sections.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-300">
+              <span>10 Sous-menus interactifs • Avertissement épistémologique systématique • Journal ANALYSIS_LOG</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 11: V1.10 — Extension Maniema & Moteur Multi-Pathologies One Health */}
+          <div
+            onClick={() => onNavigate('MANIEMA_MULTI_PATHOLOGY_V110')}
+            className="group bg-gradient-to-br from-teal-950 via-slate-900 to-sky-950 text-white rounded-xl p-5 border-2 border-teal-500 hover:border-teal-400 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3 ring-1 ring-teal-500/30"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-slate-950 transition">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-teal-500 text-slate-950 uppercase tracking-wider">
+                  V1.10 OPÉRATIONNELLE — EXTENSION MANIEMA
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-lg group-hover:text-teal-300 transition flex items-center gap-2">
+                  <span>🌍 Extension Maniema & Moteur Multi-Pathologies One Health (V1.10)</span>
+                </h3>
+                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed max-w-4xl">
+                  Déploiement à l'échelle provinciale (18 Zones de santé, 7 Territoires + Ville de Kindu). Moteur dynamique multi-pathologies (Paludisme, Fièvre typhoïde, Choléra, Diarrhées, Arboviroses, Mpox), gestion multi-projets, formulaires adaptatifs, séries temporelles découplées et banc de 14 tests automatisés.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-teal-300">
+              <span>Catalogue 6 Pathologies • 7 Niveaux Spatiaux • Séparation Démo/Réel • Banc de Tests 14/14</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
             </div>
           </div>

@@ -12,7 +12,8 @@ import {
   Database,
   Building2,
   FileSpreadsheet,
-  CloudSun
+  CloudSun,
+  Sparkles
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { exportToFullExcel } from '../utils/exportUtils';
@@ -87,6 +88,30 @@ export const Header: React.FC<HeaderProps> = ({
   const navItems: { id: AppModule; label: string; icon: any; count?: number; badgeColor?: string }[] = [
     { id: 'ACCUEIL', label: 'Accueil', icon: Building2 },
     { id: 'TABLEAU_BORD', label: 'Tableau de bord', icon: Activity },
+    {
+      id: 'DIAGNOSTIC_SCIENTIFIQUE',
+      label: '🔬 Diagnostic Scientifique V1.13',
+      icon: Sparkles,
+      badgeColor: 'bg-indigo-600 text-white'
+    },
+    {
+      id: 'SOURCES_ET_IMPORTS_V112',
+      label: '📥 Sources & Imports V1.12',
+      icon: Database,
+      badgeColor: 'bg-teal-600 text-white'
+    },
+    {
+      id: 'ENQUETES_OPERATIONNELLES_V111',
+      label: '📋 Enquêtes & Supervision V1.11',
+      icon: Database,
+      badgeColor: 'bg-emerald-600 text-white'
+    },
+    {
+      id: 'MANIEMA_MULTI_PATHOLOGY_V110',
+      label: '🌍 Extension Maniema & Multi-Pathologies V1.10',
+      icon: Activity,
+      badgeColor: 'bg-teal-600 text-white'
+    },
     { id: 'ENQUETES_MENAGES', label: 'Enquêtes Ménages', icon: Database, count: householdSurveys.length },
     { id: 'OBSERVATIONS_ENV', label: 'Observations Env.', icon: Layers, count: environmentalObs.length },
     { id: 'DONNEES_SANITAIRES', label: 'Données Sanitaires', icon: Activity, count: healthRecords.length },
@@ -96,6 +121,30 @@ export const Header: React.FC<HeaderProps> = ({
       id: 'CONTROLE_HARMONISATION',
       label: 'Contrôle & Harmonisation V1.5',
       icon: ShieldCheck,
+      badgeColor: 'bg-teal-600 text-white'
+    },
+    {
+      id: 'BASE_SPATIO_TEMPORELLE',
+      label: 'Base Spatio-Temporelle V1.7',
+      icon: Sparkles,
+      badgeColor: 'bg-emerald-600 text-white'
+    },
+    {
+      id: 'DATA_QUALITY_V18',
+      label: 'Qualité & Dataset V1.8',
+      icon: ShieldCheck,
+      badgeColor: 'bg-teal-500 text-white'
+    },
+    {
+      id: 'SPATIOTEMPORAL_EXPLORATION_V19',
+      label: '🔬 Analyse Spatio-Temporelle V1.9',
+      icon: Sparkles,
+      badgeColor: 'bg-emerald-500 text-white'
+    },
+    {
+      id: 'MANIEMA_MULTI_PATHOLOGY_V110',
+      label: '🌍 Extension Maniema & Multi-Pathologies V1.10',
+      icon: Activity,
       badgeColor: 'bg-teal-600 text-white'
     },
     {
@@ -127,6 +176,12 @@ export const Header: React.FC<HeaderProps> = ({
     if ((itemId === 'CARTOGRAPHIE' || itemId === 'MAP') && (activeId === 'CARTOGRAPHIE' || activeId === 'MAP')) return true;
     if ((itemId === 'CONTROLE_QUALITE' || itemId === 'QUALITY') && (activeId === 'CONTROLE_QUALITE' || activeId === 'QUALITY')) return true;
     if ((itemId === 'CONTROLE_HARMONISATION' || itemId === 'HARMONISATION') && (activeId === 'CONTROLE_HARMONISATION' || activeId === 'HARMONISATION')) return true;
+    if (itemId === 'BASE_SPATIO_TEMPORELLE' && activeId === 'BASE_SPATIO_TEMPORELLE') return true;
+    if ((itemId === 'DATA_QUALITY_V18' || itemId === 'QUALITE_DONNEES') && (activeId === 'DATA_QUALITY_V18' || activeId === 'QUALITE_DONNEES')) return true;
+    if ((itemId === 'SPATIOTEMPORAL_EXPLORATION_V19' || itemId === 'ANALYSE_SPATIO_TEMPORELLE') && (activeId === 'SPATIOTEMPORAL_EXPLORATION_V19' || activeId === 'ANALYSE_SPATIO_TEMPORELLE')) return true;
+    if ((itemId === 'SOURCES_ET_IMPORTS_V112' || itemId === 'SOURCES_IMPORTS' || itemId === 'INTEGRATION_MULTI_SOURCES') && (activeId === 'SOURCES_ET_IMPORTS_V112' || activeId === 'SOURCES_IMPORTS' || activeId === 'INTEGRATION_MULTI_SOURCES')) return true;
+    if ((itemId === 'ENQUETES_OPERATIONNELLES_V111' || itemId === 'SUPERVISION_TERRAIN_V111' || itemId === 'SURVEY_OPERATIONS') && (activeId === 'ENQUETES_OPERATIONNELLES_V111' || activeId === 'SUPERVISION_TERRAIN_V111' || activeId === 'SURVEY_OPERATIONS')) return true;
+    if ((itemId === 'MANIEMA_MULTI_PATHOLOGY_V110' || itemId === 'GESTION_MANIEMA_PATHOLOGIES' || itemId === 'ONE_HEALTH_PLATFORM') && (activeId === 'MANIEMA_MULTI_PATHOLOGY_V110' || activeId === 'GESTION_MANIEMA_PATHOLOGIES' || activeId === 'ONE_HEALTH_PLATFORM')) return true;
     if ((itemId === 'BASE_MODELE' || itemId === 'MODEL_BASE') && (activeId === 'BASE_MODELE' || activeId === 'MODEL_BASE')) return true;
     return false;
   };

@@ -83,10 +83,10 @@ export const GeographicHarmonizationSection: React.FC = () => {
       geo_type: newUnitType,
       geo_name: newUnitName,
       parent_geo_id: newUnitParentId || null,
-      latitude: newUnitLat ? parseFloat(newUnitLat) : null,
-      longitude: newUnitLon ? parseFloat(newUnitLon) : null,
-      is_active: true,
-      description: `Création manuelle dans le référentiel Kindu`,
+      latitude: newUnitLat ? parseFloat(newUnitLat) : undefined,
+      longitude: newUnitLon ? parseFloat(newUnitLon) : undefined,
+      source: 'Saisie manuelle superviseur',
+      status: 'ACTIF',
     };
 
     addGeographicUnit(newUnit);
@@ -102,7 +102,8 @@ export const GeographicHarmonizationSection: React.FC = () => {
       alias_id: `ALIAS-${Date.now().toString().slice(-4)}`,
       alias_name: newAliasName,
       geo_id: newAliasTargetGeoId,
-      source_type: newAliasSourceType,
+      source: newAliasSourceType,
+      notes: 'Alias toponymique enregistré',
     };
 
     addGeographicAlias(newAlias);

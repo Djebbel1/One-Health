@@ -1,6 +1,6 @@
 {
   "name": "One Health Kindu",
-  "description": "Plateforme de collecte, surveillance et modélisation spatio-temporelle des risques de paludisme et de fièvre typhoïde liés au climat à Kindu, RDC",
+  "description": "Plateforme One Health de collecte, contrôle qualité, normalisation et modélisation spatio-temporelle des risques sanitaires et climatiques à Kindu (Maniema, RDC)",
   "requestFramePermissions": [
     "camera",
     "geolocation"

@@ -11,6 +11,13 @@ import { HouseholdSurveyModule } from './components/HouseholdSurveyModule';
 import { QualityControlModule } from './components/QualityControlModule';
 import { ModelBaseModule } from './components/ModelBaseModule';
 import { HarmonizationModule } from './components/HarmonizationModule';
+import { SpatiotemporalDatabaseModule } from './components/spatiotemporal/SpatiotemporalDatabaseModule';
+import { DataQualityModule } from './components/quality/DataQualityModule';
+import { ExplorationModule } from './components/exploration/ExplorationModule';
+import { ManiemaPlatformDashboard } from './components/maniema/ManiemaPlatformDashboard';
+import { SurveyOperationsModuleV111 } from './components/SurveyOperationsModuleV111';
+import { MultiSourceHubModule } from './components/multisource/MultiSourceHubModule';
+import { ScientificDiagnosticModuleV113 } from './components/diagnostic/ScientificDiagnosticModuleV113';
 import { DataExportModal } from './components/DataExportModal';
 import { AuthModal } from './components/AuthModal';
 import { AppModule } from './types';
@@ -26,17 +33,27 @@ import {
   Menu,
   X,
   Building2,
-  Sparkles
+  Sparkles,
+  Globe,
+  ClipboardList,
+  UploadCloud
 } from 'lucide-react';
 
 const NAV_ITEMS: { id: AppModule; label: string; shortLabel: string; icon: any }[] = [
   { id: 'ACCUEIL', label: 'Accueil', shortLabel: 'Accueil', icon: Building2 },
   { id: 'DASHBOARD', label: 'Tableau de bord', shortLabel: 'Dashboard', icon: LayoutDashboard },
+  { id: 'DIAGNOSTIC_SCIENTIFIQUE', label: '🔬 Diagnostic Scientifique V1.13', shortLabel: 'V1.13 Diag.', icon: Sparkles },
+  { id: 'SOURCES_ET_IMPORTS_V112', label: '📥 Sources & Imports V1.12', shortLabel: 'V1.12 Sources', icon: UploadCloud },
+  { id: 'ENQUETES_OPERATIONNELLES_V111', label: '📋 Enquêtes & Supervision V1.11', shortLabel: 'V1.11 Enquêtes', icon: ClipboardList },
+  { id: 'MANIEMA_MULTI_PATHOLOGY_V110', label: '🌍 Extension Maniema V1.10', shortLabel: 'V1.10 Maniema', icon: Globe },
   { id: 'SURVEY', label: 'Enquêtes ménages', shortLabel: 'Ménages', icon: Home },
   { id: 'ENV', label: 'Observations env.', shortLabel: 'Gîtes/Env', icon: Bug },
   { id: 'HEALTH', label: 'Données sanitaires', shortLabel: 'Sanitaire', icon: Activity },
   { id: 'CLIMATE', label: 'Données climatiques', shortLabel: 'Climat', icon: CloudRain },
   { id: 'CONTROLE_HARMONISATION', label: 'Contrôle & Harmonisation V1.5', shortLabel: 'Harmonisation', icon: ShieldCheck },
+  { id: 'BASE_SPATIO_TEMPORELLE', label: 'Base Spatio-Temporelle V1.7', shortLabel: 'V1.7 Base', icon: Sparkles },
+  { id: 'DATA_QUALITY_V18', label: 'Qualité & Dataset V1.8', shortLabel: 'V1.8 Qualité', icon: ShieldCheck },
+  { id: 'SPATIOTEMPORAL_EXPLORATION_V19', label: '🔬 Analyse Spatio-Temporelle V1.9', shortLabel: 'V1.9 Analyse', icon: Sparkles },
   { id: 'MAP', label: 'Cartographie SIG', shortLabel: 'Carte', icon: MapIcon },
   { id: 'QUALITY', label: 'Contrôle qualité V1', shortLabel: 'Qualité', icon: ShieldCheck },
   { id: 'MODEL_BASE', label: 'Base modèle (AS×Mois)', shortLabel: 'Matrice', icon: Database },
@@ -53,6 +70,7 @@ const MainContent: React.FC = () => {
 
   const isModuleActive = (itemModule: AppModule, current: AppModule) => {
     if (itemModule === current) return true;
+    if ((itemModule === 'DIAGNOSTIC_SCIENTIFIQUE' || itemModule === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || itemModule === 'DIAGNOSTIC_DONNEES') && (current === 'DIAGNOSTIC_SCIENTIFIQUE' || current === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || current === 'DIAGNOSTIC_DONNEES')) return true;
     if ((itemModule === 'DASHBOARD' || itemModule === 'TABLEAU_BORD') && (current === 'DASHBOARD' || current === 'TABLEAU_BORD')) return true;
     if ((itemModule === 'SURVEY' || itemModule === 'ENQUETES_MENAGES') && (current === 'SURVEY' || current === 'ENQUETES_MENAGES' || current === 'SYNCHRONISATION')) return true;
     if ((itemModule === 'ENV' || itemModule === 'OBSERVATIONS_ENV') && (current === 'ENV' || current === 'OBSERVATIONS_ENV')) return true;
@@ -61,6 +79,12 @@ const MainContent: React.FC = () => {
     if ((itemModule === 'MAP' || itemModule === 'CARTOGRAPHIE') && (current === 'MAP' || current === 'CARTOGRAPHIE')) return true;
     if ((itemModule === 'QUALITY' || itemModule === 'CONTROLE_QUALITE') && (current === 'QUALITY' || current === 'CONTROLE_QUALITE')) return true;
     if ((itemModule === 'CONTROLE_HARMONISATION' || itemModule === 'HARMONISATION') && (current === 'CONTROLE_HARMONISATION' || current === 'HARMONISATION')) return true;
+    if (itemModule === 'BASE_SPATIO_TEMPORELLE' && current === 'BASE_SPATIO_TEMPORELLE') return true;
+    if ((itemModule === 'DATA_QUALITY_V18' || itemModule === 'QUALITE_DONNEES') && (current === 'DATA_QUALITY_V18' || current === 'QUALITE_DONNEES')) return true;
+    if ((itemModule === 'SPATIOTEMPORAL_EXPLORATION_V19' || itemModule === 'ANALYSE_SPATIO_TEMPORELLE') && (current === 'SPATIOTEMPORAL_EXPLORATION_V19' || current === 'ANALYSE_SPATIO_TEMPORELLE')) return true;
+    if ((itemModule === 'SOURCES_ET_IMPORTS_V112' || itemModule === 'SOURCES_IMPORTS' || itemModule === 'INTEGRATION_MULTI_SOURCES') && (current === 'SOURCES_ET_IMPORTS_V112' || current === 'SOURCES_IMPORTS' || current === 'INTEGRATION_MULTI_SOURCES')) return true;
+    if ((itemModule === 'ENQUETES_OPERATIONNELLES_V111' || itemModule === 'SUPERVISION_TERRAIN_V111' || itemModule === 'SURVEY_OPERATIONS') && (current === 'ENQUETES_OPERATIONNELLES_V111' || current === 'SUPERVISION_TERRAIN_V111' || current === 'SURVEY_OPERATIONS')) return true;
+    if ((itemModule === 'MANIEMA_MULTI_PATHOLOGY_V110' || itemModule === 'GESTION_MANIEMA_PATHOLOGIES' || itemModule === 'ONE_HEALTH_PLATFORM') && (current === 'MANIEMA_MULTI_PATHOLOGY_V110' || current === 'GESTION_MANIEMA_PATHOLOGIES' || current === 'ONE_HEALTH_PLATFORM')) return true;
     if ((itemModule === 'MODEL_BASE' || itemModule === 'BASE_MODELE') && (current === 'MODEL_BASE' || current === 'BASE_MODELE')) return true;
     return false;
   };
@@ -148,6 +172,9 @@ const MainContent: React.FC = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeModule === 'ACCUEIL' && <HomeModule onNavigate={handleNavigate} />}
+        {(activeModule === 'DIAGNOSTIC_SCIENTIFIQUE' || activeModule === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || activeModule === 'DIAGNOSTIC_DONNEES') && (
+          <ScientificDiagnosticModuleV113 />
+        )}
         {(activeModule === 'DASHBOARD' || activeModule === 'TABLEAU_BORD') && <DashboardModule />}
         {(activeModule === 'MAP' || activeModule === 'CARTOGRAPHIE') && <MapModule />}
         {(activeModule === 'HEALTH' || activeModule === 'DONNEES_SANITAIRES') && <HealthDataModule />}
@@ -158,6 +185,20 @@ const MainContent: React.FC = () => {
         )}
         {(activeModule === 'CONTROLE_HARMONISATION' || activeModule === 'HARMONISATION') && (
           <HarmonizationModule />
+        )}
+        {activeModule === 'BASE_SPATIO_TEMPORELLE' && <SpatiotemporalDatabaseModule />}
+        {(activeModule === 'DATA_QUALITY_V18' || activeModule === 'QUALITE_DONNEES') && <DataQualityModule />}
+        {(activeModule === 'SPATIOTEMPORAL_EXPLORATION_V19' || activeModule === 'ANALYSE_SPATIO_TEMPORELLE') && (
+          <ExplorationModule />
+        )}
+        {(activeModule === 'SOURCES_ET_IMPORTS_V112' || activeModule === 'SOURCES_IMPORTS' || activeModule === 'INTEGRATION_MULTI_SOURCES') && (
+          <MultiSourceHubModule onNavigateToAnalysis={() => setActiveModule('SPATIOTEMPORAL_EXPLORATION_V19')} />
+        )}
+        {(activeModule === 'ENQUETES_OPERATIONNELLES_V111' || activeModule === 'SUPERVISION_TERRAIN_V111' || activeModule === 'SURVEY_OPERATIONS') && (
+          <SurveyOperationsModuleV111 />
+        )}
+        {(activeModule === 'MANIEMA_MULTI_PATHOLOGY_V110' || activeModule === 'GESTION_MANIEMA_PATHOLOGIES' || activeModule === 'ONE_HEALTH_PLATFORM') && (
+          <ManiemaPlatformDashboard />
         )}
         {(activeModule === 'QUALITY' || activeModule === 'CONTROLE_QUALITE') && <QualityControlModule />}
         {(activeModule === 'MODEL_BASE' || activeModule === 'BASE_MODELE') && <ModelBaseModule />}

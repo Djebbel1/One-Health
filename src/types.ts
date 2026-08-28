@@ -23,6 +23,28 @@ export type AppModule =
   | 'CARTOGRAPHIE'
   | 'CONTROLE_QUALITE'
   | 'BASE_MODELE'
+  | 'BASE_SPATIO_TEMPORELLE'
+  | 'QUALITE_DONNEES'
+  | 'DATA_QUALITY_V18'
+  | 'SPATIOTEMPORAL_EXPLORATION_V19'
+  | 'ANALYSE_SPATIO_TEMPORELLE'
+  | 'EXPLORATION_SPATIO_TEMPORELLE'
+  | 'SPATIO_TEMPORAL_EXPLORATION'
+  | 'MANIEMA_MULTI_PATHOLOGY_V110'
+  | 'GESTION_MANIEMA_PATHOLOGIES'
+  | 'ONE_HEALTH_PLATFORM'
+  | 'ENQUETES_OPERATIONNELLES_V111'
+  | 'SUPERVISION_TERRAIN_V111'
+  | 'SURVEY_OPERATIONS'
+  | 'SOURCES_ET_IMPORTS_V112'
+  | 'SOURCES_IMPORTS'
+  | 'INTEGRATION_MULTI_SOURCES'
+  | 'DIAGNOSTIC_SCIENTIFIQUE_V113'
+  | 'DIAGNOSTIC_DONNEES'
+  | 'DIAGNOSTIC_SCIENTIFIQUE'
+  | 'LABORATOIRE_ANALYSE'
+  | 'LABORATOIRE_ANALYSE_V114'
+  | 'LAB_ANALYSE'
   | 'SYNCHRONISATION'
   | 'IMPORT_EXPORT'
   | 'ADMINISTRATION'
@@ -489,6 +511,11 @@ export interface HealthFacility {
 }
 
 export type DataSourceType =
+  | 'SANITAIRE'
+  | 'ENVIRONNEMENTALE'
+  | 'CLIMATIQUE'
+  | 'GEOGRAPHIQUE'
+  | 'COMMUNAUTAIRE'
   | 'REGISTRE_STRUCTURE_SANTE'
   | 'REGISTRE_CENTRE_SANTE'
   | 'RAPPORT_MENSUEL'
@@ -500,6 +527,19 @@ export type DataSourceType =
   | 'ENQUETE_ACTIVE'
   | 'HOSPITALISATION'
   | 'AUTRE';
+
+export type OneHealthDimension =
+  | 'SANTE'
+  | 'CLIMAT'
+  | 'ENVIRONNEMENT'
+  | 'COMMUNAUTAIRE'
+  | 'GEOGRAPHIE'
+  | 'DEMOGRAPHIE'
+  | 'LABORATOIRE'
+  | 'AUTRE';
+
+export type DataFrequencyType = FrequencyType;
+export type FileSourceFormat = FileFormatType;
 
 export type PeriodType = 'JOUR' | 'SEMAINE' | 'MOIS' | 'TRIMESTRE' | 'ANNÉE' | 'AUTRE';
 
@@ -777,7 +817,14 @@ export interface ClimateRecord {
 }
 
 // 11. CONTRÔLE QUALITÉ (Quality Control)
-export type QualitySeverity = 'CRITIQUE' | 'AVERTISSEMENT' | 'INFO' | 'ERROR' | 'WARNING';
+export type QualitySeverity =
+  | 'CRITIQUE'
+  | 'AVERTISSEMENT'
+  | 'INFO'
+  | 'ERROR'
+  | 'WARNING'
+  | 'ERREUR'
+  | 'INFORMATION';
 export type QualityCategory =
   | 'DONNEE_MANQUANTE'
   | 'VALEUR_IMPOSSIBLE'
@@ -1181,4 +1228,2704 @@ export interface ReadinessScoreReport {
     overall_quality_avg: number;
   };
 }
+
+// ============================================================================
+// 16. TYPES V1.6 : CARTOGRAPHIE INTÉGRÉE SPATIO-TEMPORELLE
+// ============================================================================
+
+// 16.1. Identifiants des 8 Couches Principales
+export type CartoLayerId =
+  | 'LAYER_01_MENAGES'
+  | 'LAYER_02_ENVIRONNEMENT'
+  | 'LAYER_03_SANTE'
+  | 'LAYER_04_CLIMAT'
+  | 'LAYER_05_EAU'
+  | 'LAYER_06_INONDATION'
+  | 'LAYER_07_INFRASTRUCTURES_SANITAIRES'
+  | 'LAYER_08_LIMITES_ADMINISTRATIVES';
+
+export interface CartoLayerConfig {
+  id: CartoLayerId;
+  label: string;
+  shortLabel: string;
+  description: string;
+  visible: boolean;
+  opacity: number; // 0.0 to 1.0 (e.g. 0.5 = 50%)
+  color: string;
+  iconName: string;
+  source: string;
+  spatialResolution: SpatialResolutionLevel;
+  temporalResolution: TemporalResolutionLevel;
+  category: 'SANTE' | 'ENVIRONNEMENT' | 'CLIMAT' | 'MENAGES' | 'INFRASTRUCTURE';
+  count?: number;
+}
+
+// 16.2. Sous-menus Cartographiques
+export type CartoSubMenu =
+  | 'VUE_GENERALE'
+  | 'CARTE_SANTE'
+  | 'CARTE_ENV'
+  | 'CARTE_CLIMAT'
+  | 'CARTE_MENAGES'
+  | 'CARTE_INTEGREE'
+  | 'ANALYSE_TEMPORELLE'
+  | 'COMPARAISON_PERIODES'
+  | 'COUCHES'
+  | 'LEGENDE'
+  | 'PROFIL_ZONE'
+  | 'EXPORT_CARTO'
+  | 'METHODOLOGIE'
+  | 'LIMITES_DONNEES'
+  | 'TESTS_VALIDATION';
+
+// 16.3. Filtre Maladie
+export type CartoDiseaseFilter = 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'LES_DEUX';
+
+// 16.4. Type de visualisation Sanitaire
+export type HealthVizType =
+  | 'STRUCTURE_POINTS'
+  | 'PROPORTIONAL_CIRCLES'
+  | 'HEALTH_AREA_AGGREGATION'
+  | 'HEALTH_ZONE_AGGREGATION'
+  | 'CHOROPLETH'
+  | 'DENSITY_HEATMAP';
+
+// 16.5. Source d'eau spécifique cartographiée
+export interface WaterPointItem {
+  id: string; // e.g. "EAU-001"
+  name: string;
+  type: 'SOURCE' | 'PUITS' | 'FORAGE' | 'BORNE_FONTAINE' | 'RESEAU' | 'RIVIERE' | 'AUTRE';
+  type_label: string;
+  health_area_id: string;
+  neighborhood_id?: string;
+  latitude: number;
+  longitude: number;
+  observation_date: string;
+  status: 'FONCTIONNEL' | 'DEGRADE' | 'ABANDONNE' | 'NON_PROTEGE' | 'PROTEGE';
+  quality_info: QualityScoreCategory | string;
+  source_data: string;
+  is_protected: boolean;
+  users_estimate?: number;
+  notes?: string;
+}
+
+// 16.6. Donnée Inondation cartographiée
+export interface FloodAreaItem {
+  id: string;
+  name: string;
+  type: 'INONDATION_OBSERVEE' | 'ZONE_POTENTIELLEMENT_INONDABLE';
+  health_area_id: string;
+  neighborhood_id?: string;
+  latitude: number;
+  longitude: number;
+  radius_meters?: number;
+  observation_date?: string;
+  water_level_cm?: number;
+  duration_label?: string;
+  proximity_stream?: string;
+  source: string;
+  notes?: string;
+}
+
+// 16.7. Mesure de distance géographique
+export interface DistanceMeasurement {
+  pointA: { lat: number; lng: number; label?: string } | null;
+  pointB: { lat: number; lng: number; label?: string } | null;
+  distanceMeters: number | null;
+  distanceKm: number | null;
+  isActive: boolean;
+}
+
+// 16.8. Changement environnemental / Comparaison
+export type EnvironmentalChangeType =
+  | 'NOUVEAU_FACTEUR'
+  | 'FACTEUR_DISPARU'
+  | 'FACTEUR_MAINTENU'
+  | 'FACTEUR_MODIFIE';
+
+export interface EnvironmentalChangeItem {
+  site_id: string;
+  site_name: string;
+  latitude: number;
+  longitude: number;
+  health_area_id: string;
+  factor_type: string;
+  periodA_state: string;
+  periodB_state: string;
+  change_type: EnvironmentalChangeType;
+  change_label: string;
+  notes: string;
+}
+
+// 16.9. Test Cartographique Unitaire
+export interface CartoValidationTest {
+  id: number;
+  title: string;
+  description: string;
+  category: 'AFFICHAGE' | 'FILTRAGE' | 'HISTORIQUE' | 'RESOLUTION' | 'DONNEES_MANQUANTES' | 'CONFIDENTIALITE' | 'PERFORMANCE';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  resultDetails: string;
+  isCritical?: boolean;
+}
+
+// ============================================================================
+// 17. MODULE V1.7 — BASE DE DONNÉES SPATIO-TEMPORELLE INTÉGRÉE
+// ============================================================================
+
+// 17.1. Table Centrale : SPATIOTEMPORAL_UNIT
+export interface SpatiotemporalUnit {
+  id: string; // e.g. "KINDU01-2025-01" or "AS_MIKELENGE-2025-01"
+  zone_sante_id: string; // e.g. "ZS_KINDU"
+  aire_sante_id: string; // e.g. "AS_MIKELENGE"
+  quartier_id?: string;
+  annee: number; // e.g. 2025
+  mois: number; // 1 to 12
+  date_debut: string; // YYYY-MM-01
+  date_fin: string; // YYYY-MM-DD
+  population: number; // e.g. 24500
+  population_source: string; // e.g. "DPS Maniema / Recensement Sanitaire 2024"
+  data_completeness: number; // 0 to 100 (%)
+  created_at: string;
+  updated_at: string;
+}
+
+// 17.2. Table Sanitaire : HEALTH_SPATIOTEMPORAL
+export type DiseaseCode = 'MALARIA' | 'TYPHOID';
+export type CaseClassificationType = 'CAS CONFIRME' | 'CAS PROBABLE' | 'CAS SUSPECT' | 'CAS NON CLASSIFIE' | 'NON DISPONIBLE';
+export type ScientificDataQuality = 'EXCELLENTE' | 'BONNE' | 'MOYENNE' | 'FAIBLE' | 'INCONNUE';
+
+export interface HealthSpatiotemporal {
+  id: string;
+  spatiotemporal_unit_id: string;
+  disease: DiseaseCode;
+  cases_total: number;
+  cases_confirmed: number | null;
+  cases_suspected: number | null;
+  cases_probable?: number | null;
+  cases_unclassified?: number | null;
+  hospitalizations: number;
+  deaths: number;
+  population_at_risk: number;
+  data_source: string;
+  diagnostic_method: string; // e.g. "TDR / Goutte Épaisse", "Widal / Coproculture / Clinique", "NON DISPONIBLE"
+  data_quality: ScientificDataQuality;
+  data_completeness: number; // 0-100%
+  incidence_per_1000?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// 17.3. Table Climatique : CLIMATE_SPATIOTEMPORAL
+export interface ClimateSpatiotemporal {
+  id: string;
+  spatiotemporal_unit_id: string;
+  source_id: string;
+  year: number;
+  month: number;
+  temperature_mean: number | null;
+  temperature_min: number | null;
+  temperature_max: number | null;
+  rainfall_mm: number | null;
+  humidity_percent: number | null;
+  rainy_days: number | null;
+  extreme_rainfall: boolean | null;
+  flood_event: boolean | null;
+  spatial_resolution: 'VILLE' | 'STATION' | 'AIRE_SANTE';
+  temporal_resolution: 'MOIS' | 'JOUR' | 'ANNEE';
+  data_quality: ScientificDataQuality;
+  missing_data: boolean;
+  rainfall_lag_1?: number | null;
+  rainfall_lag_2?: number | null;
+  temperature_lag_1?: number | null;
+  humidity_lag_1?: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// 17.4. Table Environnementale : ENVIRONMENT_SPATIOTEMPORAL
+export type SpatioEnvType =
+  | 'EAU_STAGNANTE'
+  | 'DEPOT_DE_DECHETS'
+  | 'INONDATION'
+  | 'ZONE_INONDABLE'
+  | 'EAUX_USEES'
+  | 'CANIVEAU'
+  | 'VEGETATION'
+  | 'HABITAT'
+  | 'AUTRE';
+
+export type SpatioEnvStatus =
+  | 'PRESENT'
+  | 'ABSENT'
+  | 'DEGRADE'
+  | 'CONSTRUIT'
+  | 'RESOLU'
+  | 'NON_OBSERVE';
+
+export interface EnvironmentSpatiotemporal {
+  id: string;
+  spatiotemporal_unit_id: string;
+  observation_id: string;
+  environment_type: SpatioEnvType;
+  status: SpatioEnvStatus;
+  observation_date: string;
+  valid_from: string; // YYYY-MM-DD
+  valid_to: string; // YYYY-MM-DD
+  latitude: number | null;
+  longitude: number | null;
+  quartier_id?: string;
+  aire_sante_id: string;
+  source: string;
+  observation_quality: ScientificDataQuality;
+  created_at: string;
+  updated_at: string;
+}
+
+// 17.5. Table Eau & Assainissement : WASH_SPATIOTEMPORAL
+export interface WashSpatiotemporal {
+  id: string;
+  spatiotemporal_unit_id: string;
+  households_observed: number | null;
+  safe_water_households: number | null;
+  unsafe_water_households: number | null;
+  water_treatment_households: number | null;
+  latrine_available_households: number | null;
+  handwashing_available_households: number | null;
+  waste_management_households: number | null;
+  data_source: string;
+  sample_size: number | null;
+  data_quality: ScientificDataQuality;
+  created_at: string;
+  updated_at: string;
+}
+
+// 17.6. Table Agrégée Ménages : HOUSEHOLD_AGGREGATE
+export interface HouseholdAggregate {
+  id: string;
+  spatiotemporal_unit_id: string;
+  survey_date: string;
+  sample_size: number;
+  water_access_rate: number | null; // 0-100%
+  water_treatment_rate: number | null; // 0-100%
+  latrine_rate: number | null; // 0-100%
+  handwashing_rate: number | null; // 0-100%
+  waste_management_rate: number | null; // 0-100%
+  environmental_exposure_rate: number | null; // 0-100%
+  data_quality: ScientificDataQuality;
+}
+
+// 17.7. Table Intégrée : INTEGRATED_SPATIOTEMPORAL_DATA
+export interface IntegratedSpatiotemporalData {
+  id: string;
+  spatiotemporal_unit_id: string;
+  year: number;
+  month: number;
+  zone_sante_id: string;
+  aire_sante_id: string;
+  aire_sante_name: string;
+  population: number;
+  
+  // Health
+  malaria_cases: number | null;
+  malaria_confirmed: number | null;
+  malaria_suspected: number | null;
+  malaria_incidence_per_1000: number | null;
+  
+  typhoid_cases: number | null;
+  typhoid_confirmed: number | null;
+  typhoid_suspected: number | null;
+  typhoid_incidence_per_1000: number | null;
+  
+  // Climate
+  rainfall_mm: number | null;
+  temperature_mean: number | null;
+  temperature_min: number | null;
+  temperature_max: number | null;
+  humidity_percent: number | null;
+  rainy_days: number | null;
+  flood_events: number | null;
+  
+  // Lags
+  rainfall_lag_1: number | null;
+  rainfall_lag_2: number | null;
+  temperature_lag_1: number | null;
+  humidity_lag_1: number | null;
+  
+  // Environment (strictly 0 if observed absent, null if not documented)
+  stagnant_water_count: number | null;
+  waste_sites_count: number | null;
+  water_sources_count: number | null;
+  flooded_zones_count: number | null;
+  environmental_obs_count: number | null;
+  
+  // WASH & Households
+  surveyed_sample_size: number | null;
+  unsafe_water_rate: number | null; // 0-100%
+  water_treatment_rate: number | null; // 0-100%
+  latrine_rate: number | null; // 0-100%
+  handwashing_rate: number | null; // 0-100%
+  waste_management_rate: number | null; // 0-100%
+  bednet_coverage_rate: number | null; // 0-100%
+  
+  // Quality & Completeness
+  data_completeness: number; // 0-100%
+  data_quality: ScientificDataQuality;
+  is_model_ready: boolean;
+  notes?: string;
+}
+
+// 17.8. Table de Contrôle de Qualité : DATA_QUALITY_CHECK
+export type QualityCheckType =
+  | 'CONFLIT_TEMPOREL'
+  | 'ERREUR_DATE'
+  | 'ERREUR_GEOGRAPHIQUE'
+  | 'DOUBLON_POTENTIEL'
+  | 'DONNEE_MANQUANTE'
+  | 'HORS_ZONE_ETUDE'
+  | 'INCOHERENCE_RESOLUTION';
+
+export type QualityCheckStatus = 'DETECTE' | 'EN_COURS' | 'VALIDE' | 'IGNORE' | 'CORRIGE';
+
+export interface DataQualityCheckRecord {
+  id: string;
+  table_name: string;
+  record_id: string;
+  check_type: QualityCheckType;
+  severity: QualitySeverity;
+  message: string;
+  status: QualityCheckStatus;
+  suggested_action?: string;
+  created_at: string;
+}
+
+// 17.9. Table des Sources : DATA_SOURCE
+export interface DataSourceRecord {
+  id: string;
+  source_name: string;
+  source_type: string;
+  organization: string;
+  collection_method: string;
+  period_start: string;
+  period_end: string;
+  spatial_resolution: string;
+  temporal_resolution: string;
+  reliability_level: 'HAUTE' | 'MOYENNE' | 'A_VERIFIER';
+  notes: string;
+}
+
+// 17.10. Vue Données Prêtes pour Modélisation : MODEL_READY_DATA
+export interface ModelReadyDataRow {
+  spatiotemporal_unit_id: string;
+  aire_sante_id: string;
+  aire_sante_name: string;
+  year: number;
+  month: number;
+  population: number;
+  
+  // $Y(s,t)$ Outcomes
+  malaria_cases: number | null;
+  malaria_confirmed: number | null;
+  malaria_incidence_per_1000: number | null;
+  
+  typhoid_cases: number | null;
+  typhoid_confirmed: number | null;
+  typhoid_incidence_per_1000: number | null;
+  
+  // Covariates
+  rainfall_mm: number | null;
+  temperature_mean: number | null;
+  humidity_percent: number | null;
+  
+  // Historical Lags
+  rainfall_lag_1: number | null;
+  rainfall_lag_2: number | null;
+  temperature_lag_1: number | null;
+  humidity_lag_1: number | null;
+  
+  // Environmental & WASH
+  stagnant_water_count: number | null;
+  waste_sites_count: number | null;
+  water_treatment_rate: number | null;
+  latrine_rate: number | null;
+  bednet_coverage_rate: number | null;
+  
+  // Completeness & Quality
+  data_completeness: number;
+  data_quality: ScientificDataQuality;
+  inclusion_criteria_met: boolean;
+}
+
+// 17.11. Test Spatio-Temporel
+export interface SpatiotemporalValidationTest {
+  id: number;
+  requirementNumber: number; // e.g. 51, 52, 53, etc.
+  title: string;
+  description: string;
+  category: 'HISTORIQUE' | 'CLIMAT' | 'DONNEES_MANQUANTES' | 'SANTE' | 'NON_COUVERT' | 'RESOLUTION' | 'DOUBLON' | 'COHERENCE' | 'SECURITE';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  resultDetails: string;
+  verifiedAt: string;
+}
+
+// 17.12. Rapport Final V1.7
+export interface V17ReportSummary {
+  structure: {
+    tablesCreated: number;
+    tablesModified: number;
+    viewsCreated: number;
+    relationsCreated: number;
+  };
+  donnees: {
+    healthRecordsCount: number;
+    envRecordsCount: number;
+    climateRecordsCount: number;
+    householdSurveysCount: number;
+    spatiotemporalUnitsCount: number;
+  };
+  qualite: {
+    averageCompleteness: number;
+    potentialDuplicatesCount: number;
+    conflictsCount: number;
+    geoErrorsCount: number;
+    temporalErrorsCount: number;
+  };
+  modelReady: {
+    availableRows: number;
+    incompleteRows: number;
+    validatedRows: number;
+  };
+  tests: {
+    total: number;
+    passed: number;
+    failed: number;
+  };
+  compatibilite: {
+    v1_0: boolean;
+    v1_1: boolean;
+    v1_2: boolean;
+    v1_3: boolean;
+    v1_4: boolean;
+    v1_5: boolean;
+    v1_6: boolean;
+  };
+  verdict: 'V1.7 — VALIDÉE' | 'V1.7 — ERREURS À CORRIGER';
+}
+
+// =========================================================================
+// 18. MODULE QUALITÉ DES DONNÉES & NORMALISATION V1.8
+// =========================================================================
+
+// 18.1. Statut Épistémologique de la Donnée
+export type DataStatus =
+  | 'OBSERVED'        // Donnée primaire observée ou mesurée
+  | 'CALCULATED'      // Donnée issue d'un calcul déterministe (taux, proportion, somme)
+  | 'ESTIMATED'       // Donnée estimée par un modèle ou ratio
+  | 'IMPUTED'         // Donnée imputée statistiquement (avec méthode documentée)
+  | 'MISSING'         // Donnée absente / non disponible
+  | 'NOT_APPLICABLE';  // Non applicable dans ce contexte
+
+// 18.2. Raison de Donnée Manquante (Strictement distinguée de Zéro)
+export type MissingReason =
+  | 'NON_COLLECTE'     // Pas d'enquête ou mesure programmée
+  | 'NON_DISPONIBLE'   // Registre incomplet / non transmis
+  | 'NON_APPLICABLE'   // Contexte non pertinent
+  | 'PERDUE'           // Fiche détériorée ou perdue
+  | 'INCONNUE'         // Raison non précisée
+  | 'AUTRE';
+
+// 18.3. Échelle de Complétude V1.8
+export type CompletenessLevel =
+  | 'EXCELLENTE' // ≥ 90 %
+  | 'BONNE'      // 75–89 %
+  | 'MOYENNE'    // 50–74 %
+  | 'FAIBLE';    // < 50 %
+
+// 18.4. Qualité GPS
+export type GpsQuality = 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
+
+// 18.5. Statut de Validation
+export type ValidationStatus = 'PENDING' | 'VALIDATED' | 'REJECTED' | 'NEEDS_REVIEW';
+
+// 18.6. Importance / Statut des Variables pour la Modélisation
+export type VariableImportance =
+  | 'ESSENTIELLE'
+  | 'UTILE'
+  | 'OPTIONNELLE'
+  | 'INSUFFISANTE'
+  | 'INUTILISABLE';
+
+// 18.7. Représentativité de l'Échantillon
+export type RepresentativenessStatus =
+  | 'REPRESENTATIVE'
+  | 'PARTIALLY_REPRESENTATIVE'
+  | 'NOT_REPRESENTATIVE'
+  | 'UNKNOWN';
+
+// 18.8. Statut de Préparation à la Modélisation
+export type ModelReadyStatus =
+  | 'PRÊT'
+  | 'PRÊT AVEC LIMITES'
+  | 'INSUFFISANT'
+  | 'NON PRÊT';
+
+// 18.9. Référentiel Géographique Normalisé : GEO_REFERENCE
+export interface GeoReference {
+  id: string;
+  type: 'PROVINCE' | 'VILLE' | 'ZONE_SANTE' | 'AIRE_SANTE' | 'QUARTIER' | 'AVENUE' | 'STRUCTURE_SANITAIRE';
+  official_name: string;
+  alternative_names: string[];
+  parent_id: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  geometry: string | null;
+  source: string;
+  valid_from: string;
+  valid_to: string | null;
+  gps_quality: GpsQuality;
+  is_within_study_bounds: boolean;
+}
+
+// 18.10. Journal des Transformations et Corrections : TRANSFORMATION_LOG
+export interface TransformationLogRecord {
+  id: string;
+  source_record_id: string;
+  transformation_type:
+    | 'NORMALISATION_DATE'
+    | 'NORMALISATION_GEO'
+    | 'NORMALISATION_UNITE'
+    | 'CALCUL_INCIDENCE'
+    | 'CALCUL_LAG'
+    | 'CALCUL_INDICATEUR_WASH'
+    | 'AGREGATION_SPATIO_TEMPORELLE'
+    | 'CORRECTION_MANUELLE'
+    | 'DOUBLON_TRAITEMENT'
+    | 'IMPUTATION_VALEUR';
+  old_value: string | null;
+  new_value: string | null;
+  reason: string;
+  correction_reason?: string;
+  performed_by: string;
+  performed_at: string;
+  validation_status: ValidationStatus;
+  is_reversible: boolean;
+}
+
+// 18.11. Candidat Doublon : POTENTIAL_DUPLICATE
+export interface DuplicateCandidateV18 {
+  id: string;
+  table_name: 'HEALTH_RECORD' | 'CLIMATE_RECORD' | 'ENVIRONMENTAL_OBS' | 'HOUSEHOLD_SURVEY';
+  record_ids: string[];
+  match_criteria: string[];
+  confidence_score: number; // 0-100%
+  detected_reason: string;
+  status: 'POTENTIAL_DUPLICATE' | 'MERGED' | 'CONFIRMED_SEPARATE' | 'RESOLVED';
+  resolution_notes?: string;
+  resolved_by?: string;
+  resolved_at?: string;
+}
+
+export type DuplicateCandidateV18Type = DuplicateCandidateV18;
+
+// 18.12. Jeu de Données Analytique Versionné : ANALYSIS_DATASET
+export interface AnalysisDatasetRow {
+  id: string;
+  dataset_version: string; // e.g. "ANALYSIS_DATASET_v1"
+  spatiotemporal_unit_id: string;
+  source_record_id?: string;
+  transformation_id?: string;
+  year: number;
+  month: number;
+  zone_sante_id: string;
+  aire_sante_id: string;
+  aire_sante_name: string;
+  
+  // Démographie
+  population: number | null;
+  
+  // Données sanitaires
+  malaria_cases: number | null;
+  malaria_confirmed: number | null;
+  malaria_incidence_per_1000: number | null; // Taux explicite / 1 000 hab
+  typhoid_cases: number | null;
+  typhoid_confirmed: number | null;
+  typhoid_incidence_per_1000: number | null; // Taux explicite / 1 000 hab
+  
+  // Données climatiques synoptiques
+  rainfall_mm: number | null;
+  temperature_mean: number | null;
+  temperature_min: number | null;
+  temperature_max: number | null;
+  humidity_percent: number | null;
+  rainy_days: number | null;
+  flood_events: number | null;
+  
+  // Décalages temporels (Lags)
+  rainfall_lag_1: number | null;
+  rainfall_lag_2: number | null;
+  rainfall_lag_3: number | null;
+  temperature_lag_1: number | null;
+  humidity_lag_1: number | null;
+  
+  // Facteurs environnementaux (0 = absence observée, null = non documenté)
+  stagnant_water_count: number | null;
+  waste_site_count: number | null;
+  water_source_count: number | null;
+  wastewater_count: number | null;
+  drainage_problem_count: number | null;
+  
+  // Indicateurs WASH
+  water_safe_rate: number | null;        // 0-100%
+  water_treatment_rate: number | null;   // 0-100%
+  latrine_rate: number | null;           // 0-100%
+  handwashing_rate: number | null;       // 0-100%
+  waste_management_rate: number | null;  // 0-100%
+  
+  // Métadonnées de qualité & traçabilité
+  data_completeness: number; // 0-100%
+  data_quality: CompletenessLevel;
+  validation_status: ValidationStatus;
+  
+  // Statuts épistémologiques champ par champ
+  data_status_flags: Record<string, DataStatus>;
+  missing_reasons: Record<string, MissingReason>;
+}
+
+// 18.13. Métadonnées du Jeu de Données Analytique
+export interface DatasetMetadata {
+  id: string;
+  version: string; // e.g. "ANALYSIS_DATASET_v1", "ANALYSIS_DATASET_v2"
+  generated_at: string;
+  generated_by: string;
+  units_count: number;
+  variables_count: number;
+  average_completeness: number;
+  filters_applied: {
+    years: number[];
+    aires: string[];
+    included_domains: string[];
+  };
+  variables_used: string[];
+  variables_excluded: string[];
+  transformations_applied: string[];
+  sources_used: string[];
+  modeling_readiness: ModelReadyStatus;
+  reproducibility_hash: string;
+  notes: string;
+}
+
+// 18.14. Entrée du Dictionnaire des Variables
+export interface VariableDictionaryEntry {
+  variable_name: string;
+  label: string;
+  definition: string;
+  data_type: 'ENTIER' | 'DECIMAL' | 'TEXTE' | 'POURCENTAGE' | 'CATEGORIEL' | 'BOOLEEN';
+  unit: string;
+  source: string;
+  calculation_method: string;
+  spatial_level: 'AIRE_SANTE' | 'ZONE_SANTE' | 'VILLE' | 'POINT_GPS';
+  temporal_level: 'MENSUEL' | 'ANNUEL' | 'OBSERVATION_PONCTUELLE';
+  category: 'SANTE' | 'CLIMAT' | 'ENVIRONNEMENT' | 'WASH' | 'DEMOGRAPHIE' | 'QUALITE';
+  importance: VariableImportance;
+  data_status: DataStatus;
+  completeness_rate: number;
+  quality_assessment: CompletenessLevel;
+  is_usable_for_model: boolean;
+  justification: string;
+}
+
+// 18.15. Rapport de Faisabilité de la Modélisation (12 sections)
+export interface ModelingFeasibilityReport {
+  period_covered: string;
+  zones_covered: {
+    health_zones: string[];
+    health_areas: string[];
+    neighborhoods_count: number;
+  };
+  total_data_counts: {
+    raw_records: number;
+    clean_records: number;
+    analysis_units: number;
+  };
+  global_completeness: number;
+  completeness_by_domain: {
+    sante: number;
+    climat: number;
+    environnement: number;
+    wash: number;
+    demographie: number;
+  };
+  quality_overview: {
+    valid_count: number;
+    to_review_count: number;
+    errors_count: number;
+    duplicates_count: number;
+  };
+  available_variables: string[];
+  missing_variables: string[];
+  insufficient_variables: string[];
+  inconsistencies: string[];
+  duplicates: string[];
+  methodological_limitations: string[];
+  recommendations: string[];
+  modeling_readiness_status: ModelReadyStatus;
+}
+
+// 18.16. Synthèse « État des Données » pour Dashboard & Navigation
+export interface DataQualityOverview {
+  totalRecords: number;
+  validRecords: number;
+  toReviewRecords: number;
+  missingDataCount: number;
+  errorsCount: number;
+  potentialDuplicatesCount: number;
+  coveredAreasCount: number;
+  coveredMonthsCount: number;
+  usableVariablesCount: number;
+  globalCompleteness: number;
+  completenessLevel: CompletenessLevel;
+  modelReadyStatus: ModelReadyStatus;
+}
+
+// 18.17. Banc de Tests V1.8 (Sections 65-76)
+export interface V18ValidationTest {
+  id: number;
+  sectionNumber: number; // 65, 66, 67...
+  title: string;
+  description: string;
+  category:
+    | 'HISTORIQUE'
+    | 'DONNEE_MANQUANTE'
+    | 'INCIDENCE'
+    | 'POPULATION'
+    | 'GPS'
+    | 'PROPORTION'
+    | 'LAG'
+    | 'LAG_MANQUANT'
+    | 'DOUBLON'
+    | 'RESOLUTION'
+    | 'TRACABILITE'
+    | 'VERSIONNAGE';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  testInput: string;
+  expectedResult: string;
+  actualResult: string;
+  verifiedAt: string;
+}
+
+// 18.18. Rapport Final Synthétique V1.8 (Section 80)
+export interface V18ReportSummary {
+  structure: {
+    tablesCreated: number;
+    tablesModified: number;
+    viewsCreated: number;
+  };
+  qualite: {
+    donneesTotales: number;
+    donneesValides: number;
+    donneesAVerifier: number;
+    donneesManquantes: number;
+    doublons: number;
+    erreurs: number;
+  };
+  spatioTemporel: {
+    airesCouvertes: number;
+    periodesCouvertes: number;
+    unitesAireMois: number;
+    trousTemporels: number;
+  };
+  variables: {
+    variablesDisponibles: number;
+    variablesPartielles: number;
+    variablesInsuffisantes: number;
+    variablesExclues: number;
+  };
+  dataset: {
+    version: string;
+    nombreLignes: number;
+    nombreVariables: number;
+    completudeMoyenne: number;
+  };
+  modelisation: {
+    etat: ModelReadyStatus;
+  };
+  tests: {
+    testsRealises: number;
+    testsReussis: number;
+    testsEchoues: number;
+    erreursRestantes: number;
+  };
+  verdict: 'V1.8 — VALIDÉE' | 'V1.8 — ERREURS À CORRIGER';
+}
+
+// ==========================================
+// 19. MODULE V1.9 — ANALYSE EXPLORATOIRE SPATIO-TEMPORELLE
+// ==========================================
+
+export type V19SubTab =
+  | 'OVERVIEW'
+  | 'TEMPORAL'
+  | 'SPATIAL'
+  | 'SEASONAL'
+  | 'CLIMATE_DISEASE'
+  | 'LAGS'
+  | 'CLUSTERS'
+  | 'COMPARISON'
+  | 'QUALITY_COVERAGE'
+  | 'REPORT';
+
+export interface ExplorationFilters {
+  disease: 'ALL' | 'MALARIA' | 'TYPHOID';
+  year: number | 'ALL';
+  month: number | 'ALL';
+  quarter: number | 'ALL';
+  zone_sante_id: string | 'ALL';
+  aire_sante_id: string | 'ALL';
+  climate_variable: 'rainfall_mm' | 'temperature_mean' | 'temperature_max' | 'humidity_percent' | 'rainy_days';
+  data_source: string | 'ALL';
+  movingAverageMonths: 0 | 3 | 6 | 12;
+}
+
+export interface TemporalPoint {
+  periodKey: string; // "2023-01"
+  year: number;
+  month: number;
+  quarter: number;
+  label: string;
+  malaria_cases: number | null;
+  malaria_confirmed: number | null;
+  malaria_incidence: number | null;
+  typhoid_cases: number | null;
+  typhoid_confirmed: number | null;
+  typhoid_incidence: number | null;
+  rainfall_mm: number | null;
+  temperature_mean: number | null;
+  temperature_max?: number | null;
+  humidity_percent: number | null;
+  rainy_days?: number | null;
+  climate_value?: number | null;
+  // Moving averages (Calculated variables)
+  malaria_ma?: number | null;
+  typhoid_ma?: number | null;
+  rainfall_ma?: number | null;
+  completeness: number;
+  observations_count: number;
+}
+
+export interface SeasonalMonthlyProfile {
+  month: number;
+  monthName: string;
+  isRainySeason: boolean; // Computed from climate data
+  malaria_mean: number | null;
+  malaria_median: number | null;
+  malaria_min: number | null;
+  malaria_max: number | null;
+  malaria_std: number | null;
+  typhoid_mean: number | null;
+  typhoid_median: number | null;
+  typhoid_min: number | null;
+  typhoid_max: number | null;
+  typhoid_std: number | null;
+  rainfall_mean: number | null;
+  temperature_mean: number | null;
+  humidity_mean: number | null;
+  n_years: number;
+}
+
+export interface YearlySeasonalCurve {
+  year: number;
+  months: {
+    month: number;
+    monthName: string;
+    malaria_cases: number | null;
+    typhoid_cases: number | null;
+    rainfall_mm: number | null;
+  }[];
+}
+
+export interface HealthAreaSpatialStat {
+  aire_sante_id: string;
+  aire_sante_name: string;
+  zone_sante_id: string;
+  population: number;
+  area_km2?: number;
+  lat: number;
+  lng: number;
+  total_malaria_cases: number;
+  total_malaria_confirmed: number;
+  malaria_incidence_per_1000: number | null;
+  total_typhoid_cases: number;
+  total_typhoid_confirmed: number;
+  typhoid_incidence_per_1000: number | null;
+  periods_covered: number;
+  total_periods: number;
+  coverage_percentage: number;
+  coverage_status: 'BONNE' | 'PARTIELLE' | 'FAIBLE' | 'ABSENTE';
+  avg_completeness: number;
+  risk_density_score: number; // Density index [0-100]
+  concentration_level: 'FORTE' | 'MOYENNE' | 'FAIBLE' | 'INDETERMINEE';
+  // Limitations
+  coverage_limitation_warning?: string;
+}
+
+export interface SpatialClusterResult {
+  method: "Moran's I" | "Local Moran's I (LISA)" | "Getis-Ord Gi*";
+  period: string;
+  spatialUnit: string;
+  nObservations: number;
+  globalMoransI?: number;
+  expectedI?: number;
+  p_value?: number;
+  z_score?: number;
+  isStatisticallySignificant: boolean;
+  scientificInterpretation: string; // Cautious phrasing
+  conditionsMet: boolean;
+  conditionMessage?: string;
+  localClusters: {
+    aire_sante_id: string;
+    aire_sante_name: string;
+    clusterType: 'CLUSTER_ELEVE' | 'CLUSTER_FAIBLE' | 'AGREGATION_SPATIALE' | 'NON_SIGNIFICATIF' | 'INDETERMINE';
+    zScore: number;
+    pValue: number;
+    localI: number;
+    cautiousLabel: string;
+  }[];
+}
+
+export interface CorrelationTestResult {
+  disease: 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'MALARIA' | 'TYPHOID';
+  climateVariable?: string;
+  climateVariableLabel?: string;
+  climate_variable?: string;
+  lagMonths?: number;
+  lag_months?: number;
+  pearsonR?: number | null;
+  pearsonPValue?: number | null;
+  spearmanRho?: number | null;
+  spearmanPValue?: number | null;
+  r?: number | null;
+  p_value?: number | null;
+  ci_95?: [number, number];
+  nObservations?: number;
+  n_observations?: number;
+  n?: number;
+  missingPercentage?: number;
+  missing_percentage?: number;
+  missingPct?: number;
+  periodAnalyzed?: string;
+  period_analyzed?: string;
+  interpretationCautious?: string;
+  interpretation?: string;
+  significant?: boolean;
+  isSignificantBonferroni?: boolean;
+  isSignificantFDR?: boolean;
+  method?: string;
+  disclaimer?: string;
+  optimalNote?: string;
+}
+
+export interface LagCorrelationMatrixCell {
+  climateVariable: string;
+  climateVariableLabel: string;
+  disease: 'PALUDISME' | 'FIEVRE_TYPHOIDE';
+  lag: number; // 0 to 6
+  r: number | null;
+  pValue: number | null;
+  n: number;
+  missingPct: number;
+  status: 'SUFFICIENT' | 'LIMITED' | 'INSUFFICIENT';
+}
+
+export interface JointDiseaseComparisonRow {
+  unitId: string;
+  aire_sante_id: string;
+  aire_sante_name: string;
+  periodKey: string;
+  malaria_cases: number | null;
+  malaria_incidence: number | null;
+  malaria_level: 'ELEVE' | 'FAIBLE' | 'INDETERMINE';
+  typhoid_cases: number | null;
+  typhoid_incidence: number | null;
+  typhoid_level: 'ELEVE' | 'FAIBLE' | 'INDETERMINE';
+  jointSituation: 'ELEVE_ELEVE' | 'ELEVE_FAIBLE' | 'FAIBLE_ELEVE' | 'FAIBLE_FAIBLE' | 'INDETERMINE';
+  jointLabel: string; // "Concentration conjointe observée", "Prédominance paludisme", etc.
+  data_coverage: 'BONNE' | 'PARTIELLE' | 'FAIBLE' | 'ABSENTE';
+}
+
+export interface EnvironmentalHistoryPoint {
+  id: string;
+  siteName: string;
+  siteType: string;
+  aire_sante_id: string;
+  valid_from: string;
+  valid_to: string | null;
+  status_in_selected_period: 'PRESENT' | 'ABSENT' | 'HISTORIQUE_INCONNU';
+  riskScore: number;
+  details: string;
+}
+
+export interface ModelingCandidateVariable {
+  id: string;
+  variableName: string;
+  category: 'SANTE' | 'CLIMAT' | 'ENVIRONNEMENT' | 'WASH' | 'DEMOGRAPHIE';
+  completenessPercentage: number;
+  spatialResolution: string; // e.g. "AS × mois", "Ville × mois", "Point terrain"
+  temporalResolution: string; // e.g. "Mensuel", "Annuel", "Ponctuel"
+  exploratoryAssociation: string;
+  qualityGrade: '🟢 Suffisante' | '🟠 Limitée' | '🔴 Insuffisante' | '⚪ Inconnue';
+  status: 'ESSENTIELLE' | 'CANDIDATE' | 'A_EVALUER' | 'INSUFFISANTE' | 'EXCLUE';
+  notes: string;
+}
+
+export interface AnalysisLogRecord {
+  analysis_id: string;
+  analysis_type: string;
+  dataset_version: string;
+  date: string;
+  user: string;
+  filters_summary: string;
+  variables_analyzed: string[];
+  method: string;
+  observations_count: number;
+  result_status: 'SUCCESS' | 'WARNING_LIMITED_DATA' | 'ABORTED_INSUFFICIENT_DATA';
+  scientific_notes: string;
+}
+
+export interface V19ValidationTest {
+  id: number;
+  sectionNumber: number; // 64 to 76
+  title: string;
+  description: string;
+  category:
+    | 'TEMPOREL'
+    | 'DONNEE_MANQUANTE'
+    | 'CLIMAT'
+    | 'LAG'
+    | 'COUVERTURE'
+    | 'HISTORIQUE_ENV'
+    | 'ZERO_VS_NULL'
+    | 'CLUSTER'
+    | 'CAUSALITE'
+    | 'COMPARAISONS_MULTIPLES'
+    | 'RESOLUTION';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  testInput: string;
+  expectedResult: string;
+  actualResult: string;
+  verifiedAt: string;
+}
+
+export interface V19ExploratoryReport {
+  metadata: {
+    generatedAt: string;
+    author: string;
+    datasetVersion: string;
+    periodAnalyzed: string;
+    spatialScope: string;
+    totalObservations: number;
+    scientificDisclaimer: string;
+  };
+  section1_DataOverview: {
+    period: string;
+    healthAreasCount: number;
+    observationsCount: number;
+    sources: string[];
+    completeness: number;
+  };
+  section2_Malaria: {
+    totalCases: number;
+    confirmedCases: number;
+    temporalTrend: 'AUGMENTATION' | 'DIMINUTION' | 'STABLE' | 'INDETERMINEE';
+    seasonalityPattern: string;
+    spatialConcentration: string;
+    potentialClusters: string;
+  };
+  section3_Typhoid: {
+    totalCases: number;
+    confirmedCases: number;
+    temporalTrend: 'AUGMENTATION' | 'DIMINUTION' | 'STABLE' | 'INDETERMINEE';
+    seasonalityPattern: string;
+    spatialConcentration: string;
+    potentialClusters: string;
+  };
+  section4_Climate: {
+    availableVariables: string[];
+    exploratoryAssociations: string[];
+  };
+  section5_Lags: {
+    testedVariables: string[];
+    lagsTested: number[];
+    notableFindings: string[];
+    multipleComparisonsWarning: string;
+  };
+  section6_Environment: {
+    availableFactors: string[];
+    historicalObservationsCount: number;
+    exploratoryAssociations: string[];
+  };
+  section7_Quality: {
+    missingDataPercentage: number;
+    wellDocumentedAreas: string[];
+    partiallyDocumentedAreas: string[];
+    insufficientlyDocumentedAreas: string[];
+    mainLimitations: string[];
+  };
+  section8_Conclusions: {
+    summary: string;
+    cautiousObservations: string[];
+  };
+  section9_RecommendedModelingCandidates: ModelingCandidateVariable[];
+  section10_VariablesToImprove: ModelingCandidateVariable[];
+  validationStatus: 'V1.9 — ANALYSE EXPLORATOIRE SPATIO-TEMPORELLE VALIDÉE' | 'V1.9 — ERREURS À CORRIGER';
+}
+
+// ============================================================================
+// 10. V1.10 — EXTENSION MANIEMA & MOTEUR MULTI-PATHOLOGIES ONE HEALTH
+// ============================================================================
+
+export type GeographicLevel =
+  | 'PROVINCE'
+  | 'VILLE_TERRITOIRE'
+  | 'ZONE_SANTE'
+  | 'AIRE_SANTE'
+  | 'QUARTIER_VILLAGE'
+  | 'AVENUE_RUE'
+  | 'SITE'
+  | 'MENAGE_POINT';
+
+export interface GeographicUnitV110 {
+  id: string;
+  code: string;
+  name: string;
+  level: GeographicLevel;
+  parentId: string | null;
+  provinceId: string;
+  coordinates: { lat: number; lng: number } | null;
+  population: number;
+  area_km2?: number;
+  status: 'ACTIF' | 'INACTIF' | 'EN_ATTENTE';
+  source: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PathologyCategory =
+  | 'VECTORIELLE'
+  | 'HYDRIQUE_ALIMENTAIRE'
+  | 'ZOONOTIQUE'
+  | 'RESPIRATOIRE'
+  | 'AUTRE_INFECTIEUSE';
+
+export type TransmissionMode =
+  | 'MOUSTIQUE_ANOPHELE'
+  | 'MOUSTIQUE_AEDES'
+  | 'EAU_ALIMENT_CONTAMINE'
+  | 'CONTACT_DIRECT_ANIMAL'
+  | 'GOUTTELETTES_AERIENNES'
+  | 'CONTACT_ORAL_FECAL';
+
+export type VariableAvailabilityStatus =
+  | 'DISPONIBLE'
+  | 'INDISPONIBLE'
+  | 'NON_APPLICABLE';
+
+export interface PathologyVariableDefinition {
+  id: string;
+  code: string;
+  label: string;
+  type: 'INTEGER' | 'DECIMAL' | 'BOOLEAN' | 'CATEGORICAL' | 'TEXT' | 'DATE' | 'GPS';
+  category: 'COMMUNE' | 'SPECIFIQUE';
+  required: boolean;
+  options?: { value: string; label: string }[];
+  unit?: string;
+  description: string;
+  availabilityStatus: VariableAvailabilityStatus;
+}
+
+export interface PathologyIndicator {
+  id: string;
+  name: string;
+  formulaDescription: string;
+  unit: string;
+  targetThreshold?: number;
+}
+
+export interface PathologyConfig {
+  id: string;
+  code: string;
+  name: string;
+  scientificName: string;
+  category: PathologyCategory;
+  transmissionMode: TransmissionMode;
+  description: string;
+  isActive: boolean;
+  icon: string;
+  color: string;
+  commonVariables: string[];
+  specificVariables: PathologyVariableDefinition[];
+  indicators: PathologyIndicator[];
+  dataSources: string[];
+  collectionFrequency: 'QUOTIDIEN' | 'HEBDOMADAIRE' | 'MENSUEL' | 'TRIMESTRIEL' | 'ANNUEL';
+  oneHealthDimension: 'SANTE_HUMAINE' | 'ENVIRONNEMENT' | 'CLIMAT' | 'SANTE_ANIMALE';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type DataSourceTypeV110 =
+  | 'REGISTRE_SANITAIRE'
+  | 'ENQUETE_MENAGE'
+  | 'OBSERVATION_TERRAIN'
+  | 'SERVICE_SANTE'
+  | 'DONNEES_CLIMATIQUES'
+  | 'DONNEES_SATELLITAIRES'
+  | 'LABORATOIRE'
+  | 'SURVEILLANCE_EPIDEMIO'
+  | 'VETERINAIRE'
+  | 'AUTRE_SOURCE';
+
+export interface TimePeriodConfig {
+  id: string;
+  sourceId: string;
+  sourceName: string;
+  sourceType: DataSourceTypeV110;
+  startDate: string;
+  endDate: string;
+  totalYears: number;
+  temporalResolution: 'JOUR' | 'SEMAINE' | 'MOIS' | 'ANNEE';
+  geographicLevel: GeographicLevel;
+  reliability: 'HAUTE' | 'MOYENNE' | 'VARIABLE';
+  lastImportDate: string;
+}
+
+export interface OneHealthProject {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  principalInvestigator: string;
+  institution: string;
+  pathologyIds: string[];
+  geographicUnitIds: string[];
+  startDate: string;
+  endDate: string | null;
+  status: 'ACTIF' | 'CLOTURE' | 'EN_PREPARATION';
+  isDemoAllowed: boolean;
+  assignedUsers: { userId: string; role: UserRoleV110 }[];
+  createdAt: string;
+}
+
+export type UserRoleV110 =
+  | 'ADMINISTRATEUR'
+  | 'RESPONSABLE_PROVINCIAL'
+  | 'RESPONSABLE_PROJET'
+  | 'SUPERVISEUR'
+  | 'ENQUETEUR';
+
+export interface UserSessionV110 {
+  id: string;
+  name: string;
+  role: UserRoleV110;
+  institution: string;
+  email?: string;
+  assignedTerritoryId?: string;
+  assignedZoneId?: string;
+  assignedAreaId?: string;
+  isActive: boolean;
+}
+
+export interface DynamicObservationRecord {
+  id: string;
+  projectId: string;
+  pathologyId: string;
+  pathologyCode: string;
+  date: string;
+  year: number;
+  month: number;
+  provinceId: string;
+  geographicUnitId: string;
+  geographicLevel: GeographicLevel;
+  sourceId: string;
+  sourceType: DataSourceTypeV110;
+  investigatorId: string;
+  investigatorName: string;
+  coordinates: { lat: number; lng: number } | null;
+  validationStatus: RecordStatus;
+  dataQuality: 'VALIDE' | 'SUSPECT' | 'INCOMPLET' | 'REJETE';
+  isDemo: boolean; // Séparation stricte démo vs réel
+  commonData: {
+    cases_total?: number | null;
+    cases_confirmed?: number | null;
+    hospitalized?: number | null;
+    deaths?: number | null;
+    notes?: string;
+  };
+  specificData: Record<string, any>;
+  variableAvailability: Record<string, VariableAvailabilityStatus>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface V110ValidationTest {
+  id: number;
+  title: string;
+  sectionRequirement: string;
+  category:
+    | 'EXTENSION_MANIEMA'
+    | 'MOTEUR_MULTI_PATHOLOGIES'
+    | 'FORMULAIRES_DYNAMIQUES'
+    | 'VARIABLES_COMMUNES_SPECIFIQUES'
+    | 'GESTION_PERIODES_SOURCES'
+    | 'HISTORIQUE_NON_ECRASE'
+    | 'SEPARATION_DEMO_REEL'
+    | 'GESTION_PROJETS'
+    | 'ROLES_UTILISATEURS'
+    | 'RELATIONS_ONE_HEALTH'
+    | 'NON_REGRESSION_V19';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  details: string;
+  verifiedAt: string;
+}
+
+// ============================================================================
+// 11. V1.11 — MODULE D'ENQUÊTE OPÉRATIONNELLE ET SUPERVISION DE TERRAIN
+// ============================================================================
+
+export type SurveyStatusV111 =
+  | 'BROUILLON'
+  | 'PREPARATION'
+  | 'PLANIFIEE'
+  | 'ACTIVE'
+  | 'EN_COURS'
+  | 'SUSPENDUE'
+  | 'TERMINÉE'
+  | 'CLOTUREE'
+  | 'ARCHIVÉE';
+
+export type SurveyTypeV111 =
+  | 'PROSPECTIVE'
+  | 'RETROSPECTIVE'
+  | 'OBSERVATION_TERRAIN';
+
+export interface FieldSurvey {
+  id: string;
+  code: string; // e.g. "ENQ-2026-MAL-01"
+  name: string;
+  description?: string;
+  projectId: string;
+  pathologyIds: string[];
+  geographicScope?: {
+    provinceId: string;
+    territoryId?: string;
+    zoneId?: string;
+    areaId?: string;
+    villageId?: string;
+  } | string;
+  geographicUnitIds?: string[];
+  targetType?: string;
+  startDate: string;
+  endDate: string | null;
+  status: SurveyStatusV111;
+  type: SurveyTypeV111;
+  responsibleId?: string;
+  responsibleName?: string;
+  leadSupervisorName?: string;
+  assignedSurveyorNames?: string[];
+  objectives?: string;
+  questionnaireId: string;
+  questionnaireVersion: string;
+  supervisorIds?: string[];
+  surveyorIds?: string[];
+  targetSampleSize?: number;
+  targetSampleCount?: number;
+  completedSampleCount?: number;
+  validatedSampleCount?: number;
+  isDemo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type QuestionnaireStatus = 'BROUILLON' | 'PUBLIE' | 'ARCHIVE';
+
+export type QuestionType =
+  | 'TEXT'
+  | 'INTEGER'
+  | 'NUMBER'
+  | 'DECIMAL'
+  | 'DATE'
+  | 'TIME'
+  | 'BOOLEAN'
+  | 'SINGLE_CHOICE'
+  | 'MULTIPLE_CHOICE'
+  | 'WATER_SOURCE'
+  | 'MOSQUITO_NET'
+  | 'SYMPTOMS_CHECKLIST'
+  | 'TEXTAREA'
+  | 'DROPDOWN'
+  | 'GPS'
+  | 'PHOTO'
+  | 'AUDIO'
+  | 'SCALE'
+  | 'FREE_TEXT';
+
+export type SurveyQuestionType = QuestionType;
+
+export interface ValidationRule {
+  id: string;
+  type: 'MIN' | 'MAX' | 'RANGE' | 'REGEX' | 'GPS_PRECISION' | 'REQUIRED_IF';
+  params: Record<string, any>;
+  errorMessage: string;
+}
+
+export interface ConditionalRule {
+  dependsOnQuestionId: string;
+  operator: 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'GREATER_THAN' | 'IN';
+  expectedValue: any;
+}
+
+export interface SurveyQuestion {
+  id: string;
+  code: string;
+  label: string;
+  description?: string;
+  type: QuestionType;
+  required: boolean;
+  defaultValue?: any;
+  options?: { value: string; label: string }[];
+  choices?: { id?: string; code: string; label: string }[];
+  unit?: string;
+  displayOrder: number;
+  conditionalRule?: ConditionalRule;
+  validationRules?: ValidationRule[];
+  specificToPathologyId?: string;
+}
+
+export interface QuestionnaireSection {
+  id: string;
+  code: string; // e.g. "SEC_A", "SEC_B"
+  title: string;
+  description?: string;
+  displayOrder: number;
+  order?: number;
+  questions: SurveyQuestion[];
+}
+
+export type SurveySection = QuestionnaireSection;
+
+export interface SurveyQuestionnaire {
+  id: string;
+  name: string;
+  version: string; // "1.0", "1.1", "2.0"
+  description: string;
+  projectId: string;
+  pathologyIds: string[];
+  status: QuestionnaireStatus;
+  sections: QuestionnaireSection[];
+  isLocked: boolean; // Locked once used in live collections
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SurveySite {
+  id: string;
+  code: string;
+  name: string;
+  geographicUnitId: string;
+  geographicUnitName?: string;
+  coordinates: { lat: number; lng: number; accuracy?: number } | null;
+  siteType: 'MENAGE' | 'GITE_LARVAIRE' | 'POINT_EAU' | 'CENTRE_SANTE' | 'MARCHE' | 'SITE_AGRICOLE' | 'AUTRE';
+  status: 'ACTIF' | 'INACTIF';
+  isDemo: boolean;
+  createdAt: string;
+}
+
+export type SurveyTargetType = 'MENAGE' | 'GITE_LARVAIRE' | 'POINT_EAU' | 'CENTRE_SANTE' | 'MARCHE' | 'SITE_AGRICOLE' | 'AUTRE';
+export type SurveyType = SurveyTypeV111;
+
+export interface SurveyHousehold {
+  id: string;
+  anonymousCode: string; // Code anonymisé sans noms de famille complets
+  siteId: string;
+  geographicUnitId: string;
+  firstObservationDate: string;
+  status: 'ACTIF' | 'INACTIF' | 'REFUS';
+  isDemo: boolean;
+  createdAt: string;
+}
+
+export type CollectionSessionStatus =
+  | 'EN_COURS'
+  | 'BROUILLON'
+  | 'SOUMISE'
+  | 'A_CORRIGER'
+  | 'VALIDEE'
+  | 'REJETEE';
+
+export type SessionStatus = CollectionSessionStatus;
+
+export interface AttachedPhoto {
+  id: string;
+  url: string;
+  description: string;
+  date: string;
+  time: string;
+  surveyId: string;
+  siteId?: string;
+  surveyorId: string;
+  isValidated: boolean;
+}
+
+export interface SupervisorComment {
+  id: string;
+  sessionId: string;
+  supervisorId: string;
+  supervisorName: string;
+  date: string;
+  commentType: 'GENERAL' | 'QUESTION' | 'LOCATION' | 'DEMANDE_CORRECTION';
+  targetQuestionId?: string;
+  message: string;
+  resolved: boolean;
+}
+
+export interface CollectionSession {
+  id: string;
+  surveyId: string;
+  surveyName: string;
+  surveyType?: string;
+  surveyorId: string;
+  surveyorName: string;
+  siteId?: string;
+  householdId?: string;
+  anonymousSubjectId: string;
+  questionnaireId: string;
+  questionnaireVersion: string;
+  startDate: string;
+  startTime: string;
+  endDate?: string;
+  endTime?: string;
+  status: CollectionSessionStatus;
+  gps: {
+    lat: number;
+    lng: number;
+    accuracy: number;
+    altitude?: number;
+    timestamp?: string;
+    source: 'DEVICE_GPS' | 'MANUAL_MAP' | 'ESTIMATED' | 'GPS_CAPTEUR_DIRECT' | 'MANUEL' | 'APPROXIME_CENTRE_VILLAGE';
+    warningAccuracy?: boolean;
+  } | null;
+  answers: Record<string, any>;
+  previousAnswersHistory?: {
+    versionNumber: number;
+    answers: Record<string, any>;
+    modifiedAt: string;
+    modifiedBy: string;
+    correctionReason: string;
+  }[];
+  photos?: AttachedPhoto[];
+  supervisorComments?: SupervisorComment[];
+  completenessScore: number; // 0 - 100%
+  missingRequiredQuestions: string[];
+  missingOptionalQuestions: string[];
+  notApplicableQuestions: string[];
+  dataQualityStatus: 'BONNE_QUALITE' | 'A_VERIFIER' | 'PROBLEMATIQUE';
+  qualityErrors: string[];
+  dataTier: 'RAW' | 'CLEANED' | 'ANALYSIS';
+  isDemo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FieldPlanItem {
+  id: string;
+  surveyId: string;
+  geographicUnitId: string;
+  geographicUnitName: string;
+  plannedObservations: number;
+  inProgressObservations: number;
+  completedObservations: number;
+  validatedObservations?: number;
+  remainingObservations: number;
+  assignedSurveyorId: string;
+  assignedSupervisorId: string;
+  plannedStartDate: string;
+  plannedEndDate: string;
+  status: 'NON_COMMENCE' | 'EN_COURS' | 'TERMINE' | 'EN_RETARD';
+}
+
+export interface HealthRegistryRecord {
+  id: string;
+  surveyId: string;
+  registerCode?: string;
+  consultationDate: string;
+  pathologyId?: string;
+  pathologyCode: string;
+  patientAnonymousId: string;
+  ageYears: number | null;
+  ageMonths?: number | null;
+  gender: 'M' | 'F' | 'INCONNU';
+  healthStructureName?: string;
+  healthFacilityName?: string;
+  healthFacilityId?: string;
+  geographicUnitId: string;
+  geographicUnitName?: string;
+  clinicalDiagnosis?: string;
+  diagnosisType?: string;
+  labTestType?: string;
+  labResult?: 'POSITIF' | 'NEGATIF' | 'DOUTEUX' | 'NON_FAIT';
+  hospitalized?: boolean;
+  outcome: 'GUERI' | 'TRANSFERE' | 'DECEDE' | 'EN_SOINS' | 'EN_COURS' | 'INCONNU';
+  dataQualityCheck?: string;
+  isDemo: boolean;
+  dataTier?: 'RAW' | 'CLEANED' | 'ANALYSIS';
+  createdAt: string;
+}
+
+export interface SurveyAuditLog {
+  id: string;
+  surveyId: string;
+  sessionId?: string;
+  userId: string;
+  userName: string;
+  userRole: string;
+  timestamp: string;
+  action:
+    | 'CREATION'
+    | 'MODIFICATION'
+    | 'SOUMISSION'
+    | 'VALIDATION'
+    | 'DEMANDE_CORRECTION'
+    | 'CORRECTION'
+    | 'REJET'
+    | 'EXPORT';
+  entity: 'ENQUETE' | 'QUESTIONNAIRE' | 'SESSION' | 'PLAN' | 'REGISTRE' | 'SITE';
+  fieldName?: string;
+  previousValue?: any;
+  newValue?: any;
+  reason?: string;
+}
+
+export interface V111ValidationTest {
+  id: number;
+  title: string;
+  name?: string;
+  description?: string;
+  category:
+    | 'CREATION_ENQUETE'
+    | 'CREATION_QUESTIONNAIRE'
+    | 'VERSIONNEMENT_QUESTIONNAIRE'
+    | 'AFFECTATION_EQUIPE'
+    | 'CREATION_SESSION'
+    | 'REMPLISSAGE_LOGIQUE_CONDITIONNELLE'
+    | 'SAUVEGARDE_PROGRESSIVE'
+    | 'SOUMISSION_SESSION'
+    | 'CONTROLE_SUPERVISEUR'
+    | 'DEMANDE_CORRECTION'
+    | 'CORRECTION_PRESERVATION_HISTORIQUE'
+    | 'NOUVELLE_VALIDATION'
+    | 'JOURNAL_AUDIT'
+    | 'CALCUL_COMPLETUDE'
+    | 'EXPORT_DONNEES'
+    | 'NON_REGRESSION_V110';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  details: string;
+  verifiedAt: string;
+}
+
+// ============================================================================
+// V1.12 — INTÉGRATION MULTI-SOURCES ET PRÉPARATION DES DONNÉES
+// ============================================================================
+
+export type GeographicLevelType =
+  | 'PROVINCE'
+  | 'TERRITOIRE'
+  | 'ZONE_SANTE'
+  | 'AIRE_SANTE'
+  | 'SITE_VILLAGE'
+  | 'COORDONNEES_GPS';
+
+export type FrequencyType =
+  | 'HORAIRE'
+  | 'JOURNALIERE'
+  | 'HEBDOMADAIRE'
+  | 'MENSUELLE'
+  | 'ANNUELLE'
+  | 'PONCTUELLE';
+
+export type FileFormatType =
+  | 'EXCEL'
+  | 'CSV'
+  | 'JSON'
+  | 'SHAPEFILE_GEOJSON'
+  | 'API'
+  | 'MANUEL';
+
+export type SourceStatusType =
+  | 'ACTIF'
+  | 'EN_ATTENTE_VALIDATION'
+  | 'OBSOLETE'
+  | 'ARCHIVE';
+
+export type QualityEstimateType =
+  | 'EXCELLENTE'
+  | 'BONNE'
+  | 'MOYENNE'
+  | 'FAIBLE'
+  | 'A_EVALUER';
+
+export type CoverageLevelType =
+  | 'COMPLETE'
+  | 'PARTIELLE'
+  | 'PONCTUELLE'
+  | 'DISCONTINUE';
+
+export type ImportStatusType =
+  | 'PREPARE'
+  | 'ANALYSE'
+  | 'EN_ATTENTE_VALIDATION'
+  | 'VALIDE'
+  | 'PARTIELLEMENT_INTEGRE'
+  | 'REJETE'
+  | 'ARCHIVE';
+
+export type DuplicateResolutionType =
+  | 'CONSERVER'
+  | 'FUSIONNER'
+  | 'EXCLURE'
+  | 'MARQUER_DOUBLON';
+
+export type AvailabilityStatus =
+  | 'DISPONIBLE'
+  | 'PARTIEL'
+  | 'ABSENT'
+  | 'NON_APPLICABLE';
+
+export type ReconciliationKeyType =
+  | 'DATE_ZONE_SANTE'
+  | 'DATE_SITE_ID'
+  | 'COORDONNEES_PERIODE'
+  | 'ANNEE_MOIS_AIRE_SANTE'
+  | 'CUSTOM';
+
+export interface DataSourceEntity {
+  id: string; // e.g. "SRC-SAN-001"
+  name: string;
+  type: DataSourceType;
+  subType: string;
+  description: string;
+  organization: string; // Organisme / Source productrice
+  periodStart: string; // e.g. "2018"
+  periodEnd: string; // e.g. "2026"
+  geographicLevel: GeographicLevelType;
+  frequency: FrequencyType;
+  format: FileFormatType;
+  status: SourceStatusType;
+  importDate: string;
+  importedBy: string;
+  estimatedQuality: QualityEstimateType;
+  coverageLevel: CoverageLevelType;
+  notes?: string;
+  isInternal: boolean; // True for internal surveys (V1.11), False for external imports
+  isDemo: boolean; // Strict demo flag
+  totalImportsCount: number;
+  lastImportId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RawImportRecord {
+  id: string; // e.g. "RAW-IMP-001"
+  importNumber: string; // e.g. "Import #001"
+  sourceId: string;
+  sourceName: string;
+  fileName: string;
+  fileSize: number; // bytes
+  fileHash: string; // SHA256 simulation / content hash
+  importDate: string;
+  importedBy: string;
+  rowCount: number;
+  columnCount: number;
+  columns: string[];
+  rawSample: Record<string, any>[]; // First rows preview
+  rawContentData: Record<string, any>[]; // Immutable full verbatim raw dataset
+  status: ImportStatusType;
+  mappingConfigId?: string;
+  qualityReportId?: string;
+  cleanedDatasetId?: string;
+  notes?: string;
+  isDemo: boolean;
+}
+
+export interface ColumnMappingItem {
+  id: string;
+  sourceColumn: string;
+  targetVariableCode: string; // e.g. "date_observation", "zone_sante", "pathology_code", "sexe", "age", "pluviometrie_mm", "gites_larvaires"
+  targetVariableName: string;
+  targetDimension: OneHealthDimension;
+  targetType: 'DATE' | 'STRING' | 'NUMBER' | 'BOOLEAN' | 'GPS_LAT' | 'GPS_LNG' | 'PATHOLOGY_CODE' | 'ZONE_SANTE_CODE';
+  unit?: string;
+  transformation?: 'DIRECT' | 'TO_UPPERCASE' | 'PARSE_DATE' | 'SYNONYM_REPLACE' | 'NUMERIC_PARSE' | 'KEEP_MISSING_AS_NULL';
+  isAutoDetected: boolean;
+  confidenceScore: number; // 0.0 - 1.0
+  isUserConfirmed: boolean;
+  isCustomVariable?: boolean;
+  customVariableDetails?: CustomVariableDefinition;
+  status: 'ASSOCIE' | 'IGNORE' | 'NOUVELLE_VARIABLE' | 'CONSERVE_SOURCE' | 'AMBIGU';
+}
+
+export interface CustomVariableDefinition {
+  code: string;
+  name: string;
+  description: string;
+  type: 'NUMBER' | 'STRING' | 'BOOLEAN' | 'DATE' | 'CATEGORICAL';
+  unit?: string;
+  category: string;
+  pathologyConcerned?: string;
+  oneHealthDimension: OneHealthDimension;
+}
+
+export interface ImportMappingConfig {
+  id: string;
+  rawImportId: string;
+  sourceId: string;
+  mappings: ColumnMappingItem[];
+  unmappedColumns: string[];
+  createdAt: string;
+  updatedAt: string;
+  isCompleted: boolean;
+}
+
+export interface DetectedDuplicate {
+  id: string;
+  rowIndices: number[]; // e.g. [12, 45]
+  keyValues: Record<string, any>;
+  similarityScore: number; // 0.0 - 1.0
+  resolution: DuplicateResolutionType;
+  justification?: string;
+  resolvedBy?: string;
+  resolvedAt?: string;
+}
+
+export interface OutlierRecord {
+  rowIndex: number;
+  column: string;
+  value: any;
+  reason: string;
+  severity: 'WARNING' | 'CRITICAL';
+}
+
+export interface ImportQualityReport {
+  id: string;
+  rawImportId: string;
+  sourceId: string;
+  totalRows: number;
+  totalColumns: number;
+  validDatesCount: number;
+  missingDatesCount: number; // Missing is NOT 0
+  invalidDatesCount: number;
+  outOfStudyDatesCount: number; // e.g. 2012 for a 2020-2026 study
+  validGpsCount: number;
+  missingGpsCount: number; // Missing GPS is NOT 0,0
+  outOfBoundsGpsCount: number; // GPS coordinates outside Maniema bounding box
+  duplicateRowsCount: number;
+  detectedDuplicates: DetectedDuplicate[];
+  outliersCount: number;
+  outliers: OutlierRecord[];
+  recognizedVariablesCount: number;
+  unknownVariablesCount: number;
+  blockingErrors: string[];
+  warnings: string[];
+  canImport: boolean; // True if blockingErrors.length === 0
+  calculatedScore: number; // 0 - 100%
+  generatedAt: string;
+}
+
+export interface DataLineageTrace {
+  id: string;
+  sourceId: string;
+  sourceName: string;
+  rawImportId: string;
+  importNumber: string;
+  fileName: string;
+  rowIndex: number;
+  originalColumn: string;
+  originalValue: any;
+  normalizedVariable: string;
+  normalizedValue: any;
+  transformationApplied: string;
+  timestamp: string;
+  operator: string;
+}
+
+export interface CleanedDatasetRecord {
+  id: string;
+  rawImportId: string;
+  sourceId: string;
+  sourceType: DataSourceType;
+  sourceName: string;
+  originalRowIndex: number;
+  normalizedDate: string | null; // Null if missing, never invented
+  normalizedYear: number | null;
+  normalizedMonth: number | null;
+  geographicLevel: GeographicLevelType;
+  zoneSanteId: string | null;
+  zoneSanteName: string | null;
+  aireSanteId: string | null;
+  aireSanteName: string | null;
+  siteVillageName: string | null;
+  latitude: number | null; // Null if missing, never 0.0
+  longitude: number | null; // Null if missing, never 0.0
+  pathologyCode: string | null;
+  pathologyName: string | null;
+  dataTier: 'CLEANED' | 'ANALYSIS';
+  values: Record<string, any>; // Missing values are explicitly null / undefined, NEVER 0
+  missingFieldCodes: string[];
+  isDuplicateResolved: boolean;
+  duplicateResolutionType?: DuplicateResolutionType;
+  dataQualityFlag: 'VALIDE' | 'AVERTISSEMENT' | 'DONNEE_MANQUANTE_PRESERVEE';
+  isDemo: boolean;
+  createdAt: string;
+}
+
+export interface DataAvailabilityMatrixRow {
+  variableOrPathologyId: string;
+  variableName: string;
+  dimension: 'SANTE' | 'CLIMAT' | 'ENVIRONNEMENT' | 'COMMUNAUTAIRE' | 'LABORATOIRE';
+  category: string;
+  unit?: string;
+  sourceIds: string[];
+  sourceNames: string[];
+  yearlyStatus: Record<number, {
+    status: AvailabilityStatus;
+    observationsCount: number;
+    coveragePercentage: number;
+    sources: string[];
+    isMissingNotZero: boolean;
+  }>;
+}
+
+export interface SynonymMappingItem {
+  id: string;
+  category: 'ZONE_SANTE' | 'PATHOLOGIE' | 'AIRE_SANTE' | 'UNITE_MESURE';
+  sourceVariant: string; // e.g. "Kindu", "Ville de Kindu", "ZS Kindu", "Malaria", "MAL"
+  standardTarget: string; // e.g. "GEO_ZS_KINDU" or "PALUDISME"
+  standardLabel: string; // e.g. "Zone de Santé de Kindu" or "Paludisme"
+  confidence: number;
+  isConfirmed: boolean;
+}
+
+export interface ReconciliationConfig {
+  id: string;
+  name: string;
+  primarySourceId: string;
+  secondarySourceIds: string[];
+  keyType: ReconciliationKeyType;
+  customKeyFields?: string[];
+  toleranceDays?: number; // e.g. 0 for exact date, 30 for monthly match
+  allowPartialMatches: boolean;
+  synonymMappings: SynonymMappingItem[];
+  isDemo: boolean;
+  createdAt: string;
+}
+
+export interface ReconciledCrossDatasetRow {
+  id?: string;
+  reconciliationKey?: string;
+  compositeKey?: string;
+  dateKey?: string;
+  year?: number;
+  month?: number;
+  periodYear?: number;
+  periodMonth?: number;
+  zoneSanteId: string;
+  zoneSanteName: string;
+  // Health Source Data
+  healthRecordsCount?: number;
+  pathologyCases?: Record<string, number | null>; // Missing is null, not 0
+  healthIncidence?: {
+    malariaCases?: number | null;
+    typhoidCases?: number | null;
+    choleraCases?: number | null;
+    mpoxCases?: number | null;
+    [key: string]: number | null | undefined;
+  };
+  // Climate Source Data (e.g. Rainfall, Temp, Humidity)
+  rainfall_mm?: number | null; // Missing is null, not 0
+  temperature_celsius?: number | null;
+  humidity_percent?: number | null;
+  climateFactors?: {
+    monthlyRainfallMm?: number | null;
+    meanTemperatureC?: number | null;
+    meanHumidityPct?: number | null;
+    [key: string]: any;
+  };
+  // Environmental Source Data (e.g. Larval sites, waste, stagnant water)
+  larval_sites_positive_count?: number | null;
+  waste_presence?: boolean | null; // e.g. 2022: true, 2025: false preserved
+  stagnant_water_presence?: boolean | null;
+  environmentalFactors?: {
+    larvalSitesCount?: number | null;
+    wasteDumpPresent?: boolean | null;
+    dominantWaterSource?: string | null;
+    [key: string]: any;
+  };
+  sourcesContributing?: string[];
+  sourcesParticipating?: string[];
+  crossCompletenessScore?: number;
+  missingDataNotes?: string[];
+  missingDimensionsNotes?: string[];
+}
+
+export interface V112ValidationTest {
+  id: number;
+  title: string;
+  name?: string;
+  description?: string;
+  category:
+    | 'REFERENTIEL_SOURCES'
+    | 'IMPORTATION_EXCEL_CSV'
+    | 'APERÇU_PRE_IMPORT'
+    | 'MAPPING_COLONNES'
+    | 'VARIABLES_NON_RECONNUES'
+    | 'CREATION_VARIABLE'
+    | 'NORMALISATION_PIPELINE'
+    | 'RAW_IMMUABLE'
+    | 'RAPPORT_QUALITE'
+    | 'GESTION_DOUBLONS'
+    | 'VALIDATION_DATES_GPS'
+    | 'RECONCILIATION_PATHOLOGIES'
+    | 'PERIODES_HETEROGENES'
+    | 'MATRICE_DISPONIBILITE'
+    | 'RAPPROCHEMENT_SOURCES'
+    | 'NON_REGRESSION_V111';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  details: string;
+  verifiedAt: string;
+}
+
+// ============================================================================
+// V1.13 — DIAGNOSTIC SCIENTIFIQUE, DISPONIBILITÉ, QUALITÉ ET PRÉPARATION
+// ============================================================================
+
+/**
+ * 7 Catégories fondamentales de statut de la donnée scientifique
+ */
+export type DataNatureStatus =
+  | 'DONNEE_OBSERVEE'       // Mesure directe de terrain
+  | 'DONNEE_IMPORTEE'        // Donnée issue d'un registre ou base officielle (SNIS/DHIS2/METTELSAT)
+  | 'DONNEE_ESTIMEE'         // Donnée calculée / interpolée avec méthode documentée
+  | 'DONNEE_PROXY'           // Donnée transposée dans le temps avec justification explicite
+  | 'DONNEE_MANQUANTE'       // Donnée absente (période/cellule sans relevé - STRICTEMENT DISTINGUÉ DE ZERO)
+  | 'DONNEE_INCONNUE'        // Phénomène potentiellement existant mais valeur non connue
+  | 'DONNEE_NON_APPLICABLE'; // Variable sans objet pour l'observation
+
+/**
+ * Statut de disponibilité dans les matrices
+ */
+export type ScientificAvailabilityState =
+  | 'DISPONIBLE'  // ✓
+  | 'PARTIEL'     // △
+  | 'INCONNU'     // ?
+  | 'ABSENT';     // ✗
+
+/**
+ * Niveaux de fiabilité des sources
+ */
+export type SourceReliabilityLevel =
+  | 'TRES_FIABLE'
+  | 'FIABLE'
+  | 'ACCEPTABLE'
+  | 'LIMITEE'
+  | 'INCONNUE';
+
+/**
+ * Système de signalisation tricolore
+ */
+export type TrafficLightSignal =
+  | 'VERT'    // Données suffisamment disponibles / exploitables
+  | 'ORANGE'  // Données utilisables avec précautions / restrictions
+  | 'ROUGE';  // Données insuffisantes pour l'analyse envisagée
+
+export type UsabilityVerdict = 'OUI' | 'NON' | 'PARTIELLEMENT';
+
+export type TemporalPrecisionType =
+  | 'JOUR'
+  | 'SEMAINE'
+  | 'MOIS'
+  | 'TRIMESTRE'
+  | 'ANNEE'
+  | 'PERIODE_INDETERMINEE';
+
+export type ConfidenceLevel = 'ELEVE' | 'MODERE' | 'FAIBLE' | 'INCONNU';
+
+/**
+ * Réponse structurée aux 10 Questions Scientifiques Fondamentales
+ */
+export interface ScientificQuestionAnswer {
+  questionNumber: number;
+  question: string;
+  shortSummary: string;
+  details: string[];
+  metrics?: Record<string, string | number>;
+  statusSignal: TrafficLightSignal;
+  scientificRecommendations: string[];
+}
+
+/**
+ * Profil diagnostique complet d'une variable
+ */
+export interface VariableDiagnosticProfile {
+  id: string;
+  variableCode: string;
+  variableName: string;
+  dimension: OneHealthDimension;
+  category: string;
+  unit?: string;
+  sourceId: string;
+  sourceName: string;
+  sourceReliability: SourceReliabilityLevel;
+  sourceReliabilityCriteria: string[];
+  
+  // Couverture temporelle
+  temporalCoverage: {
+    firstDateAvailable: string;
+    lastDateAvailable: string;
+    yearsCovered: number[];
+    missingPeriods: string[];
+    coverageRatePercent: number;
+    precision: TemporalPrecisionType;
+  };
+
+  // Couverture géographique
+  spatialCoverage: {
+    coveredZonesCount: number;
+    totalZonesCount: number; // 18 pour Maniema
+    coveredZonesNames: string[];
+    uncoveredZonesNames: string[];
+    coverageRatePercent: number;
+    geographicLevel: GeographicLevelType;
+  };
+
+  // Scores
+  completenessScorePercent: number; // Taux de remplissage (sans préjuger de la validité)
+  scientificQualityScore: number; // 0-100 (qualité, cohérence, traçabilité, précision)
+  signal: TrafficLightSignal;
+
+  // Utilisabilité analytique
+  descriptiveUsability: {
+    usable: 'OUI' | 'NON';
+    justification: string;
+    restrictions?: string;
+  };
+  statisticalUsability: {
+    usable: UsabilityVerdict;
+    justification: string;
+    restrictions?: string;
+  };
+  spatialTemporalModelingUsability: {
+    usable: UsabilityVerdict;
+    justification: string;
+    reasonsForExclusion?: string[];
+  };
+
+  // Risques de biais
+  biasRisks: {
+    hasUrbanOnlyBias: boolean;
+    hasTemporalAsymmetry: boolean;
+    hasDefinitionChange: boolean;
+    hasGeographicRezoning: boolean;
+    isPointInTimeObservation: boolean;
+    warningMessages: string[];
+  };
+
+  // Décompte des statuts
+  statusDistribution: {
+    observedCount: number;
+    importedCount: number;
+    estimatedCount: number;
+    proxyCount: number;
+    missingCount: number;
+    zeroMeasuredCount: number;
+    unknownCount: number;
+    notApplicableCount: number;
+  };
+
+  isDemo: boolean;
+}
+
+/**
+ * Historique temporel d'un facteur environnemental (ex: Déchets 2022-2026)
+ */
+export interface EnvironmentalHistoricityRecord {
+  id: string;
+  siteId: string;
+  siteName: string;
+  zoneSanteId: string;
+  zoneSanteName: string;
+  factorCode: string; // e.g. "ZONE_DECHETS", "EAU_STAGNANTE", "CONSTRUCTION"
+  factorLabel: string;
+  year: number;
+  exactDate?: string;
+  month?: number;
+  validFrom?: string;
+  validTo?: string;
+  isApproximateDate: boolean;
+  precision: TemporalPrecisionType;
+  factorState: 'OUI' | 'NON' | 'INCONNU' | 'MODIFIE';
+  stateDescription: string;
+  observationMethod: string;
+  confidenceLevel: ConfidenceLevel;
+  source: string;
+  isHistoricalProxy: boolean;
+  proxyJustification?: string;
+  isDemo: boolean;
+}
+
+/**
+ * Déclaration explicite de Proxy Historique avec justification scientifique obligatoire
+ */
+export interface HistoricalProxyDeclaration {
+  id: string;
+  variableCode: string;
+  variableName: string;
+  siteOrZoneId: string;
+  siteOrZoneName: string;
+  sourceObservationYear: number;
+  targetProxyYear: number;
+  sourceValue: any;
+  confidenceLevel: ConfidenceLevel;
+  scientificJustification: string; // OBLIGATOIRE
+  declaredBy: string;
+  declaredAt: string;
+  status: 'VALIDE' | 'EN_REVISION' | 'REJETE';
+  peerReviewNotes?: string;
+}
+
+/**
+ * Changement de définition de cas épidémiologique
+ */
+export interface CaseDefinitionShiftAlert {
+  id: string;
+  pathologyCode: string;
+  pathologyName: string;
+  periodStart: string;
+  periodEnd: string;
+  formerDefinition: string; // e.g. "Cas clinique présumé sans TDR"
+  newDefinition: string;    // e.g. "Cas confirmé par TDR / Goutte épaisse"
+  yearOfShift: number;
+  impactOnTrendAnalysis: string;
+  warningNotice: string;
+}
+
+/**
+ * Changement de découpage géographique
+ */
+export interface GeographicBoundaryShiftAlert {
+  id: string;
+  zoneSanteCode: string;
+  zoneSanteName: string;
+  yearOfShift: number;
+  formerBoundaryDescription: string;
+  newBoundaryDescription: string;
+  affectedAiresSante: string[];
+  recommendation: string;
+}
+
+/**
+ * Journal des transformations des données (Audit Trail)
+ */
+export interface DataTransformationLogEntry {
+  id: string;
+  timestamp: string;
+  sourceDatasetId?: string;
+  originalVariable: string;
+  transformationType:
+    | 'AGREGATION_MENSUELLE'
+    | 'IMPUTATION_NULL_STRICT'
+    | 'DECLARATION_PROXY'
+    | 'NORMALISATION_SYNONYME'
+    | 'FILTRAGE_QUALITE'
+    | 'EXCLUSION_MODELE'
+    | 'CONVERSION_UNITE';
+  transformationDescription: string;
+  scientificJustification: string;
+  resultVariable: string;
+  recordsAffectedCount: number;
+  performedBy: string;
+}
+
+/**
+ * Configuration de Dataset Analytique Adaptatif
+ */
+export interface AdaptiveAnalyticalDatasetConfig {
+  id: string;
+  name: string;
+  targetPathology: string;
+  timeRange: {
+    startYear: number;
+    endYear: number;
+  };
+  includedVariables: {
+    variableCode: string;
+    variableName: string;
+    dimension: OneHealthDimension;
+    isProxyIncluded: boolean;
+    coveragePct: number;
+  }[];
+  excludedVariables: {
+    variableCode: string;
+    variableName: string;
+    dimension: OneHealthDimension;
+    reasonForExclusion: string;
+  }[];
+  status: 'PRET_POUR_ANALYSE' | 'RESTRICTIONS' | 'INSUFFISANT';
+  signal: TrafficLightSignal;
+  totalRecordsCount: number;
+  notes: string;
+  createdAt: string;
+}
+
+/**
+ * Modèle de Sensibilité pour comparer l'impact des données
+ */
+export interface SensitivityModelComparison {
+  id: string;
+  pathology: string;
+  period: string;
+  modelA_Complete: {
+    name: string;
+    description: string;
+    variablesCount: number;
+    rSquaredOrFitScore: number;
+    keyFindings: string;
+  };
+  modelB_NoEnvironmental: {
+    name: string;
+    description: string;
+    variablesCount: number;
+    rSquaredOrFitScore: number;
+    deviationFromModelA: string;
+    keyFindings: string;
+  };
+  modelC_WithProxies: {
+    name: string;
+    description: string;
+    variablesCount: number;
+    rSquaredOrFitScore: number;
+    deviationFromModelA: string;
+    keyFindings: string;
+  };
+  scientificConclusion: string;
+}
+
+/**
+ * Tests de validation et non-régression V1.13
+ */
+export interface V113ValidationTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'DONNEES_COMPLETES'
+    | 'DONNEES_PARTIELLES'
+    | 'DONNEES_PONCTUELLES'
+    | 'DONNEES_MANQUANTES'
+    | 'VALEUR_ZERO'
+    | 'VALEUR_INCONNUE'
+    | 'HISTORICITE_ENV'
+    | 'PROXY_HISTORIQUE'
+    | 'CHANGEMENT_DEFINITION'
+    | 'CHANGEMENT_GEOGRAPHIQUE'
+    | 'NON_REGRESSION_V1_V12';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  expectedBehavior: string;
+  actualResult: string;
+  verifiedAt: string;
+}
+
+/**
+ * ============================================================================
+ * V1.14 — LABORATOIRE D’ANALYSE SCIENTIFIQUE ET DATASET ANALYTIQUE
+ * ============================================================================
+ */
+
+export type LabSubMenu =
+  | 'NOUVELLE_ANALYSE'
+  | 'MES_DONNEES'
+  | 'DATASET_ANALYTIQUE'
+  | 'ANALYSE_DESCRIPTIVE'
+  | 'ANALYSE_TEMPORELLE'
+  | 'ANALYSE_SPATIALE'
+  | 'ANALYSE_ASSOCIATIONS'
+  | 'LAGS'
+  | 'COMPARAISON_ZONES'
+  | 'ONE_HEALTH_INTEGREE'
+  | 'SENSIBILITE_DATASETS'
+  | 'RAPPORTS'
+  | 'HISTORIQUE_ANALYSES'
+  | 'SUITE_TESTS_V114';
+
+export type GeographicLevel =
+  | 'MANIEMA_ENTIER'
+  | 'VILLE_KINDU'
+  | 'ZONE_SANTE'
+  | 'AIRE_SANTE'
+  | 'QUARTIER'
+  | 'AVENUE'
+  | 'SITE';
+
+export type AnalysisStatus =
+  | 'BROUILLON'
+  | 'DATASET_GENERE'
+  | 'EN_COURS_ANALYSE'
+  | 'FINALISE'
+  | 'ARCHIVE';
+
+export type FeasibilitySignal = 'VERT' | 'ORANGE' | 'ROUGE';
+
+export interface AnalysisVariableSelection {
+  code: string;
+  name: string;
+  dimension: OneHealthDimension;
+  sourceCategory: 'SANITAIRE' | 'CLIMATIQUE' | 'ENVIRONNEMENTALE' | 'EAU_ASSAINISSEMENT' | 'SOCIO_DEMO';
+  sourceName: string;
+  temporalCoveragePct: number;
+  spatialCoveragePct: number;
+  missingDataPct: number;
+  isProxy: boolean;
+  proxyDetails?: {
+    originalYear: number;
+    targetYear: number;
+    justification: string;
+    confidence: 'ELEVE' | 'MOYEN' | 'FAIBLE';
+  };
+  isExcluded: boolean;
+  exclusionReason?: string;
+}
+
+export interface AnalysisTransformationItem {
+  id: string;
+  type:
+    | 'TEMPORAL_AGGREGATION'
+    | 'INCIDENCE_CALCULATION'
+    | 'LOG_TRANSFORM'
+    | 'STANDARDIZATION'
+    | 'NORMALIZATION'
+    | 'RATIO_CALCULATION';
+  title: string;
+  description: string;
+  formulaText: string;
+  parameters: Record<string, any>;
+  appliedAt: string;
+  appliedBy: string;
+}
+
+export interface AnalysisFeasibilityReport {
+  pathologyText: string;
+  periodText: string;
+  zonesCount: number;
+  observationsEstimatedCount: number;
+  variablesCount: number;
+  globalCompletenessPct: number;
+  qualityLevel: 'Excellente' | 'Bonne' | 'Modérée' | 'Faible' | 'Critique';
+  variablesWithRestrictionsCount: number;
+  criticalIssuesCount: number;
+  criticalIssuesList: string[];
+  modelingReadinessScore: 'BONNE' | 'MODEREE' | 'INSUFFISANTE';
+  statusSignal: FeasibilitySignal;
+  statusLabel: 'ANALYSE POSSIBLE' | 'ANALYSE POSSIBLE AVEC PRÉCAUTIONS' | 'DONNÉES INSUFFISANTES';
+  generatedAt: string;
+}
+
+export interface AnalysisDatasetRecord {
+  recordId: string;
+  analysisId: string;
+  dateStr: string; // YYYY-MM or YYYY-MM-DD
+  year: number;
+  month?: number;
+  week?: number;
+  zoneId: string;
+  zoneName: string;
+  healthAreaId?: string;
+  healthAreaName?: string;
+  pathology: string; // e.g. "PALUDISME", "TYPHOIDE"
+  
+  // Numerical & categorical values
+  newCases: number;
+  populationAtRisk?: number;
+  incidencePer100k?: number | null;
+  incidencePer10k?: number | null;
+  incidencePer1k?: number | null;
+  hospitalizations?: number;
+  deaths?: number;
+  ageMean?: number;
+  sexRatioMtoF?: number;
+  
+  rainfallMm?: number | null;
+  temperatureC?: number | null;
+  humidityPct?: number | null;
+  
+  wasteDumpPresent?: boolean | null;
+  standingWaterPoints?: number | null;
+  floodingOccurred?: boolean | null;
+  vegetationIndexNdvi?: number | null;
+  
+  protectedWaterAccessPct?: number | null;
+  adequateLatrinesPct?: number | null;
+  handwashingStationPct?: number | null;
+  
+  householdDensityKm2?: number | null;
+  
+  // Meta data
+  dataSource: string;
+  qualityScore: number;
+  dataStatus: ScientificDataStatus; // PRESENTE, MANQUANTE_NULL, ZERO_MESURE, PROXY, etc.
+  isProxy: boolean;
+  proxyNote?: string;
+}
+
+export interface DescriptiveStatsSummary {
+  variableCode: string;
+  variableName: string;
+  dimension: OneHealthDimension;
+  countNonMissing: number;
+  countMissing: number;
+  missingPercentage: number;
+  
+  // For numeric variables
+  mean?: number;
+  median?: number;
+  min?: number;
+  max?: number;
+  stdDev?: number;
+  q1?: number;
+  q3?: number;
+  
+  // For categorical
+  categories?: { category: string; count: number; percentage: number }[];
+}
+
+export interface CorrelationAnalysisPair {
+  varXCode: string;
+  varXName: string;
+  varYCode: string;
+  varYName: string;
+  pearsonR: number;
+  pearsonPValue: number;
+  spearmanRho: number;
+  spearmanPValue: number;
+  sampleSizeN: number;
+  interpretationText: string;
+  isSignificant: boolean;
+}
+
+export interface LagAnalysisResult {
+  climaticVar: string;
+  diseaseVar: string;
+  lags: {
+    lagMonths: number;
+    correlationR: number;
+    pValue: number;
+    sampleSizeN: number;
+    interpretation: string;
+  }[];
+  optimalLagMonths: number;
+  summaryNote: string;
+}
+
+export interface ScientificAnalysisProject {
+  id: string;
+  code: string; // e.g. "ANALYSIS_DATASET_2026_001"
+  name: string; // e.g. "Paludisme à Kindu — 2020–2026"
+  description: string;
+  targetPathologies: ('PALUDISME' | 'FIEVRE_TYPHOIDE' | 'AUTRE')[];
+  isMultiPathology: boolean;
+  timeRange: {
+    startYear: number;
+    endYear: number;
+    temporalResolution: 'JOUR' | 'SEMAINE' | 'MOIS' | 'TRIMESTRE' | 'ANNEE';
+  };
+  geographicScope: {
+    level: GeographicLevel;
+    selectedZones: string[]; // IDs of health zones / areas
+    selectedZoneNames: string[];
+  };
+  selectedSources: string[];
+  selectedVariables: AnalysisVariableSelection[];
+  excludedVariables: {
+    code: string;
+    name: string;
+    dimension: OneHealthDimension;
+    reason: string;
+  }[];
+  feasibilityReport: AnalysisFeasibilityReport;
+  transformations: AnalysisTransformationItem[];
+  datasetMetadata: {
+    datasetName: string;
+    totalRows: number;
+    columnsCount: number;
+    createdAt: string;
+    lastCalculatedAt: string;
+    isCleanedIntact: boolean;
+    isRawIntact: boolean;
+  };
+  createdAt: string;
+  updatedAt: string;
+  author: string;
+  status: AnalysisStatus;
+  isDemoData: boolean;
+  
+  // Statistical results cached
+  descriptiveStats?: DescriptiveStatsSummary[];
+  correlations?: CorrelationAnalysisPair[];
+  lagResults?: LagAnalysisResult[];
+  
+  // Auto-generated 17-section report content
+  reportDocument?: ScientificAnalysisReportDocument;
+}
+
+export interface ScientificAnalysisReportDocument {
+  id: string;
+  analysisId: string;
+  analysisTitle: string;
+  author: string;
+  generatedDate: string;
+  isDraft: boolean;
+  sections: {
+    sectionNum: number;
+    title: string;
+    content: string;
+    dataHighlights?: { label: string; value: string | number }[];
+  }[];
+  scientificCaveat: string;
+}
+
+export interface V114ValidationScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  description: string;
+  category:
+    | 'TEST_1_PALUDISME'
+    | 'TEST_2_TYPHOIDE'
+    | 'TEST_3_HISTORICITE_ENV'
+    | 'TEST_4_DONNEE_MANQUANTE'
+    | 'TEST_5_PROXY_JUSTIFIE'
+    | 'TEST_6_DONNEES_INSUFFISANTES'
+    | 'TEST_7_MULTI_PATHOLOGIES'
+    | 'TEST_8_REPRODUCTIBILITE'
+    | 'NON_REGRESSION_V1_V13';
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  testSteps: string[];
+  expectedOutput: string;
+  actualOutput: string;
+  lastRunDate: string;
+}
+
+
+
+
+
+
+
+
+
 

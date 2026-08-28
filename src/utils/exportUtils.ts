@@ -214,6 +214,23 @@ export const exportFullExcelWorkbook = exportToFullExcel;
 export const exportToExcel = exportToFullExcel;
 
 /**
+ * Custom Multi-Sheet Excel Exporter
+ */
+export function exportCustomSheetsToExcel(
+  sheets: { sheetName: string; data: any[] }[],
+  filename: string = 'export.xlsx'
+) {
+  const wb = XLSX.utils.book_new();
+  for (const sheet of sheets) {
+    if (sheet.data && sheet.data.length > 0) {
+      const ws = XLSX.utils.json_to_sheet(sheet.data);
+      XLSX.utils.book_append_sheet(wb, ws, sheet.sheetName.slice(0, 31));
+    }
+  }
+  XLSX.writeFile(wb, filename);
+}
+
+/**
  * Universal CSV Exporter
  */
 export function exportToCSV(data: any[], filename: string = 'export') {
@@ -297,3 +314,99 @@ export const exportGeoJson = exportToGeoJSON;
 export function exportVariablesCodebook() {
   exportToCSV(DATA_DICTIONARY, 'OneHealth_Kindu_Dictionnaire_Variables');
 }
+
+/**
+ * V1.7 Full Multi-Tab Spatiotemporal Database Excel Export
+ */
+export function exportSpatiotemporalV17Excel(
+  units: any[],
+  healthData: any[],
+  climateData: any[],
+  envData: any[],
+  washData: any[],
+  hhAggregates: any[],
+  integratedData: any[],
+  modelReadyRows: any[],
+  qualityChecks: any[],
+  dataSources: any[]
+) {
+  const wb = XLSX.utils.book_new();
+
+  // 1. MODEL_READY_DATA (Prioritaire pour les biostatisticiens)
+  if (modelReadyRows && modelReadyRows.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(modelReadyRows);
+    XLSX.utils.book_append_sheet(wb, ws, 'MODEL_READY_DATA');
+  }
+
+  // 2. INTEGRATED_SPATIOTEMPORAL_DATA
+  if (integratedData && integratedData.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(integratedData);
+    XLSX.utils.book_append_sheet(wb, ws, 'BASE_INTEGREE');
+  }
+
+  // 3. SPATIOTEMPORAL_UNIT
+  if (units && units.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(units);
+    XLSX.utils.book_append_sheet(wb, ws, 'UNITES_SPATIOTEMPORELLES');
+  }
+
+  // 4. HEALTH_SPATIOTEMPORAL
+  if (healthData && healthData.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(healthData);
+    XLSX.utils.book_append_sheet(wb, ws, 'SANTE_SPATIOTEMPOREL');
+  }
+
+  // 5. CLIMATE_SPATIOTEMPORAL
+  if (climateData && climateData.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(climateData);
+    XLSX.utils.book_append_sheet(wb, ws, 'CLIMAT_SPATIOTEMPOREL');
+  }
+
+  // 6. ENVIRONMENT_SPATIOTEMPORAL
+  if (envData && envData.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(envData);
+    XLSX.utils.book_append_sheet(wb, ws, 'ENVIRONNEMENT_SPATIO');
+  }
+
+  // 7. WASH & HOUSEHOLD_AGGREGATE
+  if (washData && washData.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(washData);
+    XLSX.utils.book_append_sheet(wb, ws, 'EAU_ASSAINISSEMENT');
+  }
+
+  if (hhAggregates && hhAggregates.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(hhAggregates);
+    XLSX.utils.book_append_sheet(wb, ws, 'MENAGES_AGREGES');
+  }
+
+  // 8. DATA_QUALITY_CHECK
+  if (qualityChecks && qualityChecks.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(qualityChecks);
+    XLSX.utils.book_append_sheet(wb, ws, 'CONTROLES_QUALITE');
+  }
+
+  // 9. DATA_SOURCE
+  if (dataSources && dataSources.length > 0) {
+    const ws = XLSX.utils.json_to_sheet(dataSources);
+    XLSX.utils.book_append_sheet(wb, ws, 'SOURCES_DONNEES');
+  }
+
+  const filename = `ONE_HEALTH_KINDU_V17_BASE_SPATIOTEMPORELLE_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  XLSX.writeFile(wb, filename);
+}
+
+/**
+ * V1.7 JSON Exporter for Spatiotemporal Database
+ */
+export function exportSpatiotemporalV17Json(payload: any, filename: string = 'ONE_HEALTH_KINDU_V17_DATABASE') {
+  const jsonStr = JSON.stringify(payload, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${filename}_${new Date().toISOString().slice(0, 10)}.json`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
