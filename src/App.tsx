@@ -19,6 +19,9 @@ import { SurveyOperationsModuleV111 } from './components/SurveyOperationsModuleV
 import { MultiSourceHubModule } from './components/multisource/MultiSourceHubModule';
 import { ScientificDiagnosticModuleV113 } from './components/diagnostic/ScientificDiagnosticModuleV113';
 import { ScientificLaboratoryModuleV114 } from './components/laboratory/ScientificLaboratoryModuleV114';
+import { StatisticalModelingModuleV115 } from './components/modeling/StatisticalModelingModuleV115';
+import { ScientificValidationModuleV116 } from './components/validation/ScientificValidationModuleV116';
+import { OneHealthSurveillanceModuleV117 } from './components/surveillance/OneHealthSurveillanceModuleV117';
 import { DataExportModal } from './components/DataExportModal';
 import { AuthModal } from './components/AuthModal';
 import { AppModule } from './types';
@@ -42,7 +45,9 @@ import {
 
 const NAV_ITEMS: { id: AppModule; label: string; shortLabel: string; icon: any }[] = [
   { id: 'ACCUEIL', label: 'Accueil', shortLabel: 'Accueil', icon: Building2 },
-  { id: 'DASHBOARD', label: 'Tableau de bord', shortLabel: 'Dashboard', icon: LayoutDashboard },
+  { id: 'SURVEILLANCE_ONE_HEALTH_V117', label: '🚨 Surveillance One Health V1.17', shortLabel: 'V1.17 Veille', icon: Activity },
+  { id: 'VALIDATION_SCIENTIFIQUE', label: '🛡️ Validation Scientifique V1.16', shortLabel: 'V1.16 Valid.', icon: ShieldCheck },
+  { id: 'MODELISATION', label: '📊 Modélisation Statistique V1.15', shortLabel: 'V1.15 Modèle', icon: Sparkles },
   { id: 'LABORATOIRE_ANALYSE', label: '🧪 Laboratoire d Analyse V1.14', shortLabel: 'V1.14 Lab', icon: Sparkles },
   { id: 'DIAGNOSTIC_SCIENTIFIQUE', label: '🔬 Diagnostic Scientifique V1.13', shortLabel: 'V1.13 Diag.', icon: Sparkles },
   { id: 'SOURCES_ET_IMPORTS_V112', label: '📥 Sources & Imports V1.12', shortLabel: 'V1.12 Sources', icon: UploadCloud },
@@ -72,6 +77,9 @@ const MainContent: React.FC = () => {
 
   const isModuleActive = (itemModule: AppModule, current: AppModule) => {
     if (itemModule === current) return true;
+    if ((itemModule === 'SURVEILLANCE_ONE_HEALTH_V117' || itemModule === 'SURVEILLANCE' || itemModule === 'SURVEILLANCE_MODULE') && (current === 'SURVEILLANCE_ONE_HEALTH_V117' || current === 'SURVEILLANCE' || current === 'SURVEILLANCE_MODULE')) return true;
+    if ((itemModule === 'VALIDATION_SCIENTIFIQUE' || itemModule === 'SCIENTIFIC_VALIDATION') && (current === 'VALIDATION_SCIENTIFIQUE' || current === 'SCIENTIFIC_VALIDATION')) return true;
+    if ((itemModule === 'MODELISATION' || itemModule === 'MODELISATION_STATISTIQUE' || itemModule === 'MODELISATION_V115' || itemModule === 'STATISTICAL_MODELING') && (current === 'MODELISATION' || current === 'MODELISATION_STATISTIQUE' || current === 'MODELISATION_V115' || current === 'STATISTICAL_MODELING')) return true;
     if ((itemModule === 'LABORATOIRE_ANALYSE' || itemModule === 'LABORATOIRE_ANALYSE_V114' || itemModule === 'LAB_ANALYSE') && (current === 'LABORATOIRE_ANALYSE' || current === 'LABORATOIRE_ANALYSE_V114' || current === 'LAB_ANALYSE')) return true;
     if ((itemModule === 'DIAGNOSTIC_SCIENTIFIQUE' || itemModule === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || itemModule === 'DIAGNOSTIC_DONNEES') && (current === 'DIAGNOSTIC_SCIENTIFIQUE' || current === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || current === 'DIAGNOSTIC_DONNEES')) return true;
     if ((itemModule === 'DASHBOARD' || itemModule === 'TABLEAU_BORD') && (current === 'DASHBOARD' || current === 'TABLEAU_BORD')) return true;
@@ -175,6 +183,15 @@ const MainContent: React.FC = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeModule === 'ACCUEIL' && <HomeModule onNavigate={handleNavigate} />}
+        {(activeModule === 'SURVEILLANCE_ONE_HEALTH_V117' || activeModule === 'SURVEILLANCE' || activeModule === 'SURVEILLANCE_MODULE') && (
+          <OneHealthSurveillanceModuleV117 />
+        )}
+        {(activeModule === 'VALIDATION_SCIENTIFIQUE' || activeModule === 'SCIENTIFIC_VALIDATION') && (
+          <ScientificValidationModuleV116 />
+        )}
+        {(activeModule === 'MODELISATION' || activeModule === 'MODELISATION_STATISTIQUE' || activeModule === 'MODELISATION_V115' || activeModule === 'STATISTICAL_MODELING') && (
+          <StatisticalModelingModuleV115 />
+        )}
         {(activeModule === 'LABORATOIRE_ANALYSE' || activeModule === 'LABORATOIRE_ANALYSE_V114' || activeModule === 'LAB_ANALYSE') && (
           <ScientificLaboratoryModuleV114 />
         )}

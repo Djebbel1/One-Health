@@ -160,10 +160,97 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Card V1.17: Système de Surveillance One Health & Détection des Signaux d'Alerte */}
+          <div
+            onClick={() => onNavigate('SURVEILLANCE_ONE_HEALTH_V117')}
+            className="group bg-gradient-to-br from-rose-950 via-slate-900 to-teal-950 text-white rounded-xl p-5 border-2 border-rose-400 hover:border-rose-300 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between md:col-span-3 lg:col-span-1 ring-2 ring-rose-500/20"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-rose-600 text-white flex items-center justify-center group-hover:bg-rose-500 transition shadow-md">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-rose-400 text-slate-950 text-[10px] font-black rounded-full shadow-sm">
+                  NOUVEAU V1.17
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-rose-300 transition">
+                  🚨 Surveillance One Health &amp; Signaux d&apos;Alerte
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Veille prospective intégrée : comparaison aux niveaux attendus modélisés V1.16, surveillance conjointe (Sanitaire, Climat, Environnement, WASH), alertes multi-critères et validation humaine obligatoire.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-rose-300">
+              <span>Tableau de Bord, SIG &amp; 10 Scénarios Validés</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card V1.16: Validation Scientifique, Robustesse & Fiabilité des Modèles */}
+          <div
+            onClick={() => onNavigate('VALIDATION_SCIENTIFIQUE')}
+            className="group bg-gradient-to-br from-teal-950 via-slate-900 to-teal-900 text-white rounded-xl p-5 border-2 border-teal-400 hover:border-teal-300 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between md:col-span-3 lg:col-span-1 ring-2 ring-teal-500/20"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-teal-500 text-white flex items-center justify-center group-hover:bg-teal-400 transition shadow-md">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-teal-400 text-slate-950 text-[10px] font-black rounded-full shadow-sm">
+                  NOUVEAU V1.16
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-teal-300 transition">
+                  🛡️ Validation Scientifique, Robustesse & Fiabilité
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Validation temporelle (Time-split, Rolling-folds), spatiale (Hold-out), calibration (pente, ECE), détection d&apos;overfitting &amp; data leakage, score de robustesse décomposé, et cartographie à couches strictes.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-teal-300">
+              <span>Banc d&apos;Épreuve &amp; 12 Tests Validés</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card V1.15: Moteur de Modélisation Statistique et Spatio-Temporelle */}
+          <div
+            onClick={() => onNavigate('MODELISATION')}
+            className="group bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-xl p-5 border border-indigo-500/70 hover:border-indigo-300 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between md:col-span-3 lg:col-span-1"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-indigo-500 text-white flex items-center justify-center group-hover:bg-indigo-400 transition shadow-md">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-indigo-400 text-slate-950 text-[10px] font-black rounded-full shadow-sm">
+                  NOUVEAU V1.15
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-indigo-300 transition">
+                  📊 Moteur de Modélisation Statistique & Spatio-Temporelle
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  GLM (Poisson, Binomiale Négative, Logistique), Lags (0–4 mois), contrôle de surdispersion, diagnostic de Moran, cartographie du risque en 5 strates, analyse de sensibilité, reproductibilité R/Python et rapport en 20 sections.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-indigo-300">
+              <span>12 Scénarios de Validation Méthodologique</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
           {/* Card V1.14: Laboratoire d'Analyse Scientifique & Dataset Analytique */}
           <div
             onClick={() => onNavigate('LABORATOIRE_ANALYSE')}
-            className="group bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white rounded-xl p-5 border-2 border-indigo-500/70 hover:border-indigo-400 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between md:col-span-3 lg:col-span-1"
+            className="group bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white rounded-xl p-5 border border-indigo-500/70 hover:border-indigo-400 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between md:col-span-3 lg:col-span-1"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">

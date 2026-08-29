@@ -45,6 +45,18 @@ export type AppModule =
   | 'LABORATOIRE_ANALYSE'
   | 'LABORATOIRE_ANALYSE_V114'
   | 'LAB_ANALYSE'
+  | 'MODELISATION'
+  | 'MODELISATION_STATISTIQUE'
+  | 'MODELISATION_V115'
+  | 'STATISTICAL_MODELING'
+  | 'VALIDATION_SCIENTIFIQUE'
+  | 'VALIDATION_SCIENTIFIQUE_V116'
+  | 'SCIENTIFIC_VALIDATION'
+  | 'SURVEILLANCE'
+  | 'SURVEILLANCE_ONE_HEALTH'
+  | 'SURVEILLANCE_ONE_HEALTH_V117'
+  | 'SURVEILLANCE_V117'
+  | 'SURVEILLANCE_MODULE'
   | 'SYNCHRONISATION'
   | 'IMPORT_EXPORT'
   | 'ADMINISTRATION'
@@ -3928,6 +3940,970 @@ export interface V114ValidationScenarioTest {
   actualOutput: string;
   lastRunDate: string;
 }
+
+// ==========================================
+// V1.15 — MOTEUR DE MODÉLISATION STATISTIQUE & SPATIO-TEMPORELLE
+// ==========================================
+
+export type ModelingSubTab =
+  | 'NOUVELLE_MODELISATION'
+  | 'MODELES_STATISTIQUES'
+  | 'MODELES_SPATIO_TEMPORELS'
+  | 'VARIABLES_ET_DIAGNOSTIC'
+  | 'DIAGNOSTICS_COMPLETS'
+  | 'COMPARAISON_MODELES'
+  | 'PREDICTIONS'
+  | 'CARTOGRAPHIE_RISQUE'
+  | 'RISQUE_INTEGRE_ET_SENSIBILITE'
+  | 'HISTORIQUE_ET_REPRODUCTIBILITE'
+  | 'RAPPORTS_AUTOMATISES'
+  | 'SUITE_TESTS_V115';
+
+export type StatisticalModelType =
+  | 'POISSON'
+  | 'NEGATIVE_BINOMIAL'
+  | 'LOGISTIC'
+  | 'SPATIO_TEMPORAL_FIXED'
+  | 'SPATIO_TEMPORAL_RANDOM'
+  | 'MIXED_HIERARCHICAL';
+
+export type DependentVariableType =
+  | 'COUNT_CASES'
+  | 'INCIDENCE_RATE'
+  | 'BINARY_PRESENCE'
+  | 'MORTALITY_COUNT'
+  | 'HOSPITALIZATIONS_COUNT';
+
+export type OffsetOption = 'POPULATION' | 'NONE' | 'SURFACE_AREA' | 'CUSTOM_EXPOSURE';
+
+export type SpatialEffectType = 'NONE' | 'ZONE_FIXED' | 'ZONE_RANDOM';
+export type TemporalEffectType = 'NONE' | 'YEAR_FIXED' | 'MONTH_FIXED' | 'LINEAR_TREND' | 'SEASONAL_HARMONIC';
+
+export interface ModelCovariateSelection {
+  code: string;
+  name: string;
+  dimension: OneHealthDimension;
+  type: 'NUMERICAL' | 'CATEGORICAL_BINARY' | 'CATEGORICAL_NOMINAL' | 'CATEGORICAL_ORDINAL';
+  unit: string;
+  source: string;
+  temporalCoveragePct: number;
+  qualityLevel: string;
+  status: ScientificDataStatus;
+  isProxy: boolean;
+  proxyNote?: string;
+  isLagged: boolean;
+  lagMonths: number; // 0, 1, 2, 3, 4
+  referenceCategory?: string;
+  vifValue?: number;
+  vifInterpretation?: 'COLINEARITE_FAIBLE' | 'COLINEARITE_MODEREE' | 'COLINEARITE_ELEVEE';
+  isExcludedFromFit?: boolean;
+  exclusionReason?: string;
+}
+
+export interface ModelInteractionTerm {
+  id: string;
+  var1Code: string;
+  var1Name: string;
+  var2Code: string;
+  var2Name: string;
+  label: string;
+}
+
+export interface SpatioTemporalEffectsConfig {
+  spatialUnit: string; // e.g. "Zone × Mois"
+  spatialEffect: SpatialEffectType;
+  temporalEffect: TemporalEffectType;
+  hierarchicalStructure?: 'MANIEMA_TO_ZS' | 'ZS_TO_AS' | 'AS_TO_QUARTIER';
+  includeSeasonalHarmonic: boolean;
+  includeLinearTrend: boolean;
+}
+
+export interface PreModelingCheckResult {
+  isBlocked: boolean;
+  statusSignal: 'VERT' | 'ORANGE' | 'ROUGE';
+  statusLabel: 'MODELISATION_AUTORISEE' | 'MODELISATION_AVEC_PRECAUTIONS' | 'MODELISATION_BLOQUEE';
+  sampleSizeTotal: number;
+  sampleSizeValid: number;
+  excludedCount: number;
+  missingDataPct: number;
+  temporalSpanYears: number;
+  spatialZonesCount: number;
+  blockingReasons: string[];
+  warnings: string[];
+  zeroVarianceVariables: string[];
+  highMissingVariables: string[];
+  proxyCount: number;
+  checkedAt: string;
+}
+
+export interface ModelCoefficientResult {
+  variableCode: string;
+  variableName: string;
+  categoryModalite?: string;
+  coefficient: number;
+  standardError: number;
+  zValue: number;
+  pValue: number;
+  ciLower95: number;
+  ciUpper95: number;
+  expCoeff?: number; // Rate Ratio (IRR) or Odds Ratio (OR)
+  expCiLower95?: number;
+  expCiUpper95?: number;
+  isSignificant: boolean;
+  interpretationText: string;
+}
+
+export interface ModelDiagnosticsSummary {
+  convergenceReached: boolean;
+  iterationsCount: number;
+  totalObsInitial: number;
+  totalObsUsed: number;
+  totalObsExcluded: number;
+  exclusionBreakdown: { reason: string; count: number }[];
+  aic: number;
+  bic: number;
+  logLikelihood: number;
+  deviance: number;
+  dfResiduals: number;
+  dispersionRatio: number; // Pearson Chi2 / df
+  hasOverdispersion: boolean;
+  suggestedAlternativeModel?: string;
+  moranSpatialIndexI?: number;
+  moranPValue?: number;
+  moranInterpretation?: string;
+  temporalAutocorrelationAr1?: number;
+  temporalAr1PValue?: number;
+  temporalAr1Warning?: string;
+  influentialObservations: {
+    recordId: string;
+    zoneName: string;
+    dateStr: string;
+    cooksDistance: number;
+    leverageHii: number;
+    standardizedResidual: number;
+    isInfluential: boolean;
+    scientificNote: string;
+  }[];
+  residualsDistribution: {
+    min: number;
+    q1: number;
+    median: number;
+    mean: number;
+    q3: number;
+    max: number;
+    stdDev: number;
+  };
+}
+
+export interface SpatialRiskPredictionZone {
+  zoneId: string;
+  zoneName: string;
+  period: string;
+  year: number;
+  month?: number;
+  observedCases?: number;
+  predictedCases: number;
+  predictedIncidencePer100k: number;
+  ciLowerIncidence: number;
+  ciUpperIncidence: number;
+  relativeRiskRR: number;
+  riskLevelClass: 'TRES_FAIBLE' | 'FAIBLE' | 'MODERE' | 'ELEVE' | 'TRES_ELEVE';
+  uncertaintyMargin: number; // CI upper - CI lower
+  uncertaintyLevel: 'FAIBLE' | 'MODEREE' | 'ELEVEE';
+  isHistoricProxy: boolean;
+  proxyLabel?: string;
+  dataSourceStatus: ScientificDataStatus;
+  environmentalFactorsSummary?: string;
+}
+
+export interface SensitivityAnalysisComparison {
+  fullModelTitle: string;
+  restrictedModelTitle: string;
+  noProxyModelTitle: string;
+  metrics: {
+    modelType: string;
+    aic: number;
+    bic: number;
+    logLik: number;
+    sampleSize: number;
+    dispersion: number;
+  }[];
+  coefficientsComparison: {
+    variable: string;
+    fullBeta: number;
+    fullPVal: number;
+    restrictedBeta: number;
+    restrictedPVal: number;
+    noProxyBeta: number;
+    noProxyPVal: number;
+    stabilityNote: string;
+  }[];
+  conclusionNote: string;
+}
+
+export interface OneHealthIntegratedIndex {
+  indexName: string;
+  formulaDescription: string;
+  weights: { dimension: OneHealthDimension; variableCode: string; weight: number; standardizedMethod: string }[];
+  scoresByZone: {
+    zoneId: string;
+    zoneName: string;
+    period: string;
+    integratedRiskScore: number; // 0 - 100
+    healthComponent: number;
+    climaticComponent: number;
+    environmentalComponent: number;
+    washComponent: number;
+    riskTier: 'TRES_FAIBLE' | 'FAIBLE' | 'MODERE' | 'ELEVE' | 'TRES_ELEVE';
+    uncertaintyScore: number;
+  }[];
+  methodJustification: string;
+}
+
+export interface ScientificModelingProject {
+  id: string;
+  code: string; // e.g. "MODEL_2026_001"
+  title: string;
+  researchHypothesis: string;
+  sourceDatasetId: string; // Reference to ANALYSIS_DATASET_XXXX
+  sourceDatasetCode: string;
+  sourceDatasetName: string;
+  pathology: 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'MULTI_PATHOLOGIE' | 'AUTRE';
+  targetPathologiesList: string[];
+  timeRange: {
+    startYear: number;
+    endYear: number;
+    temporalResolution: 'JOUR' | 'SEMAINE' | 'MOIS' | 'TRIMESTRE' | 'ANNEE';
+  };
+  geographicScope: {
+    level: GeographicLevel;
+    selectedZones: string[];
+    selectedZoneNames: string[];
+  };
+  dependentVariable: DependentVariableType;
+  dependentVariableName: string;
+  dependentVariableColumn: string;
+  modelType: StatisticalModelType;
+  offsetOption: OffsetOption;
+  offsetColumnName?: string;
+  selectedCovariates: ModelCovariateSelection[];
+  interactionTerms: ModelInteractionTerm[];
+  spatioTemporalConfig: SpatioTemporalEffectsConfig;
+  evaluationMethod: 'INTERNAL_RESIDUALS' | 'TRAIN_TEST_SPLIT' | 'TEMPORAL_BLOCK_SPLIT' | 'SPATIAL_LEAVE_ONE_OUT';
+  
+  preFlightCheck: PreModelingCheckResult;
+  coefficients: ModelCoefficientResult[];
+  diagnostics: ModelDiagnosticsSummary;
+  predictions: SpatialRiskPredictionZone[];
+  correlationMatrix?: {
+    variables: string[];
+    matrix: { varX: string; varY: string; r: number; pValue: number }[];
+  };
+  sensitivityAnalysis?: SensitivityAnalysisComparison;
+  integratedOneHealthIndex?: OneHealthIntegratedIndex;
+  
+  mathematicalFormula: string;
+  scientificCaveat: string; // "Association statistique ≠ Causalité"
+  scientistAdequationNotes: string;
+  isDemonstrationData: boolean;
+  rCodeEquivalent: string;
+  pythonCodeEquivalent: string;
+  status: 'ESTIME' | 'EN_COURS' | 'BROUILLON' | 'BLOQUE';
+  createdAt: string;
+  updatedAt: string;
+  author: string;
+}
+
+export interface AutomatedModelingReportDocument {
+  id: string;
+  modelId: string;
+  modelCode: string;
+  modelTitle: string;
+  author: string;
+  generatedDate: string;
+  sections: {
+    sectionNum: number;
+    title: string;
+    content: string;
+    bulletPoints?: string[];
+    tableData?: { headers: string[]; rows: (string | number)[][] };
+    caveatBox?: string;
+  }[];
+  formalScientificCaveat: string;
+  cautiousConclusionText: string;
+}
+
+export interface V115ValidationScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'TEST_POISSON'
+    | 'TEST_BINOMIAL_NEGATIF'
+    | 'TEST_LOGISTIQUE'
+    | 'TEST_SPATIO_TEMPOREL'
+    | 'TEST_LAG'
+    | 'TEST_HISTORIQUE_ENV'
+    | 'TEST_PROXY'
+    | 'TEST_DONNEES_MANQUANTES'
+    | 'TEST_MULTICOLINEARITE'
+    | 'TEST_CARTOGRAPHIE'
+    | 'TEST_REPRODUCTIBILITE'
+    | 'TEST_NON_REGRESSION_V1_V14';
+  description: string;
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  testSteps: string[];
+  expectedOutput: string;
+  actualOutput: string;
+  lastRunDate: string;
+}
+
+// ==========================================
+// V1.16 — TYPES VALIDATION SCIENTIFIQUE, ROBUSTESSE & FIABILITÉ
+// ==========================================
+
+export type ValidationSubTab =
+  | 'VUE_ENSEMBLE'
+  | 'VALIDATION_MODELE'
+  | 'VALIDATION_TEMPORELLE'
+  | 'VALIDATION_SPATIALE'
+  | 'VALIDATION_CROISEE'
+  | 'CALIBRATION'
+  | 'METRIQUES'
+  | 'PERFORMANCE'
+  | 'RESIDUS'
+  | 'ROBUSTESSE'
+  | 'SENSIBILITE'
+  | 'INCERTITUDE'
+  | 'VALIDATION_CARTES'
+  | 'RAPPORT_20_SECTIONS'
+  | 'RAPPORT_VALIDATION'
+  | 'REPRODUCTIBILITE'
+  | 'HISTORIQUE_VALIDATION'
+  | 'BANC_DE_TESTS'
+  | 'SUITE_TESTS_V116';
+
+export type ValidationSubTabId = ValidationSubTab;
+
+export type ValidationMethodType =
+  | 'TIME_SPLIT'
+  | 'ROLLING_WALK_FORWARD'
+  | 'SPATIAL_HOLD_OUT'
+  | 'SPATIO_TEMPORAL_SPLIT'
+  | 'K_FOLD_CROSS_VALIDATION'
+  | 'STRATIFIED_K_FOLD'
+  | 'LEAVE_ONE_OUT'
+  | 'BOOTSTRAP_RESAMPLING';
+
+export type PreValidationStatus = 'POSSIBLE' | 'LIMITEE' | 'IMPOSSIBLE';
+
+export interface PreValidationCheckResult {
+  status: PreValidationStatus;
+  canProceed: boolean;
+  totalObservations: number;
+  totalHealthZones: number;
+  totalPeriods: number;
+  missingValuesPct: number;
+  outliersDetectedCount: number;
+  proxiesCount: number;
+  temporalCoveragePct: number;
+  spatialCoveragePct: number;
+  datasetStructureStatus: 'COHERENT' | 'IRREGULIER' | 'FRAGMENTE';
+  justifications: string[];
+  epistemicWarnings: string[];
+}
+
+export type DataLeakageAuditStatus = 'CLEAR' | 'WARNING' | 'BLOCKED';
+
+export interface DataLeakageAuditItem {
+  id: string;
+  riskType: 'TARGET_DERIVATIVE' | 'FUTURE_DATA_LEAK' | 'TEST_SET_AGGREGATION' | 'TEST_SET_STANDARDIZATION' | 'PROXY_INDIRECT_LEAK';
+  title: string;
+  detected: boolean;
+  severity: 'CRITIQUE' | 'AVERTISSEMENT' | 'CONFORME';
+  details: string;
+  remedyAction: string;
+}
+
+export interface DataLeakageAuditResult {
+  overallStatus: DataLeakageAuditStatus;
+  isValidationBlocked: boolean;
+  items: DataLeakageAuditItem[];
+  auditSummary: string;
+}
+
+export interface ContinuousMetrics {
+  mae: number; // Mean Absolute Error
+  rmse: number; // Root Mean Squared Error
+  mse: number; // Mean Squared Error
+  r2: number; // Coefficient de détermination
+  deviance: number;
+  logLikelihood: number;
+  aic: number;
+  bic: number;
+  dispersionRatio: number;
+}
+
+export interface ClassificationMetrics {
+  accuracy: number;
+  sensitivity: number; // Recall
+  specificity: number;
+  precision: number;
+  f1Score: number;
+  aucRoc: number;
+  hasImbalance: boolean;
+  imbalanceRatioText: string;
+  confusionMatrix: {
+    truePositive: number;
+    falsePositive: number;
+    trueNegative: number;
+    falseNegative: number;
+  };
+}
+
+export interface TimeSplitValidationResult {
+  trainPeriodLabel: string; // e.g. "2020-2024"
+  testPeriodLabel: string; // e.g. "2025-2026"
+  trainObsCount: number;
+  testObsCount: number;
+  trainMetrics: ContinuousMetrics;
+  testMetrics: ContinuousMetrics;
+  overfittingGapPercentage: number; // e.g. 14.8%
+  overfittingRiskTier: 'FAIBLE' | 'MODERE' | 'ELEVE';
+  overfittingInterpretation: string;
+  futureLeakagePrevented: boolean;
+}
+
+export interface RollingFoldResult {
+  foldNumber: number;
+  trainPeriod: string;
+  testPeriod: string;
+  trainObs: number;
+  testObs: number;
+  trainMse: number;
+  testMse: number;
+  testMae: number;
+  testR2: number;
+  driftStatus: 'STABLE' | 'DEGRADATION_LEGERE' | 'RUPTURE_STRUCTURELLE';
+}
+
+export interface RollingTimeValidationResult {
+  folds: RollingFoldResult[];
+  averageTestMae: number;
+  averageTestR2: number;
+  driftSummary: string;
+}
+
+export interface SpatialHoldOutResult {
+  trainZoneIds: string[];
+  trainZoneNames: string[];
+  testZoneIds: string[];
+  testZoneNames: string[];
+  trainObsCount: number;
+  testObsCount: number;
+  trainMetrics: ContinuousMetrics;
+  testMetrics: ContinuousMetrics;
+  moranIOnTestResiduals: number;
+  moranPValue: number;
+  spatialLeakagePrevented: boolean;
+  spatialGeneralizationNote: string;
+}
+
+export interface CrossValidationFold {
+  foldIndex: number;
+  trainSize: number;
+  valSize: number;
+  valMae: number;
+  valRmse: number;
+  valR2: number;
+  valAic: number;
+}
+
+export interface CrossValidationResult {
+  method: ValidationMethodType;
+  kFolds: number;
+  folds: CrossValidationFold[];
+  meanMae: number;
+  stdMae: number;
+  meanR2: number;
+  stdR2: number;
+  spatioTemporalDependenceAdvisory: string;
+}
+
+export interface CalibrationBin {
+  decile: number;
+  predictedRiskMean: number;
+  observedRiskMean: number;
+  sampleCount: number;
+  residualGap: number;
+}
+
+export interface CalibrationAnalysis {
+  bins: CalibrationBin[];
+  calibrationSlope: number; // idéal = 1.0
+  calibrationIntercept: number; // idéal = 0.0
+  brierScore: number; // pour classification / probabilités
+  ece: number; // Expected Calibration Error
+  calibrationQuality: 'EXCELLENTE' | 'ACCEPTABLE' | 'SOUS_CALIBREE' | 'SUR_CALIBREE';
+  interpretationNote: string;
+}
+
+export interface ResidualPoint {
+  id: string;
+  zoneId: string;
+  zoneName: string;
+  period: string;
+  observed: number;
+  predicted: number;
+  residual: number; // Obs - Pred
+  standardizedResidual: number;
+  cooksDistance: number;
+  tier: 'SURESTIME' | 'CONFORME' | 'SOUS_ESTIME';
+}
+
+export interface ResidualsAnalysis {
+  points: ResidualPoint[];
+  distribution: {
+    mean: number;
+    stdDev: number;
+    min: number;
+    q1: number;
+    median: number;
+    q3: number;
+    max: number;
+  };
+  temporalTrend: { period: string; avgResidual: number; count: number }[];
+  spatialClustersCount: number;
+  extremeResidualsCount: number;
+}
+
+export interface RobustnessScenarioResult {
+  scenarioCode: string;
+  title: string;
+  description: string;
+  sampleSize: number;
+  keyCoefficients: {
+    variable: string;
+    beta: number;
+    ci95Lower: number;
+    ci95Upper: number;
+    pValue: number;
+    signFlipped: boolean;
+  }[];
+  aic: number;
+  bic: number;
+  r2: number;
+  stabilityStatus: 'STABLE' | 'SENSIBLE_AUX_HYPOTHESES' | 'RUPTURE_DE_SIGNE';
+}
+
+export interface RobustnessAnalysis {
+  scenarios: RobustnessScenarioResult[];
+  signFlipAlerts: {
+    variable: string;
+    fromScenario: string;
+    toScenario: string;
+    oldBeta: number;
+    newBeta: number;
+    message: string;
+  }[];
+  overallStabilityAssessment: 'RESULTATS_STABLES' | 'RESULTATS_SENSIBLES_AUX_HYPOTHESES';
+  scientificNote: string;
+}
+
+export interface LagSensitivityEntry {
+  lagMonths: number;
+  betaValue: number;
+  ciLower: number;
+  ciUpper: number;
+  pValue: number;
+  aic: number;
+  obsCount: number;
+  biologicalPlausibilityNote: string;
+  isStatisticallyPreferred: boolean;
+}
+
+export interface SpatialReliabilityZone {
+  zoneId: string;
+  zoneName: string;
+  type: string;
+  obsCount: number;
+  dataQualityRating: 'A' | 'B' | 'C';
+  coveragePct: number;
+  uncertaintyMargin: number;
+  localMae: number;
+  isProxy: boolean;
+  proxyHistoricalNote?: string;
+  reliabilityTier: 'FIABILITE_ELEVEE' | 'FIABILITE_INTERMEDIAIRE' | 'FIABILITE_FAIBLE';
+  reliabilityScore: number; // 0-100
+  scoringCriteria: string[];
+}
+
+export interface ValidatedRiskMapZone {
+  zoneId: string;
+  zoneName: string;
+  lat: number;
+  lng: number;
+  
+  // SÉPARATION STRICTE
+  sanitaryRiskTier: 'TRES_FAIBLE' | 'FAIBLE' | 'MODERE' | 'ELEVE' | 'TRES_ELEVE';
+  estimationReliabilityTier: 'FIABILITE_ELEVEE' | 'FIABILITE_INTERMEDIAIRE' | 'FIABILITE_FAIBLE';
+  
+  predictedIncidence: number;
+  confidenceInterval95: [number, number];
+  predictionInterval95: [number, number];
+  uncertaintyMargin: number;
+  
+  observedIncidence?: number;
+  estimationError: 'CONFORME' | 'SURESTIME' | 'SOUS_ESTIME';
+  residualGap?: number;
+  
+  historicalYear: number;
+  environmentalStateText: string;
+  isProxyHistorical: boolean;
+  proxyHistoricalLabel?: string;
+}
+
+export interface DecomposedRobustnessScore {
+  overallScore: number; // 0-100
+  tier: 'ROBUSTE' | 'MODERE' | 'FAIBLE';
+  components: {
+    name: string;
+    weightPct: number;
+    score: number; // 0-100
+    details: string;
+  }[];
+  transparencyJustification: string;
+}
+
+export interface DecomposedConfidenceScore {
+  overallConfidence: number; // 0-100
+  confidenceTier: 'CONFIANCE_HAUTE' | 'CONFIANCE_MOYENNE' | 'CONFIANCE_REDUITE';
+  isDistinctFromSanitaryRisk: boolean;
+  criteriaBreakdown: {
+    criterion: string;
+    score: number;
+    description: string;
+  }[];
+  cautiousAdvisory: string;
+}
+
+export interface AutomatedValidationReportDocument {
+  id: string;
+  validationId: string;
+  validationCode: string;
+  modelCode: string;
+  modelTitle: string;
+  pathology: string;
+  datasetName: string;
+  author: string;
+  generatedDate: string;
+  sections: {
+    sectionNum: number;
+    title: string;
+    content: string;
+    bulletPoints?: string[];
+    tableData?: { headers: string[]; rows: (string | number)[][] };
+    caveatBox?: string;
+  }[];
+  causalityDistinctionNotice: string;
+  cautiousConclusion: string;
+}
+
+export interface ScientificValidationProject {
+  id: string;
+  code: string; // e.g. "VAL_2026_001"
+  title: string;
+  modelId: string;
+  modelCode: string;
+  modelTitle: string;
+  datasetId: string;
+  datasetName: string;
+  pathology: 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'MULTI_PATHOLOGIE' | 'AUTRE';
+  targetPathologiesList: string[];
+  territory: string;
+  periodRange: string;
+  primaryMethod: ValidationMethodType;
+  
+  preValidationCheck: PreValidationCheckResult;
+  dataLeakageAudit: DataLeakageAuditResult;
+  
+  timeSplitResult?: TimeSplitValidationResult;
+  rollingTimeResult?: RollingTimeValidationResult;
+  spatialValidationResult?: SpatialHoldOutResult;
+  crossValidationResult?: CrossValidationResult;
+  
+  calibration: CalibrationAnalysis;
+  residuals: ResidualsAnalysis;
+  robustness: RobustnessAnalysis;
+  lagsSensitivity: LagSensitivityEntry[];
+  
+  spatialReliabilityZones: SpatialReliabilityZone[];
+  validatedMapZones: ValidatedRiskMapZone[];
+  
+  decomposedRobustnessScore: DecomposedRobustnessScore;
+  decomposedConfidenceScore: DecomposedConfidenceScore;
+  
+  reportDocument: AutomatedValidationReportDocument;
+  
+  rValidationScript: string;
+  pythonValidationScript: string;
+  
+  status: 'VALIDE' | 'VALIDATION_PARTIELLE' | 'BLOQUE' | 'EN_COURS';
+  validatedAt: string;
+  validatorName: string;
+  isDemonstrationData: boolean;
+}
+
+export interface V116ValidationScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'TEST_SURAPPRENTISSAGE'
+    | 'TEST_FUITE_INFORMATION'
+    | 'TEST_VALIDATION_TEMPORELLE'
+    | 'TEST_VALIDATION_SPATIALE'
+    | 'TEST_CALIBRATION'
+    | 'TEST_INCERTITUDE_INTERVALLES'
+    | 'TEST_ROBUSTESSE_SCENARIOS'
+    | 'TEST_HISTORICITE_ENV'
+    | 'TEST_MULTI_PATHOLOGIES'
+    | 'TEST_SEPARATION_RISQUE_FIABILITE'
+    | 'TEST_REPRODUCTIBILITE_SCRIPTS'
+    | 'TEST_NON_REGRESSION_V1_V15';
+  description: string;
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  testSteps: string[];
+  expectedOutput: string;
+  actualOutput: string;
+  lastRunDate: string;
+}
+
+// ============================================================================
+// V1.17 — SYSTÈME DE SURVEILLANCE ONE HEALTH & DÉTECTION DES SIGNAUX D'ALERTE
+// ============================================================================
+
+export type SurveillanceSubTabId =
+  | 'TABLEAU_BORD'
+  | 'SURVEILLANCE_SANITAIRE'
+  | 'SURVEILLANCE_CLIMATIQUE'
+  | 'SURVEILLANCE_ENVIRONNEMENTALE'
+  | 'SURVEILLANCE_WASH'
+  | 'SIGNAUX'
+  | 'ALERTES'
+  | 'CARTOGRAPHIE'
+  | 'TENDANCES'
+  | 'HISTORIQUE'
+  | 'RAPPORTS'
+  | 'BANC_TESTS_V117';
+
+export type SurveillanceSignalLevel =
+  | 'NORMAL'           // 🟢 Normal
+  | 'VIGILANCE'        // 🟡 Vigilance
+  | 'SIGNAL_IMPORTANT' // 🟠 Signal important
+  | 'SIGNAL_CRITIQUE'; // 🔴 Signal critique
+
+export type SurveillanceAlertLevel =
+  | 'NIVEAU_0_NORMAL'    // Niveau 0 - Normal
+  | 'NIVEAU_1_VIGILANCE' // Niveau 1 - Vigilance
+  | 'NIVEAU_2_ALERTE'    // Niveau 2 - Alerte
+  | 'NIVEAU_3_MAJEURE';  // Niveau 3 - Alerte majeure
+
+export type SurveillanceAlertStatus =
+  | 'NOUVELLE'
+  | 'EN_VERIFICATION'
+  | 'CONFIRMEE'
+  | 'REJETEE'
+  | 'CLOTUREE';
+
+export type ExpectedLevelMethod =
+  | 'MOYENNE_HISTORIQUE'
+  | 'TENDANCE_LINEAIRE'
+  | 'MEDIANE_SAISONNIERE'
+  | 'MODELE_GLM_NB_VALIDE_V116'
+  | 'SERIE_TEMPORELLE_ARIMA';
+
+export type SignalVerificationAction =
+  | 'CONFIRMER'
+  | 'REJETER'
+  | 'METTRE_EN_OBSERVATION'
+  | 'DEMANDER_DONNEES_SUPPLEMENTAIRES';
+
+export type UserSurveillanceRole =
+  | 'ADMINISTRATEUR' // Configuration, seuils, modèles
+  | 'CHERCHEUR'      // Analyse, modélisation
+  | 'SUPERVISEUR'    // Vérification & validation des alertes
+  | 'COLLECTEUR'     // Saisie & transmission des données
+  | 'OBSERVATEUR'    // Consultation seule
+  | 'ANALYSTE'
+  | 'LECTEUR';
+
+export interface SurveillanceDataQualityAudit {
+  completenessRate: number; // 0 à 100%
+  transmissionDelayDays: number; // ex: 5 jours (J+5)
+  delayedFacilitiesCount: number;
+  hasOutliers: boolean;
+  definitionChanged: boolean;
+  definitionChangeNote?: string;
+  coverageExpanded: boolean;
+  coverageExpansionNote?: string;
+  isProxyData: boolean;
+  proxyWarningNote?: string;
+  historicalYearsAvailable: number;
+  isHistoricalReferenceLimited: boolean;
+}
+
+export interface SurveillanceSignal {
+  id: string;
+  code: string; // ex: "SIG-2026-084"
+  pathology: 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'MULTI_PATHOLOGIE' | 'CHOLERA' | 'AUTRE';
+  pathologyName: string;
+  healthZone: string; // ex: "Kasuku", "Mikelenge", "Alunguli"
+  healthArea: string;
+  period: string; // ex: "2026-S34 (Août 2026)"
+  dateIso: string;
+  indicator: string; // ex: "Incidence hebdomadaire (/1000 hab)"
+  unit: string;
+  observedValue: number;
+  expectedValue: number;
+  differenceValue: number;
+  differencePercent: number; // ex: +42.5%
+  thresholdApplied: number;
+  thresholdDescription: string;
+  method: ExpectedLevelMethod;
+  level: SurveillanceSignalLevel;
+  confidenceScore: number; // 0 à 100%
+  confidenceRating: 'ELEVEE' | 'INTERMEDIAIRE' | 'FAIBLE_LIMITEE';
+  dataQuality: SurveillanceDataQualityAudit;
+  status: 'ACTIF' | 'EN_EVALUATION' | 'CONVERTI_EN_ALERTE' | 'CLASSE_SANS_SUITE';
+  persistence: {
+    firstDetectedPeriod: string;
+    consecutivePeriodsCount: number;
+    isPersistent: boolean;
+    trend: 'HAUSSE' | 'STABLE' | 'BAISSE';
+  };
+  spatialExtension: {
+    isCluster: boolean;
+    neighboringZonesAffected: string[];
+    isSpatialSpread: boolean;
+  };
+  oneHealthDrivers: {
+    rainfallAnomalyMm: number;
+    temperatureAnomalyC: number;
+    relativeHumidityAnomaly: number;
+    stagnantWaterRiskIndex: number;
+    unmanagedWasteSites: number;
+    washAccessDeficitPercent: number;
+    appliedLagMonths: number;
+    lagAssociationDescription: string;
+  };
+  isDemonstrationData: boolean;
+}
+
+export interface SurveillanceAlert {
+  id: string;
+  code: string; // ex: "ALT-2026-012"
+  title: string;
+  pathology: 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'MULTI_PATHOLOGIE' | 'AUTRE';
+  pathologyName: string;
+  healthZone: string;
+  healthAreas: string[];
+  triggerDate: string;
+  period: string;
+  level: SurveillanceAlertLevel;
+  status: SurveillanceAlertStatus;
+  triggerSignalIds: string[];
+  multiCriteriaRule: {
+    ruleName: string;
+    caseIncreaseConfirmed: boolean;
+    deviationOverExpectedPercent: number;
+    persistenceWeeks: number;
+    spatialZonesCount: number;
+    climaticFactorTriggered: boolean;
+    environmentalFactorTriggered: boolean;
+    dataQualitySufficient: boolean;
+    ruleSummary: string;
+  };
+  confidenceScore: number;
+  predictedRiskScore: number; // 0-100% (ex: 82% vs alerte réelle)
+  humanVerification: {
+    actionTaken?: SignalVerificationAction;
+    verifiedBy?: string;
+    verifierRole?: UserSurveillanceRole;
+    verifiedAt?: string;
+    mandatoryJustification?: string;
+    reviewerNotes?: string;
+    additionalDataRequested?: string[];
+  };
+  historyTimeline: {
+    date: string;
+    user: string;
+    role: string;
+    action: string;
+    previousStatus?: string;
+    newStatus?: string;
+    comment: string;
+  }[];
+  isDemonstrationData: boolean;
+}
+
+export interface ThresholdAuditEntry {
+  id: string;
+  pathology: string;
+  indicator: string;
+  previousThreshold: number;
+  newThreshold: number;
+  modifiedBy: string;
+  userRole: UserSurveillanceRole;
+  modifiedAt: string;
+  mandatoryJustification: string;
+}
+
+export interface SurveillanceReport17Sections {
+  metadata: {
+    reportId: string;
+    generatedAt: string;
+    periodCovered: string;
+    territory: string;
+    authorName: string;
+    authorRole: string;
+  };
+  sections: {
+    sectionNumber: number;
+    title: string;
+    summary: string;
+    keyPoints: string[];
+    metrics?: { label: string; value: string | number; badge?: string }[];
+    warnings?: string[];
+  }[];
+  cautiousConclusionNotice: string;
+}
+
+export interface V117SurveillanceScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'TEST_ANOMALIE_SANITAIRE'
+    | 'TEST_SAISONNALITE'
+    | 'TEST_DONNEES_INCOMPLETES'
+    | 'TEST_EXTENSION_SPATIALE'
+    | 'TEST_DONNEES_FUTURES'
+    | 'TEST_PROXY_ENVIRONNEMENTAL'
+    | 'TEST_RETARD_TRANSMISSION'
+    | 'TEST_CHANGEMENT_DEFINITION'
+    | 'TEST_MULTI_PATHOLOGIES_ONE_HEALTH'
+    | 'TEST_INTERACTION_ONE_HEALTH_LAGS';
+  description: string;
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  steps: string[];
+  expectedOutcome: string;
+  actualOutcome?: string;
+  lastRunDate: string;
+}
+
+
+
 
 
 

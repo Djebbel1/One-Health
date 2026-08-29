@@ -87,7 +87,25 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navItems: { id: AppModule; label: string; icon: any; count?: number; badgeColor?: string }[] = [
     { id: 'ACCUEIL', label: 'Accueil', icon: Building2 },
+    {
+      id: 'SURVEILLANCE_ONE_HEALTH_V117',
+      label: '🚨 Surveillance One Health V1.17',
+      icon: Activity,
+      badgeColor: 'bg-rose-600 text-white shadow-sm'
+    },
     { id: 'TABLEAU_BORD', label: 'Tableau de bord', icon: Activity },
+    {
+      id: 'VALIDATION_SCIENTIFIQUE',
+      label: '🛡️ Validation Scientifique V1.16',
+      icon: ShieldCheck,
+      badgeColor: 'bg-teal-600 text-white shadow-sm'
+    },
+    {
+      id: 'MODELISATION',
+      label: '📊 Modélisation Statistique V1.15',
+      icon: Sparkles,
+      badgeColor: 'bg-indigo-500 text-white shadow-sm'
+    },
     {
       id: 'LABORATOIRE_ANALYSE',
       label: '🧪 Laboratoire d Analyse V1.14',
@@ -174,6 +192,9 @@ export const Header: React.FC<HeaderProps> = ({
 
   const isTabActive = (itemId: AppModule, activeId: AppModule) => {
     if (itemId === activeId) return true;
+    if ((itemId === 'VALIDATION_SCIENTIFIQUE' || itemId === 'SCIENTIFIC_VALIDATION') && (activeId === 'VALIDATION_SCIENTIFIQUE' || activeId === 'SCIENTIFIC_VALIDATION')) return true;
+    if ((itemId === 'MODELISATION' || itemId === 'MODELISATION_STATISTIQUE' || itemId === 'MODELISATION_V115' || itemId === 'STATISTICAL_MODELING') && (activeId === 'MODELISATION' || activeId === 'MODELISATION_STATISTIQUE' || activeId === 'MODELISATION_V115' || activeId === 'STATISTICAL_MODELING')) return true;
+    if ((itemId === 'LABORATOIRE_ANALYSE' || itemId === 'LABORATOIRE_ANALYSE_V114' || itemId === 'LAB_ANALYSE') && (activeId === 'LABORATOIRE_ANALYSE' || activeId === 'LABORATOIRE_ANALYSE_V114' || activeId === 'LAB_ANALYSE')) return true;
     if ((itemId === 'TABLEAU_BORD' || itemId === 'DASHBOARD') && (activeId === 'TABLEAU_BORD' || activeId === 'DASHBOARD')) return true;
     if ((itemId === 'ENQUETES_MENAGES' || itemId === 'SURVEY') && (activeId === 'ENQUETES_MENAGES' || activeId === 'SURVEY')) return true;
     if ((itemId === 'OBSERVATIONS_ENV' || itemId === 'ENV') && (activeId === 'OBSERVATIONS_ENV' || activeId === 'ENV')) return true;
