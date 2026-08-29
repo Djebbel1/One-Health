@@ -1199,3 +1199,16 @@ export const INITIAL_DYNAMIC_OBSERVATIONS: DynamicObservationRecord[] = [
     updatedAt: '2024-04-02T14:00:00Z'
   }
 ];
+
+export const ZONES_SANTE_MANIEMA = [
+  { id: 'ZS-KINDU', nom: 'Kindu (Urbaine)', population: 215000 },
+  { id: 'ZS-ALUNGULI', nom: 'Alunguli (Rive droite)', population: 195000 },
+  { id: 'ZS-KASONGO', nom: 'Kasongo', population: 230000 },
+  { id: 'ZS-KIBOMBO', nom: 'Kibombo', population: 180000 },
+  { id: 'ZS-PANGI', nom: 'Pangi / Kampene', population: 165000 },
+  { id: 'ZS-PUNIA', nom: 'Punia', population: 140000 },
+  { id: 'ZS-LUBUTU', nom: 'Lubutu', population: 135000 },
+  { id: 'ZS-KAILO', nom: 'Kailo', population: 120000 },
+  { id: 'ZS-KABAMBARE', nom: 'Kabambare', population: 155000 }
+];
+

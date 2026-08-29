@@ -18,6 +18,7 @@ import { ManiemaPlatformDashboard } from './components/maniema/ManiemaPlatformDa
 import { SurveyOperationsModuleV111 } from './components/SurveyOperationsModuleV111';
 import { MultiSourceHubModule } from './components/multisource/MultiSourceHubModule';
 import { ScientificDiagnosticModuleV113 } from './components/diagnostic/ScientificDiagnosticModuleV113';
+import { ScientificLaboratoryModuleV114 } from './components/laboratory/ScientificLaboratoryModuleV114';
 import { DataExportModal } from './components/DataExportModal';
 import { AuthModal } from './components/AuthModal';
 import { AppModule } from './types';
@@ -42,6 +43,7 @@ import {
 const NAV_ITEMS: { id: AppModule; label: string; shortLabel: string; icon: any }[] = [
   { id: 'ACCUEIL', label: 'Accueil', shortLabel: 'Accueil', icon: Building2 },
   { id: 'DASHBOARD', label: 'Tableau de bord', shortLabel: 'Dashboard', icon: LayoutDashboard },
+  { id: 'LABORATOIRE_ANALYSE', label: '🧪 Laboratoire d Analyse V1.14', shortLabel: 'V1.14 Lab', icon: Sparkles },
   { id: 'DIAGNOSTIC_SCIENTIFIQUE', label: '🔬 Diagnostic Scientifique V1.13', shortLabel: 'V1.13 Diag.', icon: Sparkles },
   { id: 'SOURCES_ET_IMPORTS_V112', label: '📥 Sources & Imports V1.12', shortLabel: 'V1.12 Sources', icon: UploadCloud },
   { id: 'ENQUETES_OPERATIONNELLES_V111', label: '📋 Enquêtes & Supervision V1.11', shortLabel: 'V1.11 Enquêtes', icon: ClipboardList },
@@ -70,6 +72,7 @@ const MainContent: React.FC = () => {
 
   const isModuleActive = (itemModule: AppModule, current: AppModule) => {
     if (itemModule === current) return true;
+    if ((itemModule === 'LABORATOIRE_ANALYSE' || itemModule === 'LABORATOIRE_ANALYSE_V114' || itemModule === 'LAB_ANALYSE') && (current === 'LABORATOIRE_ANALYSE' || current === 'LABORATOIRE_ANALYSE_V114' || current === 'LAB_ANALYSE')) return true;
     if ((itemModule === 'DIAGNOSTIC_SCIENTIFIQUE' || itemModule === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || itemModule === 'DIAGNOSTIC_DONNEES') && (current === 'DIAGNOSTIC_SCIENTIFIQUE' || current === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || current === 'DIAGNOSTIC_DONNEES')) return true;
     if ((itemModule === 'DASHBOARD' || itemModule === 'TABLEAU_BORD') && (current === 'DASHBOARD' || current === 'TABLEAU_BORD')) return true;
     if ((itemModule === 'SURVEY' || itemModule === 'ENQUETES_MENAGES') && (current === 'SURVEY' || current === 'ENQUETES_MENAGES' || current === 'SYNCHRONISATION')) return true;
@@ -172,6 +175,9 @@ const MainContent: React.FC = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeModule === 'ACCUEIL' && <HomeModule onNavigate={handleNavigate} />}
+        {(activeModule === 'LABORATOIRE_ANALYSE' || activeModule === 'LABORATOIRE_ANALYSE_V114' || activeModule === 'LAB_ANALYSE') && (
+          <ScientificLaboratoryModuleV114 />
+        )}
         {(activeModule === 'DIAGNOSTIC_SCIENTIFIQUE' || activeModule === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || activeModule === 'DIAGNOSTIC_DONNEES') && (
           <ScientificDiagnosticModuleV113 />
         )}

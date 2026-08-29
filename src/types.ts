@@ -530,9 +530,13 @@ export type DataSourceType =
 
 export type OneHealthDimension =
   | 'SANTE'
+  | 'SANTE_HUMAINE'
+  | 'SANTE_ANIMALE'
   | 'CLIMAT'
   | 'ENVIRONNEMENT'
+  | 'WASH'
   | 'COMMUNAUTAIRE'
+  | 'SOCIO_DEMOGRAPHIQUE'
   | 'GEOGRAPHIE'
   | 'DEMOGRAPHIE'
   | 'LABORATOIRE'
@@ -2390,7 +2394,21 @@ export type GeographicLevel =
   | 'QUARTIER_VILLAGE'
   | 'AVENUE_RUE'
   | 'SITE'
-  | 'MENAGE_POINT';
+  | 'MENAGE_POINT'
+  | 'MANIEMA_ENTIER'
+  | 'VILLE_KINDU'
+  | 'QUARTIER'
+  | 'AVENUE';
+
+export type ScientificDataStatus =
+  | 'PRESENTE'
+  | 'OBSERVEE'
+  | 'IMPORTEE'
+  | 'MANQUANTE_NULL'
+  | 'ZERO_MESURE'
+  | 'PROXY'
+  | 'ESTIMEE'
+  | 'NON_APPLICABLE';
 
 export interface GeographicUnitV110 {
   id: string;
@@ -3662,15 +3680,6 @@ export type LabSubMenu =
   | 'RAPPORTS'
   | 'HISTORIQUE_ANALYSES'
   | 'SUITE_TESTS_V114';
-
-export type GeographicLevel =
-  | 'MANIEMA_ENTIER'
-  | 'VILLE_KINDU'
-  | 'ZONE_SANTE'
-  | 'AIRE_SANTE'
-  | 'QUARTIER'
-  | 'AVENUE'
-  | 'SITE';
 
 export type AnalysisStatus =
   | 'BROUILLON'

@@ -89,6 +89,12 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'ACCUEIL', label: 'Accueil', icon: Building2 },
     { id: 'TABLEAU_BORD', label: 'Tableau de bord', icon: Activity },
     {
+      id: 'LABORATOIRE_ANALYSE',
+      label: '🧪 Laboratoire d Analyse V1.14',
+      icon: Sparkles,
+      badgeColor: 'bg-indigo-600 text-white'
+    },
+    {
       id: 'DIAGNOSTIC_SCIENTIFIQUE',
       label: '🔬 Diagnostic Scientifique V1.13',
       icon: Sparkles,

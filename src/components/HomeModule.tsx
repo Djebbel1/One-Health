@@ -160,6 +160,35 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Card V1.14: Laboratoire d'Analyse Scientifique & Dataset Analytique */}
+          <div
+            onClick={() => onNavigate('LABORATOIRE_ANALYSE')}
+            className="group bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white rounded-xl p-5 border-2 border-indigo-500/70 hover:border-indigo-400 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between md:col-span-3 lg:col-span-1"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-indigo-500/30 text-indigo-300 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-slate-950 transition">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-0.5 bg-indigo-400/30 text-indigo-200 border border-indigo-400/50 text-[10px] font-black rounded-full">
+                  NOUVEAU V1.14
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base group-hover:text-indigo-300 transition">
+                  🧪 Laboratoire d Analyse & Dataset Analytique
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Passerelle vers la modélisation : sélection des variables One Health, création de vues contrôlées sans altération du RAW/CLEANED, lags temporels (0–4 mois), associations et rapport automatisé en 17 sections.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-indigo-300">
+              <span>8 Scénarios de Validation & Suite de Tests</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
           {/* Card V1.13: Diagnostic Scientifique, Disponibilité & Préparation Analytique */}
           <div
             onClick={() => onNavigate('DIAGNOSTIC_SCIENTIFIQUE')}
