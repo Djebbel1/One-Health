@@ -1,6 +1,8 @@
 import React from 'react';
 import { UserRole } from '../types';
 import { Shield, User, CheckCircle, Lock } from 'lucide-react';
+import { APP_CONFIG } from '../config/appConfig';
+import { OneHealthLogo } from './common/OneHealthLogo';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -54,14 +56,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-indigo-600" />
-              Changer de Profil Utilisateur (Authentification)
-            </h3>
-            <p className="text-xs text-slate-500">
-              Plateforme One Health Kindu • Recherche Universitaire RDC
-            </p>
+          <div className="flex items-center gap-3">
+            <OneHealthLogo size="sm" variant="badge" showTerritoryBadge={false} />
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-emerald-600" />
+                <span>Authentification &amp; Rôles</span>
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                {APP_CONFIG.name} • {APP_CONFIG.primaryRegion} (RDC)
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}

@@ -29,7 +29,7 @@ export const V17ReportSummaryView: React.FC = () => {
             RAPPORT FINAL DE SYNTHÈSE V1.7 — BASE SPATIO-TEMPORELLE INTÉGRÉE
           </h3>
           <p className="text-xs text-emerald-100/90">
-            Validation technique, structurelle et scientifique pour le projet épidémiologique One Health Kindu.
+            Validation technique, structurelle et scientifique pour le projet épidémiologique One Health Maniema.
           </p>
         </div>
 

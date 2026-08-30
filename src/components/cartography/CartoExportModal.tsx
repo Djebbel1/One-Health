@@ -68,7 +68,7 @@ export const CartoExportModal: React.FC<CartoExportModalProps> = ({
 
     try {
       const timestamp = new Date().toISOString().slice(0, 10);
-      const filenamePrefix = `OneHealth_Kindu_Carto_${selectedYear}${selectedMonth ? `_M${selectedMonth}` : ''}_${selectedHealthAreaId}`;
+      const filenamePrefix = `OneHealth_Maniema_Carto_${selectedYear}${selectedMonth ? `_M${selectedMonth}` : ''}_${selectedHealthAreaId}`;
 
       if (exportFormat === 'EXCEL') {
         // Multi-tab Excel export

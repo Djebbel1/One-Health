@@ -22,9 +22,31 @@ import { ScientificLaboratoryModuleV114 } from './components/laboratory/Scientif
 import { StatisticalModelingModuleV115 } from './components/modeling/StatisticalModelingModuleV115';
 import { ScientificValidationModuleV116 } from './components/validation/ScientificValidationModuleV116';
 import { OneHealthSurveillanceModuleV117 } from './components/surveillance/OneHealthSurveillanceModuleV117';
+import { TerrainModule } from './components/terrain/TerrainModule';
+import { GovernanceModule } from './components/governance/GovernanceModule';
+import { SecurityAndProductionModule } from './components/security/SecurityAndProductionModule';
 import { DataExportModal } from './components/DataExportModal';
 import { AuthModal } from './components/AuthModal';
-import { AppModule } from './types';
+import { AboutOneHealthManiemaModal } from './components/AboutOneHealthManiemaModal';
+import { APP_CONFIG } from './config/appConfig';
+import { AppModule, BackupRecord, FeatureFlag, MaintenanceConfig, MFAConfiguration, SecurityAuditLogEntry, SecurityEnvironmentConfig, CentralSystemError } from './types';
+import {
+  DEFAULT_SECURITY_ENV_CONFIG,
+  INITIAL_CONNECTED_DEVICES,
+  DEFAULT_MFA_CONFIG,
+  DEFAULT_ROLE_PERMISSION_MATRIX,
+  DEFAULT_DATA_PRIVACY_RULES,
+  INITIAL_RECYCLE_BIN_ITEMS,
+  DEFAULT_RETENTION_POLICIES,
+  INITIAL_BACKUP_RECORDS,
+  DEFAULT_DISASTER_RECOVERY_PLAN,
+  INITIAL_SECURITY_LOGS,
+  INITIAL_CENTRAL_ERRORS,
+  DEFAULT_FEATURE_FLAGS,
+  DEFAULT_MAINTENANCE_CONFIG,
+  SYSTEM_HEALTH_METRICS_MOCK,
+  MOCK_SECURITY_USER_SESSION
+} from './data/mockSecurityDataV120';
 import {
   LayoutDashboard,
   Map as MapIcon,
@@ -40,11 +62,17 @@ import {
   Sparkles,
   Globe,
   ClipboardList,
-  UploadCloud
+  UploadCloud,
+  Compass,
+  FolderKanban,
+  Shield
 } from 'lucide-react';
 
 const NAV_ITEMS: { id: AppModule; label: string; shortLabel: string; icon: any }[] = [
   { id: 'ACCUEIL', label: 'Accueil', shortLabel: 'Accueil', icon: Building2 },
+  { id: 'SECURITE_PRODUCTION', label: '🛡️ Sécurité & Prod V1.20', shortLabel: 'V1.20 Sec', icon: Shield },
+  { id: 'PROJETS_GOUVERNANCE', label: '🏛️ Projets & Gouvernance V1.19', shortLabel: 'V1.19 Gouv.', icon: FolderKanban },
+  { id: 'TERRAIN', label: '🧭 Opérations Terrain V1.18', shortLabel: 'V1.18 Terrain', icon: Compass },
   { id: 'SURVEILLANCE_ONE_HEALTH_V117', label: '🚨 Surveillance One Health V1.17', shortLabel: 'V1.17 Veille', icon: Activity },
   { id: 'VALIDATION_SCIENTIFIQUE', label: '🛡️ Validation Scientifique V1.16', shortLabel: 'V1.16 Valid.', icon: ShieldCheck },
   { id: 'MODELISATION', label: '📊 Modélisation Statistique V1.15', shortLabel: 'V1.15 Modèle', icon: Sparkles },
@@ -71,12 +99,142 @@ const MainContent: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { qualityIssues, userSession, setUserSession } = useData();
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const { qualityIssues, userSession, setUserSession, oneHealthProjects, pendingSyncCount } = useData();
+
+  // V1.20 Security & Production State
+  const [envConfig, setEnvConfig] = useState<SecurityEnvironmentConfig>(DEFAULT_SECURITY_ENV_CONFIG);
+  const [connectedDevices, setConnectedDevices] = useState(INITIAL_CONNECTED_DEVICES);
+  const [mfaConfig, setMfaConfig] = useState<MFAConfiguration>(DEFAULT_MFA_CONFIG);
+  const [permissionMatrix, setPermissionMatrix] = useState(DEFAULT_ROLE_PERMISSION_MATRIX);
+  const [privacyRules, setPrivacyRules] = useState(DEFAULT_DATA_PRIVACY_RULES);
+  const [recycleBinItems, setRecycleBinItems] = useState(INITIAL_RECYCLE_BIN_ITEMS);
+  const [retentionPolicies, setRetentionPolicies] = useState(DEFAULT_RETENTION_POLICIES);
+  const [backups, setBackups] = useState<BackupRecord[]>(INITIAL_BACKUP_RECORDS);
+  const [drPlan, setDrPlan] = useState(DEFAULT_DISASTER_RECOVERY_PLAN);
+  const [securityLogs, setSecurityLogs] = useState<SecurityAuditLogEntry[]>(INITIAL_SECURITY_LOGS);
+  const [centralErrors, setCentralErrors] = useState<CentralSystemError[]>(INITIAL_CENTRAL_ERRORS);
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlag[]>(DEFAULT_FEATURE_FLAGS);
+  const [maintenanceConfig, setMaintenanceConfig] = useState<MaintenanceConfig>(DEFAULT_MAINTENANCE_CONFIG);
+  const [systemHealth, setSystemHealth] = useState(SYSTEM_HEALTH_METRICS_MOCK);
+  const [currentSecuritySession, setCurrentSecuritySession] = useState(MOCK_SECURITY_USER_SESSION);
 
   const pendingIssuesCount = qualityIssues.filter(q => q.status === 'A_CORRIGER').length;
 
+  const handleAddSecurityLog = (
+    action: SecurityAuditLogEntry['action'],
+    details: string,
+    severity: SecurityAuditLogEntry['severity'] = 'INFO'
+  ) => {
+    const newLog: SecurityAuditLogEntry = {
+      id: `SEC-LOG-${Date.now().toString(36).toUpperCase()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      userId: userSession.id,
+      userName: userSession.name,
+      userRole: userSession.role as any,
+      ipAddress: '105.178.112.9 (Kindu)',
+      action,
+      resource: 'SYSTEM',
+      status: 'SUCCESS',
+      severity,
+      details,
+      environment: envConfig.activeEnvironment
+    };
+    setSecurityLogs(prev => [newLog, ...prev]);
+  };
+
+  const handleCreateBackup = (name: string, backupType: BackupRecord['backupType']) => {
+    const newBackup: BackupRecord = {
+      backupId: `BKP-${Date.now().toString(36).toUpperCase()}`,
+      name,
+      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      createdBy: userSession.name,
+      environmentSource: envConfig.activeEnvironment,
+      fileSizeBytes: Math.floor(Math.random() * 4000000) + 12000000,
+      sha256Hash: `a8f5c9e2b1d43768e14298fc1c149afbf4c8996fb92427ae41e4649b934ca495`,
+      backupType,
+      tablesIncluded: [
+        'study_projects',
+        'study_protocols',
+        'data_dictionary',
+        'household_surveys',
+        'health_records',
+        'climate_records',
+        'environmental_obs',
+        'multilevel_validations',
+        'reproducible_models',
+        'central_audit_log'
+      ],
+      recordCounts: {
+        projects: oneHealthProjects.length,
+        datasets: 6,
+        surveys: 150,
+        models: 3,
+        protocols: 3,
+        validations: 18
+      },
+      status: 'VERIFIED',
+      verifiedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      verificationStatus: 'PASSED',
+      retentionDays: backupType === 'SCHEDULED_WEEKLY' ? 90 : 30,
+      isEncrypted: true,
+      downloadUrlMasked: `https://secure-backup.onehealth.cd/archives/2026/08/BKP-SNAPSHOT-${Date.now()}.enc`
+    };
+    setBackups(prev => [newBackup, ...prev]);
+    handleAddSecurityLog('BACKUP_CREATED', `Sauvegarde ${name} (${backupType}) créée et chiffrée avec succès.`, 'INFO');
+  };
+
+  const handleVerifyBackupIntegrity = (backupId: string) => {
+    setBackups(prev =>
+      prev.map(b => (b.backupId === backupId ? { ...b, status: 'VERIFIED' as const, verificationStatus: 'PASSED' as const, verifiedAt: new Date().toISOString().replace('T', ' ').substring(0, 16) } : b))
+    );
+    handleAddSecurityLog('BACKUP_INTEGRITY_VERIFIED', `Contrôle d'intégrité SHA-256 validé pour la sauvegarde ${backupId}.`, 'INFO');
+  };
+
+  const handleRunStagingTestRestore = (backupId: string) => {
+    handleAddSecurityLog('RESTORE_COMPLETED', `Restauration de test exécutée avec succès en environnement STAGING pour la sauvegarde ${backupId}. Aucun impact sur la base de production.`, 'WARNING');
+  };
+
+  const handleToggleFeatureFlag = (flagKey: string) => {
+    setFeatureFlags(prev =>
+      prev.map(f => {
+        if (f.key === flagKey) {
+          const next = !f.isEnabled;
+          handleAddSecurityLog('CONFIG_CHANGED', `Feature Flag ${f.label} modifié : ${next ? 'ACTIVÉ' : 'DÉSACTIVÉ'}.`, 'WARNING');
+          return { ...f, isEnabled: next };
+        }
+        return f;
+      })
+    );
+  };
+
+  const handleUpdateEnvConfig = (updates: Partial<SecurityEnvironmentConfig>) => {
+    setEnvConfig(prev => ({ ...prev, ...updates }));
+    handleAddSecurityLog('CONFIG_CHANGED', `Configuration environnement modifiée : ${JSON.stringify(updates)}`, 'WARNING');
+  };
+
+  const handleRevokeDevice = (deviceId: string) => {
+    setConnectedDevices(prev =>
+      prev.map(d => (d.deviceId === deviceId ? { ...d, isRevoked: true } : d))
+    );
+    handleAddSecurityLog('SESSION_REVOKED', `Appareil ${deviceId} révoqué par ${userSession.name}`, 'WARNING');
+  };
+
+  const handleRestoreRecycleItem = (itemId: string) => {
+    setRecycleBinItems(prev => prev.filter(i => i.itemId !== itemId));
+    handleAddSecurityLog('RECYCLE_RESTORED', `Élément restauré depuis la corbeille : ${itemId}`, 'INFO');
+  };
+
+  const handlePermanentDeleteRecycleItem = (itemId: string) => {
+    setRecycleBinItems(prev => prev.filter(i => i.itemId !== itemId));
+    handleAddSecurityLog('DATA_PURGED', `Purge définitive autorisée par l'administrateur pour : ${itemId}`, 'CRITICAL');
+  };
+
   const isModuleActive = (itemModule: AppModule, current: AppModule) => {
     if (itemModule === current) return true;
+    if ((itemModule === 'SECURITE_PRODUCTION' || itemModule === 'SECURITE_PRODUCTION_V120') && (current === 'SECURITE_PRODUCTION' || current === 'SECURITE_PRODUCTION_V120')) return true;
+    if ((itemModule === 'PROJETS_GOUVERNANCE' || itemModule === 'GOUVERNANCE_DONNEES' || itemModule === 'PROJETS_ETUDES' || itemModule === 'DICTIONNAIRE_VARIABLES' || itemModule === 'DATA_LINEAGE_V119' || itemModule === 'REPRODUCTIBILITE_V119') && (current === 'PROJETS_GOUVERNANCE' || current === 'GOUVERNANCE_DONNEES' || current === 'PROJETS_ETUDES' || current === 'DICTIONNAIRE_VARIABLES' || current === 'DATA_LINEAGE_V119' || current === 'REPRODUCTIBILITE_V119')) return true;
+    if ((itemModule === 'TERRAIN' || itemModule === 'GESTION_TERRAIN_V118' || itemModule === 'TERRAIN_V118' || itemModule === 'CAMPAGNES_TERRAIN' || itemModule === 'ENQUETES_TERRAIN' || itemModule === 'COLLECTE_OFFLINE') && (current === 'TERRAIN' || current === 'GESTION_TERRAIN_V118' || current === 'TERRAIN_V118' || current === 'CAMPAGNES_TERRAIN' || current === 'ENQUETES_TERRAIN' || current === 'COLLECTE_OFFLINE')) return true;
     if ((itemModule === 'SURVEILLANCE_ONE_HEALTH_V117' || itemModule === 'SURVEILLANCE' || itemModule === 'SURVEILLANCE_MODULE') && (current === 'SURVEILLANCE_ONE_HEALTH_V117' || current === 'SURVEILLANCE' || current === 'SURVEILLANCE_MODULE')) return true;
     if ((itemModule === 'VALIDATION_SCIENTIFIQUE' || itemModule === 'SCIENTIFIC_VALIDATION') && (current === 'VALIDATION_SCIENTIFIQUE' || current === 'SCIENTIFIC_VALIDATION')) return true;
     if ((itemModule === 'MODELISATION' || itemModule === 'MODELISATION_STATISTIQUE' || itemModule === 'MODELISATION_V115' || itemModule === 'STATISTICAL_MODELING') && (current === 'MODELISATION' || current === 'MODELISATION_STATISTIQUE' || current === 'MODELISATION_V115' || current === 'STATISTICAL_MODELING')) return true;
@@ -119,6 +277,9 @@ const MainContent: React.FC = () => {
         setActiveModule={handleNavigate}
         onOpenExport={() => setIsExportModalOpen(true)}
         onOpenAuth={() => setIsAuthModalOpen(true)}
+        onOpenAbout={() => setIsAboutModalOpen(true)}
+        activeEnvironment={envConfig.activeEnvironment}
+        maintenanceNotice={maintenanceConfig.active ? maintenanceConfig.message : null}
       />
 
       {/* Mobile Top Navigation Trigger */}
@@ -183,6 +344,75 @@ const MainContent: React.FC = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeModule === 'ACCUEIL' && <HomeModule onNavigate={handleNavigate} />}
+        {(activeModule === 'SECURITE_PRODUCTION' || activeModule === 'SECURITE_PRODUCTION_V120') && (
+          <SecurityAndProductionModule
+            envConfig={envConfig}
+            onUpdateEnvConfig={handleUpdateEnvConfig}
+            systemHealth={systemHealth}
+            currentSession={currentSecuritySession}
+            connectedDevices={connectedDevices}
+            mfaConfig={mfaConfig}
+            permissionMatrix={permissionMatrix}
+            privacyRules={privacyRules}
+            recycleBinItems={recycleBinItems}
+            retentionPolicies={retentionPolicies}
+            backups={backups}
+            drPlan={drPlan}
+            securityLogs={securityLogs}
+            centralErrors={centralErrors}
+            featureFlags={featureFlags}
+            maintenanceConfig={maintenanceConfig}
+            projects={oneHealthProjects}
+            currentUserRole={userSession.role as any}
+            currentUserName={userSession.name}
+            pendingSyncCount={pendingSyncCount}
+            onRefreshHealth={() => {
+              setSystemHealth({ ...systemHealth, lastCheckedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+              handleAddSecurityLog('SYSTEM_HEALTH_CHECK', 'Vérification proactive des métriques système et de la base IDB.', 'INFO');
+            }}
+            onRevokeDevice={handleRevokeDevice}
+            onUpdateMfaConfig={(updates) => {
+              setMfaConfig(prev => ({ ...prev, ...updates }));
+              handleAddSecurityLog('MFA_CHALLENGE_ISSUED', `Paramètres MFA mis à jour : ${updates.enabled ? 'Activé' : 'Désactivé'}`, 'WARNING');
+            }}
+            onResetFailedAttempts={() => {
+              setCurrentSecuritySession(prev => ({ ...prev, failedConsecutiveAttempts: 0 }));
+              handleAddSecurityLog('CONFIG_CHANGED', 'Compteur de tentatives échouées réinitialisé.', 'INFO');
+            }}
+            onSimulateFailedLogin={() => {
+              setCurrentSecuritySession(prev => {
+                const nextCount = prev.failedConsecutiveAttempts + 1;
+                if (nextCount >= 5) {
+                  handleAddSecurityLog('ACCOUNT_LOCKED', `Compte temporairement verrouillé après ${nextCount} tentatives infructueuses.`, 'CRITICAL');
+                } else {
+                  handleAddSecurityLog('AUTH_LOGIN_FAILED', `Échec d'authentification simulé (Tentative ${nextCount}/5)`, 'WARNING');
+                }
+                return { ...prev, failedConsecutiveAttempts: nextCount };
+              });
+            }}
+            onSafeLogout={() => {
+              handleAddSecurityLog('AUTH_LOGOUT', `Déconnexion sécurisée effectuée pour ${userSession.name}`, 'INFO');
+              setIsAuthModalOpen(true);
+            }}
+            onRestoreRecycleItem={handleRestoreRecycleItem}
+            onPermanentDeleteRecycleItem={handlePermanentDeleteRecycleItem}
+            onCreateBackup={handleCreateBackup}
+            onVerifyBackupIntegrity={handleVerifyBackupIntegrity}
+            onRunStagingTestRestore={handleRunStagingTestRestore}
+            onToggleFeatureFlag={handleToggleFeatureFlag}
+            onUpdateMaintenanceConfig={(updates) => {
+              setMaintenanceConfig(prev => ({ ...prev, ...updates }));
+              handleAddSecurityLog('CONFIG_CHANGED', `Mode maintenance : ${updates.active ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`, 'WARNING');
+            }}
+            onAddSecurityLog={handleAddSecurityLog}
+          />
+        )}
+        {(activeModule === 'PROJETS_GOUVERNANCE' || activeModule === 'GOUVERNANCE_DONNEES' || activeModule === 'PROJETS_ETUDES' || activeModule === 'DICTIONNAIRE_VARIABLES' || activeModule === 'DATA_LINEAGE_V119' || activeModule === 'REPRODUCTIBILITE_V119') && (
+          <GovernanceModule />
+        )}
+        {(activeModule === 'TERRAIN' || activeModule === 'GESTION_TERRAIN_V118' || activeModule === 'TERRAIN_V118' || activeModule === 'CAMPAGNES_TERRAIN' || activeModule === 'ENQUETES_TERRAIN' || activeModule === 'COLLECTE_OFFLINE') && (
+          <TerrainModule />
+        )}
         {(activeModule === 'SURVEILLANCE_ONE_HEALTH_V117' || activeModule === 'SURVEILLANCE' || activeModule === 'SURVEILLANCE_MODULE') && (
           <OneHealthSurveillanceModuleV117 />
         )}
@@ -248,6 +478,12 @@ const MainContent: React.FC = () => {
       </div>
 
       {/* Modals */}
+      <AboutOneHealthManiemaModal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+        activeEnvironment={envConfig.activeEnvironment}
+      />
+
       <DataExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
@@ -272,10 +508,15 @@ const MainContent: React.FC = () => {
       />
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto">
-        <p className="max-w-7xl mx-auto px-4">
-          One Health Kindu • Plateforme Universitaire de Recherche Spatio-Temporelle (RDC - Maniema) • Respect strict du protocole d'anonymisation et de non-extrapolation historique
-        </p>
+      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="font-semibold text-slate-700">
+            {APP_CONFIG.name} ({APP_CONFIG.version}) • {APP_CONFIG.tagline}
+          </p>
+          <p className="text-[11px] text-slate-400">
+            {APP_CONFIG.primaryRegion} (RDC) • Anonymisation stricte (No PII) • Non-extrapolation temporelle
+          </p>
+        </div>
       </footer>
     </div>
   );

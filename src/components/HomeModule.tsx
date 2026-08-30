@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Activity,
   ShieldCheck,
@@ -8,10 +8,20 @@ import {
   Database,
   ArrowRight,
   Sparkles,
-  Award
+  Award,
+  Globe,
+  MapPin,
+  CheckCircle2,
+  Info,
+  Sliders,
+  TrendingUp,
+  Cpu
 } from 'lucide-react';
 import { AppModule } from '../types';
 import { useData } from '../context/DataContext';
+import { APP_CONFIG } from '../config/appConfig';
+import { OneHealthLogo } from './common/OneHealthLogo';
+import { AboutOneHealthManiemaModal } from './AboutOneHealthManiemaModal';
 
 interface HomeModuleProps {
   onNavigate: (module: AppModule) => void;
@@ -19,27 +29,49 @@ interface HomeModuleProps {
 
 export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
   const { householdSurveys, environmentalObs, healthRecords, climateRecords, userSession } = useData();
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
 
   return (
     <div className="space-y-6">
-      {/* Hero Banner with University Research Framing */}
+      {/* About Modal */}
+      <AboutOneHealthManiemaModal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+        activeEnvironment="PRODUCTION"
+      />
+
+      {/* Hero Banner with Official ONE HEALTH MANIEMA Identity */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-2xl p-6 sm:p-8 border border-slate-700/60 shadow-md relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-            <Award className="w-3.5 h-3.5" />
-            <span>Projet Universitaire de Recherche & Thèse Doctorale</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+              <Award className="w-3.5 h-3.5" />
+              <span>Plateforme Scientifique &amp; Opérationnelle One Health</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 text-xs font-semibold border border-cyan-500/30">
+              <MapPin className="w-3 h-3" />
+              <span>Province du Maniema • RDC</span>
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 px-2 py-0.5 bg-slate-800/80 rounded-md border border-slate-700">
+              {APP_CONFIG.version}
+            </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
-            Approche One Health pour la modélisation des risques sanitaires à Kindu
-          </h1>
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+              {APP_CONFIG.name}
+            </h1>
+            <p className="text-sm sm:text-base text-emerald-300 font-semibold">
+              {APP_CONFIG.tagline}
+            </p>
+          </div>
 
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Plateforme intégrée de collecte géoréférencée, contrôle qualité et compilation spatio-temporelle
-            des données sanitaires (paludisme, fièvre typhoïde), climatiques (pluviométrie, températures) et
-            environnementales (gîtes larvaires, assainissement) à <strong className="text-emerald-300">Kindu, Province du Maniema, RDC</strong>.
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">
+            Plateforme numérique intégrée de collecte géoréférencée, gestion de protocoles, contrôle qualité,
+            analyses multidimensionnelles, modélisation épidémiologique et surveillance prospective One Health
+            en <strong className="text-emerald-300">Province du Maniema (RDC)</strong> — avec la <strong className="text-teal-300">Ville de Kindu</strong> comme territoire pilote initial et extension provinciale continue.
           </p>
 
           {/* Quick Metrics Bar */}
@@ -52,22 +84,57 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
             <div className="bg-slate-800/80 backdrop-blur-xs rounded-xl p-3 border border-slate-700">
               <span className="text-xs text-slate-400 block font-medium">Observations Env.</span>
               <span className="text-xl font-bold text-teal-400">{environmentalObs.length}</span>
-              <span className="text-[10px] text-slate-400 block">Facteurs avec dates validité</span>
+              <span className="text-[10px] text-slate-400 block">Gîtes &amp; Facteurs spatiaux</span>
             </div>
             <div className="bg-slate-800/80 backdrop-blur-xs rounded-xl p-3 border border-slate-700">
               <span className="text-xs text-slate-400 block font-medium">Rapports Sanitaires</span>
               <span className="text-xl font-bold text-cyan-400">{healthRecords.length}</span>
-              <span className="text-[10px] text-slate-400 block">Aires de santé (2020-2024)</span>
+              <span className="text-[10px] text-slate-400 block">Registres &amp; Consultations</span>
             </div>
             <div className="bg-slate-800/80 backdrop-blur-xs rounded-xl p-3 border border-slate-700">
               <span className="text-xs text-slate-400 block font-medium">Relevés Climat</span>
               <span className="text-xl font-bold text-amber-400">{climateRecords.length}</span>
-              <span className="text-[10px] text-slate-400 block">Météo & Précipitations</span>
+              <span className="text-[10px] text-slate-400 block">Pluie &amp; Températures</span>
             </div>
           </div>
 
-          {/* Direct Quick Action Buttons for Household Surveys (V1.1 Access) */}
+          {/* Direct Quick Action Buttons for Main V1.20 and V1.21 modules */}
           <div className="pt-3 flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setIsAboutModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-xl text-xs font-bold border border-emerald-500/40 transition transform active:scale-95"
+            >
+              <Info className="w-4 h-4 text-emerald-400" />
+              <span>ℹ️ À PROPOS DE ONE HEALTH MANIEMA</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('SECURITE_PRODUCTION')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 text-slate-950 rounded-xl text-xs font-black shadow-md transition transform active:scale-95"
+            >
+              <ShieldCheck className="w-4 h-4 text-slate-950" />
+              <span>🛡️ SÉCURITÉ &amp; PRODUCTION V1.20</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('PROJETS_GOUVERNANCE')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-xl text-xs font-black border border-teal-500/40 transition transform active:scale-95"
+            >
+              <Sparkles className="w-4 h-4 text-teal-300" />
+              <span>🏛️ GOUVERNANCE &amp; PROJETS V1.19</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('TERRAIN')}
+              className="inline-flex items-center gap-2 px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-xl text-xs font-bold border border-slate-700 transition"
+            >
+              <span>🧭 OPÉRATIONS TERRAIN V1.18</span>
+            </button>
+
             <button
               type="button"
               onClick={() => onNavigate('SURVEY')}
@@ -75,36 +142,157 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
             >
               <span>➕ NOUVELLE ENQUÊTE MÉNAGE</span>
             </button>
+          </div>
+        </div>
+      </div>
 
-            <button
-              type="button"
-              onClick={() => onNavigate('SURVEY')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold border border-slate-700 transition"
-            >
-              <span>📋 MES ENQUÊTES</span>
-            </button>
+      {/* The 6 Core Functions of ONE HEALTH MANIEMA */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Globe className="w-5 h-5 text-emerald-600" />
+              <span>Les 6 Fonctions Clés de ONE HEALTH MANIEMA</span>
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Cycle complet de valorisation des données épidémiologiques, climatiques et environnementales.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsAboutModalOpen(true)}
+            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 hover:underline"
+          >
+            <span>Voir l'architecture institutionnelle</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-            <button
-              type="button"
-              onClick={() => onNavigate('SURVEY')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-bold border border-slate-700 transition"
-            >
-              <span>⏳ EN ATTENTE DE SYNCHRONISATION</span>
-              <span className="px-1.5 py-0.2 bg-amber-500/20 text-amber-300 rounded-full font-mono text-[10px]">
-                {householdSurveys.filter(s => s.sync_status === 'PENDING').length}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* 1. COLLECTER */}
+          <div
+            onClick={() => onNavigate('TERRAIN')}
+            className="p-4 rounded-xl bg-slate-50 hover:bg-emerald-50/50 border border-slate-200 hover:border-emerald-300 transition cursor-pointer group space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
+                1
               </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onNavigate('SURVEY')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-xl text-xs font-bold border border-slate-700 transition"
-            >
-              <span>✅ ENQUÊTES VALIDÉES</span>
-              <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded-full font-mono text-[10px]">
-                {householdSurveys.filter(s => s.status === 'VALIDATED').length}
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                PWA / Offline
               </span>
-            </button>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-emerald-800">
+              Collecter
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Enquêtes ménages géoréférencées, fiches d'observation environnementale, géolocalisation GPS et capture hors-ligne.
+            </p>
+          </div>
+
+          {/* 2. GÉRER */}
+          <div
+            onClick={() => onNavigate('PROJETS_GOUVERNANCE')}
+            className="p-4 rounded-xl bg-slate-50 hover:bg-teal-50/50 border border-slate-200 hover:border-teal-300 transition cursor-pointer group space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 font-bold text-xs flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition">
+                2
+              </span>
+              <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                Gouvernance
+              </span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-teal-800">
+              Gérer
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Protocoles éthiques, dictionnaire de 150+ variables, traçabilité RAW / CLEAN / ANALYTIC et contrôle qualité.
+            </p>
+          </div>
+
+          {/* 3. ANALYSER */}
+          <div
+            onClick={() => onNavigate('LABORATOIRE_ANALYSE')}
+            className="p-4 rounded-xl bg-slate-50 hover:bg-cyan-50/50 border border-slate-200 hover:border-cyan-300 transition cursor-pointer group space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-700 font-bold text-xs flex items-center justify-center group-hover:bg-cyan-600 group-hover:text-white transition">
+                3
+              </span>
+              <span className="text-[10px] font-bold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-full border border-cyan-200">
+                Exploration
+              </span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-cyan-800">
+              Analyser
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Statistiques descriptives, croisements spatiaux, corrélations météo-épidémio et séries temporelles mensuelles.
+            </p>
+          </div>
+
+          {/* 4. MODÉLISER */}
+          <div
+            onClick={() => onNavigate('MODELISATION')}
+            className="p-4 rounded-xl bg-slate-50 hover:bg-indigo-50/50 border border-slate-200 hover:border-indigo-300 transition cursor-pointer group space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
+                4
+              </span>
+              <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+                GLMM / INLA
+              </span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-indigo-800">
+              Modéliser
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Modélisation spatio-temporelle hiérarchique, inférence bayésienne, prédiction du risque et reproductibilité R / Python.
+            </p>
+          </div>
+
+          {/* 5. SURVEILLER */}
+          <div
+            onClick={() => onNavigate('SURVEILLANCE_ONE_HEALTH_V117')}
+            className="p-4 rounded-xl bg-slate-50 hover:bg-rose-50/50 border border-slate-200 hover:border-rose-300 transition cursor-pointer group space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition">
+                5
+              </span>
+              <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                Alertes &amp; Signaux
+              </span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-rose-800">
+              Surveiller
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Veille sanitaire continue, seuils d'alerte épidémiologiques automatisés et détection précoce d'anomalies.
+            </p>
+          </div>
+
+          {/* 6. DÉCIDER */}
+          <div
+            onClick={() => onNavigate('SECURITE_PRODUCTION')}
+            className="p-4 rounded-xl bg-slate-50 hover:bg-purple-50/50 border border-slate-200 hover:border-purple-300 transition cursor-pointer group space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition">
+                6
+              </span>
+              <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                Aide à la Décision
+              </span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-purple-800">
+              Décider
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Tableaux de bord d'aide à la décision pour autorités sanitaires, rapports scientifiques et exports certifiés.
+            </p>
           </div>
         </div>
       </div>
@@ -618,6 +806,35 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ onNavigate }) => {
             </div>
             <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-teal-300">
               <span>Catalogue 6 Pathologies • 7 Niveaux Spatiaux • Séparation Démo/Réel • Banc de Tests 14/14</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 12: V1.20 — Sécurité, Sauvegardes, Récupération & Préparation à la Production */}
+          <div
+            onClick={() => onNavigate('SECURITE_PRODUCTION')}
+            className="group bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 text-white rounded-xl p-5 border-2 border-emerald-500 hover:border-emerald-400 hover:shadow-2xl transition cursor-pointer flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3 ring-1 ring-emerald-500/40"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500 text-slate-950 flex items-center justify-center group-hover:bg-emerald-400 transition font-bold shadow-md">
+                  <ShieldCheck className="w-6 h-6 text-slate-950" />
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-slate-950 uppercase tracking-wider shadow-xs">
+                  V1.20 NOUVEAU — SÉCURITÉ &amp; PRODUCTION
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-lg group-hover:text-emerald-300 transition flex items-center gap-2">
+                  <span>🛡️ Sécurité, Sauvegardes, Récupération &amp; Production Readiness (V1.20)</span>
+                </h3>
+                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed max-w-4xl">
+                  Architecture de durcissement opérationnel : isolation stricte des environnements (DEV/STAGING/PROD), authentification renforcée &amp; gestion des sessions/appareils, matrice RBAC 8 niveaux, corbeille de restauration (anti-suppression définitive accidentelle), centre de sauvegardes multi-cibles, plan de reprise après sinistre (PRA/DRP), journalisation d'audit &amp; erreurs centralisées, feature flags et banc de 12 tests de sécurité automatisés.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-300">
+              <span>9 Onglets Dédiés • Score de Préparation Prod • Sauvegardes Chiffrées • Banc de Tests 12/12</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
             </div>
           </div>

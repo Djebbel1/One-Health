@@ -32,9 +32,9 @@ export const INITIAL_USER_SESSIONS: UserSession[] = [
     id: 'USR-003',
     name: 'Alain Tambwe (Enquêteur Principal Alunguli)',
     role: 'ENQUÊTEUR',
-    institution: 'Projet One Health Kindu - Terrain',
+    institution: 'Projet One Health Maniema - Terrain',
     assignedArea: 'AS_ALUNGULI',
-    email: 'a.tambwe@onehealth-kindu.org',
+    email: 'a.tambwe@onehealth-maniema.cd',
     isActive: true,
   },
   {

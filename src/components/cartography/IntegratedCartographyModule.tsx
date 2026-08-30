@@ -141,7 +141,7 @@ export const IntegratedCartographyModule: React.FC = () => {
                   V1.6 Spatio-Temporelle
                 </span>
                 <h1 className="text-lg font-bold text-slate-900">
-                  Cartographie Intégrée One Health Kindu
+                  Cartographie Intégrée One Health Maniema
                 </h1>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">

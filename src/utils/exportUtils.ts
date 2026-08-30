@@ -206,7 +206,7 @@ export function exportToFullExcel(
   );
   XLSX.utils.book_append_sheet(wb, wsClimate, 'Donnees_Climatiques');
 
-  const filename = `ONE_HEALTH_KINDU_EXPORT_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  const filename = `ONE_HEALTH_MANIEMA_EXPORT_${new Date().toISOString().slice(0, 10)}.xlsx`;
   XLSX.writeFile(wb, filename);
 }
 
@@ -271,7 +271,7 @@ export const exportCsv = exportToCSV;
  */
 export function exportToGeoJSON(
   data: any[],
-  filename: string = 'ONE_HEALTH_KINDU_GIS'
+  filename: string = 'ONE_HEALTH_MANIEMA_GIS'
 ) {
   const features: any[] = [];
 
@@ -290,7 +290,7 @@ export function exportToGeoJSON(
 
   const geoJsonObj = {
     type: 'FeatureCollection',
-    name: 'OneHealth_Kindu_SpatialData',
+    name: 'OneHealth_Maniema_SpatialData',
     crs: {
       type: 'name',
       properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' },
@@ -312,7 +312,7 @@ export function exportToGeoJSON(
 export const exportGeoJson = exportToGeoJSON;
 
 export function exportVariablesCodebook() {
-  exportToCSV(DATA_DICTIONARY, 'OneHealth_Kindu_Dictionnaire_Variables');
+  exportToCSV(DATA_DICTIONARY, 'OneHealth_Maniema_Dictionnaire_Variables');
 }
 
 /**

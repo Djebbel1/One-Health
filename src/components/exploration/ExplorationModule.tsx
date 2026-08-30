@@ -68,7 +68,7 @@ export const ExplorationModule: React.FC = () => {
                 Module V1.9 Validé
               </span>
               <span className="text-xs font-mono text-slate-400">
-                One Health Kindu • Maniema, RDC
+                One Health Maniema • Province du Maniema, RDC
               </span>
             </div>
             <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">

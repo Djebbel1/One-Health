@@ -11,6 +11,8 @@ import {
   Layers,
   Database
 } from 'lucide-react';
+import { APP_CONFIG } from '../config/appConfig';
+import { OneHealthLogo } from './common/OneHealthLogo';
 
 interface DataExportModalProps {
   isOpen: boolean;
@@ -59,14 +61,17 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({ isOpen, onClos
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Download className="w-5 h-5 text-indigo-600" />
-              Centre d'Export des Données de Recherche
-            </h3>
-            <p className="text-xs text-slate-500">
-              One Health Kindu • Formats compatibles R, INLA, Python, QGIS et Excel
-            </p>
+          <div className="flex items-center gap-3">
+            <OneHealthLogo size="sm" variant="badge" showTerritoryBadge={false} />
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <Download className="w-4 h-4 text-emerald-600" />
+                <span>Centre d'Export des Données de Recherche</span>
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                {APP_CONFIG.name} • {APP_CONFIG.primaryRegion} (RDC) • Formats R, Python, QGIS &amp; Excel
+              </p>
+            </div>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-lg font-bold p-1">
             ✕

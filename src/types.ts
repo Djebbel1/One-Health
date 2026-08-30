@@ -6,6 +6,28 @@
 
 // 1. Navigation Modules
 export type AppModule =
+  | 'EXPLOITATION_PRODUCTION'
+  | 'ARCHITECTURE_EXPLOITATION'
+  | 'INCIDENT_CENTER'
+  | 'DEPLOYMENT_PIPELINE'
+  | 'DATABASE_MIGRATIONS'
+  | 'SECURITE_PRODUCTION'
+  | 'SECURITE_PRODUCTION_V120'
+  | 'SECURITE_SAUVEGARDE'
+  | 'PRODUCTION_READINESS'
+  | 'BACKUP_CENTER'
+  | 'DISASTER_RECOVERY'
+  | 'SYSTEM_HEALTH'
+  | 'SECURITY_AUDIT'
+  | 'PROJETS_GOUVERNANCE'
+  | 'GOUVERNANCE_DONNEES'
+  | 'PROJETS_ETUDES'
+  | 'DICTIONNAIRE_VARIABLES'
+  | 'DATA_LINEAGE_V119'
+  | 'REPRODUCTIBILITE_V119'
+  | 'GOUVERNANCE_V119'
+  | 'PROJETS'
+  | 'GOUVERNANCE'
   | 'DASHBOARD'
   | 'MAP'
   | 'HEALTH'
@@ -57,6 +79,12 @@ export type AppModule =
   | 'SURVEILLANCE_ONE_HEALTH_V117'
   | 'SURVEILLANCE_V117'
   | 'SURVEILLANCE_MODULE'
+  | 'TERRAIN'
+  | 'GESTION_TERRAIN_V118'
+  | 'TERRAIN_V118'
+  | 'CAMPAGNES_TERRAIN'
+  | 'ENQUETES_TERRAIN'
+  | 'COLLECTE_OFFLINE'
   | 'SYNCHRONISATION'
   | 'IMPORT_EXPORT'
   | 'ADMINISTRATION'
@@ -4902,15 +4930,1252 @@ export interface V117SurveillanceScenarioTest {
   lastRunDate: string;
 }
 
+// ============================================================================
+// V1.18 — GESTION OPÉRATIONNELLE DES ENQUÊTES, MODE HORS CONNEXION ET SYNCHRONISATION TERRAIN
+// ============================================================================
 
+export type FieldUserRole =
+  | 'ADMINISTRATEUR'
+  | 'RESPONSABLE_CAMPAGNE'
+  | 'SUPERVISEUR'
+  | 'ENQUETEUR'
+  | 'CONTROLEUR_QUALITE'
+  | 'OBSERVATEUR';
 
+export type FieldCampaignStatus =
+  | 'BROUILLON'
+  | 'PREPARATION'
+  | 'ACTIVE'
+  | 'SUSPENDUE'
+  | 'TERMINEE'
+  | 'ARCHIVEE';
 
+export interface FieldCampaignPeriod {
+  id: string; // e.g. "PER-2027-S1"
+  name: string; // e.g. "Série 1 - Grande Saison des Pluies 2027"
+  year: number | string;
+  startDate: string;
+  endDate: string;
+  isCurrent: boolean;
+  targetCount: number;
+}
 
+export interface FieldCampaign {
+  id: string; // e.g. "CAMP-2027-01"
+  name: string;
+  description: string;
+  project: string; // e.g. "Projet Pilote One Health Kindu"
+  protocol: string; // e.g. "PROT-OH-MN-2027-V2"
+  pathologies: string[]; // e.g. ['PALUDISME', 'FIEVRE_TYPHOIDE', 'AUTRE_ENTERO']
+  pathologyLabels: string[];
+  territory: string; // e.g. "Kindu & Territoires limitrophes (Maniema)"
+  targetHealthZones: string[];
+  periods: FieldCampaignPeriod[];
+  startDate: string;
+  endDate: string;
+  managerName: string;
+  managerId: string;
+  status: FieldCampaignStatus;
+  targetQuestionnaires: number;
+  completedQuestionnaires: number;
+  isDemonstrationData: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
+export interface FieldTeam {
+  id: string; // e.g. "EQ-01"
+  name: string;
+  supervisorId: string;
+  supervisorName: string;
+  membersIds: string[];
+  membersNames: string[];
+  territory: string;
+  healthZones: string[];
+  campaignId: string;
+  campaignName: string;
+  status: 'ACTIVE' | 'EN_REPOS' | 'INACTIVE';
+  assignedAreasCount: number;
+  targetHouseholds: number;
+  completedFormsCount: number;
+  enumeratorsCount?: number;
+}
 
+export interface FieldEnumerator {
+  id: string; // Strict unique identifier format: e.g. "ENQ-0001"
+  displayName: string; // Privacy protected display e.g. "Enquêteur KND-01 (J.M.)"
+  internalCode: string;
+  teamId: string;
+  teamName: string;
+  role: FieldUserRole;
+  campaignId: string;
+  campaignName: string;
+  assignedZones: string[];
+  assignedHealthAreas: string[];
+  status: 'ACTIF' | 'EN_MISSION' | 'CONGE' | 'INACTIF';
+  assignedHouseholdsTarget: number;
+  completedForms: number;
+  draftsCount: number;
+  pendingSyncCount: number;
+  lastSyncTimestamp?: string;
+  connectionState: 'ONLINE' | 'UNSTABLE' | 'OFFLINE';
+  batteryLevel?: number;
+  appVersion: string;
+  currentLatitude?: number;
+  currentLongitude?: number;
+  accuracyMeters?: number;
+  isLocationPrivate?: boolean;
+}
 
+export type FieldFormType =
+  | 'MENAGE_ONE_HEALTH'
+  | 'CLINIQUE_CENTRE_SANTE'
+  | 'ENVIRONNEMENTAL_GITES'
+  | 'EAU_WASH_COMMUNAUTAIRE';
 
+export interface FieldAssignment {
+  id: string; // e.g. "AFF-2027-001"
+  campaignId: string;
+  campaignName: string;
+  teamId: string;
+  teamName: string;
+  enumeratorId: string; // ENQ-0001
+  enumeratorName: string;
+  territory: string;
+  healthZone: string;
+  healthArea: string;
+  neighborhood?: string;
+  avenueStreet?: string;
+  targetHouseholdIds?: string[];
+  formType: FieldFormType;
+  periodId: string;
+  periodName: string;
+  plannedHouseholdsCount: number;
+  completedHouseholdsCount: number;
+  estimatedWorkloadHours: number;
+  status: 'ATTRIBUE' | 'EN_COURS' | 'TERMINE' | 'SUSPENDU';
+  assignedDate: string;
+  geofenceCenter?: { lat: number; lng: number; radiusMeters: number };
+}
 
+export type FieldFormStatus =
+  | 'NON_COMMENCE'
+  | 'BROUILLON'
+  | 'TERMINE'
+  | 'EN_ATTENTE_SYNCHRONISATION'
+  | 'SYNCHRONISE'
+  | 'EN_CONTROLE'
+  | 'VALIDE'
+  | 'REJETE'
+  | 'VERROUILLE';
 
+export interface FieldFormGPS {
+  latitude: number;
+  longitude: number;
+  accuracy: number; // In meters
+  capturedAt: string;
+  source: 'DEVICE_HARDWARE' | 'OFFLINE_CACHE' | 'MANUAL';
+  isWithinAssignedZone: boolean;
+  distanceFromZoneCenterMeters?: number;
+  geofenceWarning?: string;
+}
+
+export interface FieldFormDataPayload {
+  respondentConsent: boolean;
+  respondentAge?: number;
+  respondentMaritalStatus?: 'CELIBATAIRE' | 'MARIE' | 'DIVORCE' | 'VEUF' | 'MINEUR';
+  headGender: 'M' | 'F';
+  householdSize: number;
+  childrenUnder5: number;
+  children5To14: number;
+  adults15Plus: number;
+  // Pathologies specifics
+  hadMalariaLast30Days: boolean;
+  casesCountMalaria: number;
+  mosquitoNetAvailable: boolean;
+  mosquitoNetImpregnated: boolean;
+  stagnantWaterNearHouse: boolean;
+  hadTyphoidLast30Days: boolean;
+  casesCountTyphoid: number;
+  waterSource: string;
+  waterTreatmentMethod: string;
+  waterStorageType: string;
+  latrineType: string;
+  solidWasteDisposal: string;
+  distanceToWasteMeters: number;
+  notes?: string;
+}
+
+export interface FieldFormRecord {
+  localId: string; // Immediately created offline e.g. "LOCAL-2027-000001"
+  serverId?: string; // Assigned/Confirmed on server sync e.g. "SRV-2027-000142"
+  campaignId: string;
+  campaignName: string;
+  formType: FieldFormType;
+  pathology: 'PALUDISME' | 'FIEVRE_TYPHOIDE' | 'MULTI_PATHOLOGIE' | 'AUTRE';
+  enumeratorId: string; // Strict unique ID e.g. "ENQ-0001"
+  enumeratorName: string;
+  teamId: string;
+  assignmentId: string;
+  status: FieldFormStatus;
+  syncStatus: 'PENDING' | 'SYNCING' | 'SYNCED' | 'ERROR' | 'CONFLICT';
+  syncErrorMessage?: string;
+  syncAttempts: number;
+  lastSyncAttemptDate?: string;
+  
+  // Timestamps (Device local time vs Server time)
+  createdAtDevice: string;
+  lastModifiedDevice: string;
+  completedAtDevice?: string;
+  synchronizedAtServer?: string;
+  validatedAt?: string;
+  validatedBy?: string;
+  lockedAt?: string;
+  lockedBy?: string;
+  unlockReason?: string;
+  durationMinutes?: number;
+  startTime?: string;
+  endTime?: string;
+
+  // Geography & Location
+  territory: string;
+  healthZone: string;
+  healthArea: string;
+  neighborhood: string;
+  streetName?: string;
+  householdCode?: string;
+  gps: FieldFormGPS;
+
+  // Form payload
+  formData: FieldFormDataPayload;
+
+  // Quality checks & flags
+  qualityChecks: {
+    completenessScore: number; // 0-100%
+    hasInconsistencies: boolean;
+    inconsistencyList: string[];
+    durationSuspicion: boolean; // Flagged if excessively fast (< 3 min) or long
+    isFlaggedForAudit: boolean;
+    auditReason?: string;
+    markedForDeletion?: boolean;
+    deletionRequestedBy?: string;
+    deletionReason?: string;
+  };
+
+  isDemoData: boolean;
+}
+
+export interface FieldSyncQueueItem {
+  id: string;
+  localId: string;
+  serverId?: string;
+  formType: string;
+  enumeratorId: string;
+  timestamp: string;
+  status: 'PENDING' | 'SYNCING' | 'SUCCESS' | 'ERROR' | 'CONFLICT';
+  errorReason?: string;
+  retryCount: number;
+  payloadSizeKb: number;
+  entity?: string;
+  operation?: string;
+  recordIdentifier?: string;
+  payload?: any;
+}
+
+export type SyncQueueItemV118 = FieldSyncQueueItem;
+
+export interface FieldDataConflict {
+  id: string;
+  localId: string;
+  serverId: string;
+  formType: string;
+  enumeratorId: string;
+  enumeratorName: string;
+  conflictDetectedAt: string;
+  localData: Partial<FieldFormRecord>;
+  serverData: Partial<FieldFormRecord>;
+  conflictingFields: {
+    field: string;
+    label: string;
+    localValue: any;
+    serverValue: any;
+  }[];
+  resolutionStatus: 'UNRESOLVED' | 'RESOLVED_LOCAL' | 'RESOLVED_SERVER' | 'RESOLVED_MERGE';
+  resolvedBy?: string;
+  resolvedAt?: string;
+  resolutionNotes?: string;
+}
+
+export interface FieldAuditLogEntry {
+  id: string;
+  timestamp: string;
+  eventType:
+    | 'CREATION_CAMPAGNE'
+    | 'CREATION_AFFECTATION'
+    | 'REPARTITION_LOT'
+    | 'SAISIE_LOCAL_BROUILLON'
+    | 'SOUMISSION_OFFLINE'
+    | 'CAPTURE_GPS'
+    | 'TENTATIVE_SYNCHRONISATION'
+    | 'SYNCHRONISATION_REUSSIE'
+    | 'ERREUR_SYNCHRONISATION'
+    | 'DETECTION_CONFLIT'
+    | 'RESOLUTION_CONFLIT'
+    | 'ARBITRAGE_CONFLIT'
+    | 'DETECTION_DOUBLON'
+    | 'CONTROLE_QUALITE'
+    | 'VALIDATION_SUPERVISEUR'
+    | 'REJET_QUESTIONNAIRE'
+    | 'VERROUILLAGE'
+    | 'DEVERROUILLAGE'
+    | 'MARQUAGE_SUPPRESSION'
+    | 'DEMANDE_SUPPRESSION'
+    | 'EXPORT_DATASET'
+    | 'CREATION_FORMULAIRE'
+    | 'MODIFICATION_DONNEES'
+    | 'ATTRIBUTION_AFFECTATION'
+    | 'INJECTION_PIPELINE'
+    | 'CREATION_EQUIPE'
+    | 'MODIFICATION_EQUIPE'
+    | 'CLOTURE_CAMPAGNE'
+    | string;
+  entityType:
+    | 'CAMPAGNE'
+    | 'EQUIPE'
+    | 'AFFECTATION'
+    | 'FORMULAIRE'
+    | 'SYNCHRONISATION'
+    | 'CONFLIT'
+    | 'FORM'
+    | 'SYNC_ENGINE'
+    | 'PIPELINE'
+    | 'PIPELINE_ONE_HEALTH'
+    | 'LOT'
+    | 'ENQUETEUR'
+    | 'CAMPAIGN'
+    | 'TEAM'
+    | 'ASSIGNMENT'
+    | 'ASSIGNMENT_BATCH'
+    | 'CONFLICT'
+    | string;
+  entityId: string;
+  localId?: string;
+  serverId?: string;
+  userId: string;
+  userName: string;
+  userRole: FieldUserRole;
+  description: string;
+  details?: Record<string, any>;
+  ipOrDeviceId?: string;
+  isDemoData?: boolean;
+}
+
+export interface V118FieldScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'TEST_OFFLINE_COLLECTE_RESUME'
+    | 'TEST_SYNCHRO_INTERROMPUE'
+    | 'TEST_DETECTION_DOUBLON'
+    | 'TEST_RESOLUTION_CONFLIT'
+    | 'TEST_GPS_GEOFENCING'
+    | 'TEST_BROUILLON_AUTOSAVE'
+    | 'TEST_BLOCAGE_NON_VALIDE'
+    | 'TEST_ROLES_PERMISSIONS_VERROU'
+    | 'TEST_REPARTITION_EQUILIBREE'
+    | 'TEST_NON_REGRESSION_PIPELINE';
+  description: string;
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  steps: string[];
+  expectedOutcome: string;
+  actualOutcome?: string;
+  lastRunDate: string;
+}
+
+// ============================================================================
+// MODULE V1.19 — GESTION CENTRALISÉE DES PROJETS, VERSIONNEMENT & GOUVERNANCE
+// ============================================================================
+
+export type ProjectStatus =
+  | 'BROUILLON'
+  | 'PREPARATION'
+  | 'ACTIF'
+  | 'SUSPENDU'
+  | 'TERMINE'
+  | 'ARCHIVE';
+
+export interface OneHealthDimensionsConfig {
+  humanHealth: boolean;
+  animalHealth: boolean;
+  environment: boolean;
+  climate: boolean;
+  water: boolean;
+  sanitation: boolean;
+  ecosystem: boolean;
+}
+
+export interface ProjectMetadata {
+  institution: string;
+  ethicsApprovalNumber?: string;
+  fundingSource?: string;
+  contactEmail: string;
+  keywords: string[];
+  dataSharingPolicy: 'RESTRICTED' | 'COLLABORATIVE' | 'OPEN_ACCESS';
+  customMetadata?: Record<string, any>;
+}
+
+export interface StudyProject {
+  id: string; // e.g. "PRJ-KIN-001"
+  code: string; // e.g. "OH-MANIEMA-2026"
+  name: string;
+  description: string;
+  leader: string;
+  leaderRole: string;
+  territory: string; // Default: Maniema, RDC
+  targetPathologies: string[]; // e.g. ['Paludisme', 'Fièvre typhoïde', 'Choléra']
+  dimensions: OneHealthDimensionsConfig;
+  status: ProjectStatus;
+  version: string; // e.g. "v1.2.0"
+  createdAt: string;
+  startDate: string;
+  endDate: string;
+  metadata: ProjectMetadata;
+  activeProtocolId: string;
+  campaignsCount: number;
+  datasetsCount: number;
+  modelsCount: number;
+  isArchived: boolean;
+  isDemoData: boolean;
+}
+
+export type ProtocolStatus =
+  | 'BROUILLON'
+  | 'SOUMIS_COMITE'
+  | 'VALIDE'
+  | 'AMENDE'
+  | 'ARCHIVE';
+
+export interface ProtocolVersionHistory {
+  version: string; // e.g. "V1.0", "V1.1", "V2.0"
+  date: string;
+  author: string;
+  changesSummary: string;
+  justification: string;
+  isMajorChange: boolean; // if true, modified population, main variable, method or criteria
+  status: ProtocolStatus;
+}
+
+export interface StudyProtocol {
+  id: string; // e.g. "PROT-2026-001"
+  projectId: string;
+  title: string;
+  currentVersion: string;
+  objectives: {
+    primary: string;
+    secondary: string[];
+  };
+  targetPopulation: string;
+  inclusionCriteria: string[];
+  exclusionCriteria: string[];
+  samplingMethod: string;
+  periods: {
+    seriesId: string;
+    label: string;
+    startDate: string;
+    endDate: string;
+    seasonsCovered: string[];
+  }[];
+  targetZones: string[];
+  keyVariables: string[];
+  ethicsCommitteeRef: string;
+  integrityRules: string[];
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+  status: ProtocolStatus;
+  history: ProtocolVersionHistory[];
+  isDemoData: boolean;
+}
+
+export type VariableType =
+  | 'TEXTE'
+  | 'ENTIER'
+  | 'DECIMAL'
+  | 'BOOLEEN'
+  | 'DATE'
+  | 'HEURE'
+  | 'DATE_HEURE'
+  | 'CATEGORIE'
+  | 'GPS'
+  | 'IMAGE'
+  | 'FICHIER';
+
+export type VariableDomain =
+  | 'SANTE_HUMAINE'
+  | 'CLIMAT'
+  | 'ENVIRONNEMENT'
+  | 'EAU_ASSAINISSEMENT'
+  | 'SANTE_ANIMALE'
+  | 'DEMOGRAPHIE'
+  | 'SPATIAL';
+
+export type VariableObligation = 'OBLIGATOIRE' | 'FACULTATIF' | 'CONDITIONNEL';
+
+export type VariableSourceType =
+  | 'ENQUETE'
+  | 'REGISTRE'
+  | 'LABORATOIRE'
+  | 'STATION_METEO'
+  | 'SATELLITE'
+  | 'BASE_EXTERNE'
+  | 'CALCUL'
+  | 'MODELE'
+  | 'PROXY';
+
+export interface DataDictionaryVariable {
+  variableId: string; // e.g. "VAR-001"
+  name: string; // Technical name: e.g. "cases_malaria_conf"
+  label: string; // Display label
+  description: string;
+  type: VariableType;
+  unit?: string; // e.g. "°C", "mm", "cas", "%"
+  precision?: number;
+  acceptableRange?: {
+    min?: number;
+    max?: number;
+  };
+  domain: VariableDomain;
+  categories?: {
+    code: string;
+    label: string;
+  }[];
+  obligation: VariableObligation;
+  conditionRule?: string; // e.g. "SI inondation == OUI -> type_inondation obligatoire"
+  source: VariableSourceType;
+  isProxy: boolean;
+  proxyDetails?: {
+    originalVariable: string;
+    justification: string;
+    sourceName: string;
+    scientificLimitation: string;
+  };
+  aggregationLevel: 'INDIVIDU' | 'MENAGE' | 'SITE' | 'AIRE_SANTE' | 'ZONE_SANTE' | 'PROVINCE';
+  scientificMeaning: string;
+  version: string;
+  projectId: string;
+  isDeprecated?: boolean;
+  deprecatedInFavorOf?: string;
+  isDemoData: boolean;
+}
+
+export interface VariableMigrationRule {
+  fromVariable: string;
+  toVariable: string;
+  transformationType: 'RENAME' | 'CAST_TYPE' | 'UNIT_CONVERSION' | 'LOOKUP_MAP' | 'FORMULA';
+  formulaOrRule: string;
+  description: string;
+  effectiveFromVersion: string;
+}
+
+export interface ProjectFormVersion {
+  formId: string; // e.g. "FRM-OH-01"
+  projectId: string;
+  protocolId: string;
+  name: string;
+  version: string; // e.g. "V1.0", "V1.1"
+  releaseDate: string;
+  author: string;
+  questionsCount: number;
+  associatedVariables: string[];
+  compatibleDatasetTypes: ('RAW' | 'CLEAN' | 'ANALYTIC')[];
+  migrationRules?: VariableMigrationRule[];
+  changeLog: string[];
+  status: 'ACTIF' | 'OBSOLETE' | 'BROUILLON';
+  isDemoData: boolean;
+}
+
+export type GovernanceDatasetType =
+  | 'RAW'
+  | 'CLEAN'
+  | 'ANALYTIC'
+  | 'MODEL'
+  | 'SURVEILLANCE';
+
+export interface DatasetSnapshot {
+  snapshotId: string; // e.g. "SNP-2026-08-30-01"
+  datasetId: string;
+  name: string;
+  createdAt: string;
+  createdBy: string;
+  rowsCount: number;
+  columnsCount: number;
+  sha256Hash: string;
+  isImmutable: boolean;
+  notes: string;
+}
+
+export interface GovernanceDataset {
+  id: string; // e.g. "DS-ANALYTIC-V1.2"
+  projectId: string;
+  name: string;
+  type: GovernanceDatasetType;
+  version: string; // e.g. "V1.0", "V1.1", "V2.0"
+  description: string;
+  recordsCount: number;
+  variablesCount: number;
+  variables: string[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  isImmutable: boolean; // snapshots and validated datasets cannot be altered
+  sourceDataOrigin: string; // e.g. "RAW-2026-01 + Mettelsat"
+  appliedTransformations: string[];
+  validationStatus: 'NON_VALIDE' | 'EN_CONTROLE' | 'VALIDE' | 'ARCHIVE';
+  snapshots: DatasetSnapshot[];
+  sha256Hash: string;
+  isDemoData: boolean;
+}
+
+export interface DataLineageNode {
+  id: string;
+  label: string;
+  type: 'SOURCE' | 'RAW' | 'CLEAN' | 'ANALYTIC' | 'MODEL' | 'PREDICTION' | 'SURVEILLANCE' | 'REPORT';
+  version: string;
+  date: string;
+  details: string;
+  recordsCount?: number;
+  validationStatus?: string;
+}
+
+export interface DataLineageEdge {
+  from: string;
+  to: string;
+  transformation: string;
+  rule: string;
+}
+
+export interface ExternalDataSource {
+  id: string; // e.g. "SRC-EXT-METTELSAT"
+  name: string;
+  organization: string;
+  type: 'CLIMAT' | 'ENVIRONNEMENT_SATELLITE' | 'REGISTRE_OFFICIEL' | 'DONNEES_DEMO' | 'LABO_EXTERNE';
+  coveragePeriod: string;
+  spatialResolution: string;
+  temporalResolution: string;
+  accessMethod: 'API' | 'IMPORT_EXCEL_CSV' | 'MANUEL' | 'RESEAU_INTERNE';
+  lastAccessedDate: string;
+  scientificReference: string;
+  providedVariables: string[];
+  reliabilityScore: number; // 0-100%
+  notes: string;
+  isDemoData: boolean;
+}
+
+export interface FileImportAudit {
+  importId: string; // e.g. "IMP-2026-08-30-001"
+  fileName: string;
+  fileFormat: 'EXCEL' | 'CSV' | 'JSON';
+  fileSizeBytes: number;
+  sha256Hash: string;
+  importDate: string;
+  importedBy: string;
+  projectId: string;
+  campaignId?: string;
+  rowsDetected: number;
+  columnsDetected: number;
+  importedSuccessfully: number;
+  errorsCount: number;
+  isPotentialDuplicate: boolean;
+  duplicateOfImportId?: string;
+  destinationDatasetId: string;
+  isDemoData: boolean;
+}
+
+export interface CaseDefinition {
+  id: string;
+  pathology: string; // e.g. "Paludisme", "Fièvre Typhoïde"
+  version: string; // e.g. "V1.0", "V2.0"
+  suspectedCaseCriteria: string[];
+  probableCaseCriteria: string[];
+  confirmedCaseCriteria: string[];
+  laboratoryConfirmationMethods: string[];
+  effectiveDate: string;
+  isComparabilityBroken: boolean; // if true, flags break in historical trend comparability
+  comparabilityWarning?: string;
+  scientificAuthor: string;
+  status: 'ACTIF' | 'AMENDE' | 'ARCHIVE';
+  isDemoData: boolean;
+}
+
+export type ValidationLevel =
+  | 'NIVEAU_1_TECHNIQUE'
+  | 'NIVEAU_2_QUALITE'
+  | 'NIVEAU_3_SCIENTIFIQUE'
+  | 'NIVEAU_4_FINALE';
+
+export type DataGovernanceStatus =
+  | 'RAW'
+  | 'EN_CONTROLE'
+  | 'CORRIGEE'
+  | 'VALIDEE'
+  | 'REJETEE'
+  | 'VERROUILLEE'
+  | 'ARCHIVEE';
+
+export interface MultiLevelValidationRecord {
+  id: string; // e.g. "VAL-REC-001"
+  projectId: string;
+  entityType: 'OBSERVATION_INDIVIDUELLE' | 'SERIE_TEMPORELLE' | 'FICHIER_IMPORT' | 'DATASET_ANALYTIQUE';
+  entityIdentifier: string;
+  currentStatus: DataGovernanceStatus;
+  isLogicallyDeleted: boolean;
+  deletionReason?: string;
+  deletedBy?: string;
+  deletedAt?: string;
+  validationSteps: {
+    level: ValidationLevel;
+    passed: boolean;
+    validatedBy: string;
+    validatedAt: string;
+    comment: string;
+  }[];
+  correctionsHistory: {
+    field: string;
+    oldValue: any;
+    newValue: any;
+    reason: string;
+    user: string;
+    timestamp: string;
+  }[];
+  rejectionReason?: string;
+  isDemoData: boolean;
+}
+
+export interface ProjectUserPermission {
+  userId: string;
+  userName: string;
+  userRole: FieldUserRole;
+  projectId: string;
+  canCollect: boolean;
+  canAccessData: boolean;
+  canAnalyze: boolean;
+  canModel: boolean;
+  canSurveil: boolean;
+  canExport: boolean;
+  canAdminister: boolean;
+  grantedBy: string;
+  grantedAt: string;
+}
+
+export type ModelGovernanceStatus =
+  | 'EXPERIMENTAL'
+  | 'EN_VALIDATION'
+  | 'VALIDE'
+  | 'ARCHIVE';
+
+export interface ReproducibleModel {
+  modelId: string; // e.g. "MOD-GAM-001"
+  projectId: string;
+  name: string;
+  algorithmType: 'REGRESSION_LOGISTIQUE' | 'GAM_SPLINES' | 'SARIMA_SPATIAL' | 'RANDOM_FOREST' | 'INLA_BAYESIEN';
+  version: string;
+  sourceDatasetId: string;
+  sourceDatasetVersion: string;
+  dependentVariable: string;
+  independentVariables: string[];
+  hyperparameters: Record<string, any>;
+  performanceMetrics: {
+    auc_roc?: number;
+    aic?: number;
+    bic?: number;
+    r_squared?: number;
+    mae?: number;
+    rmse?: number;
+    sensitivity?: number;
+    specificity?: number;
+  };
+  author: string;
+  trainingDate: string;
+  governanceStatus: ModelGovernanceStatus;
+  allowedForOperationalAlerts: boolean; // strictly false for EXPERIMENTAL
+  reproducibilityScriptSnippet: string;
+  isDemoData: boolean;
+}
+
+export interface ReproducibleAnalysis {
+  analysisId: string; // e.g. "ANA-2026-001"
+  projectId: string;
+  title: string;
+  method: string;
+  datasetId: string;
+  datasetVersion: string;
+  variables: string[];
+  parameters: Record<string, any>;
+  executedBy: string;
+  executedAt: string;
+  softwareVersion: string;
+  resultsSummary: Record<string, any>;
+  isReproducedSuccessfully?: boolean;
+  reproductionNotes?: string;
+  isDemoData: boolean;
+}
+
+export interface VersionDiffResult {
+  entityType: 'DATASET' | 'FORMULAIRE' | 'PROTOCOLE';
+  versionA: string;
+  versionB: string;
+  differences: {
+    category: 'AJOUT' | 'SUPPRESSION' | 'MODIFICATION';
+    item: string;
+    details: string;
+  }[];
+  isCompatible: boolean;
+  migrationActionRequired?: string;
+}
+
+export interface GovernanceQualityScore {
+  totalScore: number; // 0 to 100%
+  breakdown: {
+    completeness: number; // weight 25%
+    consistency: number; // weight 25%
+    traceability: number; // weight 20%
+    documentation: number; // weight 15%
+    validationCoverage: number; // weight 15%
+  };
+  grade: 'EXCELLENT' | 'BON' | 'ACCEPTABLE' | 'A_AMELIORER' | 'CRITIQUE';
+  explanation: string[];
+}
+
+export interface GovernanceAlert {
+  id: string;
+  severity: 'CRITIQUE' | 'AVERTISSEMENT' | 'INFO';
+  category:
+    | 'DATASET_SANS_SOURCE'
+    | 'VARIABLE_SANS_DEFINITION'
+    | 'MODELE_NON_VALIDE_ALERTE'
+    | 'RAPPORT_SANS_VERSION'
+    | 'DONNEE_NON_VALIDEE_UTILISEE'
+    | 'VERSION_OBSOLETE_UTILISEE'
+    | 'PROTOCOLE_AMENDE_SANS_VERSION';
+  title: string;
+  description: string;
+  affectedResource: string;
+  suggestedAction: string;
+  isResolved: boolean;
+}
+
+export interface CentralAuditLogEntry {
+  id: string; // e.g. "AUD-GOV-001"
+  timestamp: string;
+  projectId: string;
+  userId: string;
+  userName: string;
+  userRole: FieldUserRole;
+  actionType:
+    | 'CONNEXION'
+    | 'CREATION_PROJET'
+    | 'MODIFICATION_PROJET'
+    | 'ARCHIVAGE_PROJET'
+    | 'RESTAURATION_PROJET'
+    | 'SELECTION_PROJET'
+    | 'AMENDEMENT_PROTOCOLE'
+    | 'CREATION_VARIABLE'
+    | 'MODIFICATION_VARIABLE'
+    | 'CREATION_SNAPSHOT'
+    | 'IMPORT_FICHIER'
+    | 'IMPORT_FICHIER_VALIDE'
+    | 'DETECTION_DOUBLON_FICHIER'
+    | 'VALIDATION_NIVEAU_1'
+    | 'VALIDATION_NIVEAU_2'
+    | 'VALIDATION_NIVEAU_3'
+    | 'VALIDATION_FINALE'
+    | 'REJET_DONNEE'
+    | 'REJET_FICHE'
+    | 'CORRECTION_VALEUR'
+    | 'SUPPRESSION_LOGIQUE'
+    | 'EXPORT_DATASET'
+    | 'MODIFICATION_PERMISSIONS'
+    | 'MODIFICATION_DROITS_UTILISATEUR'
+    | 'VALIDATION_MODELE'
+    | 'STATUT_MODELE_MODIFIE'
+    | 'ALERTE_GOUVERNANCE_RESOLUE'
+    | 'REPRODUCTION_MODELE'
+    | 'REPRODUCTION_ANALYSE';
+  entityType: 'PROJET' | 'PROTOCOLE' | 'VARIABLE' | 'FORMULAIRE' | 'DATASET' | 'SNAPSHOT' | 'MODELE' | 'ANALYSE' | 'IMPORT' | 'PERMISSION' | 'ALERTE' | 'AUTRE';
+  entityId: string;
+  description: string;
+  details?: Record<string, any>;
+  ipOrDeviceId?: string;
+  isImmutable: boolean;
+  isDemoData: boolean;
+}
+
+export interface V119GovernanceScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'TEST_ISOLATION_MULTI_PROJETS'
+    | 'TEST_VERSIONNEMENT_DATASETS'
+    | 'TEST_VERSIONNEMENT_FORMULAIRES'
+    | 'TEST_AMENDEMENT_PROTOCOLE'
+    | 'TEST_PROVENANCE_DATA_LINEAGE'
+    | 'TEST_REPRODUCTIBILITE_ANALYSE'
+    | 'TEST_PERMISSIONS_RBAC_PROJET'
+    | 'TEST_IMMUTABILITE_AUDIT_LOGIQUE'
+    | 'TEST_ARCHIVAGE_RESTAURATION'
+    | 'TEST_NON_REGRESSION_V1_V18';
+  description: string;
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  steps: string[];
+  expectedOutcome: string;
+  actualOutcome?: string;
+  lastRunDate: string;
+}
+
+// Type Aliases for Governance Modules
+export type AuditLogEntry = CentralAuditLogEntry;
+export type AuditActionType = CentralAuditLogEntry['actionType'];
+export type RecordValidationWorkflow = MultiLevelValidationRecord;
+export type RecordLifecycleStatus = DataGovernanceStatus;
+export type RecordCorrectionEntry = MultiLevelValidationRecord['correctionsHistory'][number];
+export type UserProjectPermission = ProjectUserPermission;
+export type CaseDefinitionMetadata = CaseDefinition;
+export type GovernanceVersionDiff = VersionDiffResult;
+
+// ==========================================
+// 20. MODULE V1.20 — SÉCURITÉ, SAUVEGARDES, RÉCUPÉRATION & PRODUCTION
+// ==========================================
+
+export type EnvironmentType = 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
+
+export interface SecurityEnvironmentConfig {
+  activeEnvironment: EnvironmentType;
+  bannerVisible: boolean;
+  bannerMessage: string;
+  isStrictProductionMode: boolean;
+  allowDemoDataInsertion: boolean;
+  sslEnforced: boolean;
+  rateLimitEnabled: boolean;
+  rateLimitMaxRequestsPerMinute: number;
+  corsAllowedOrigins: string[];
+  sessionTimeoutMinutes: number;
+}
+
+export type MFAStatus = 'DISABLED' | 'ENABLED_TOTP' | 'ENABLED_SMS' | 'PENDING_SETUP';
+
+export interface SecurityUserSession {
+  sessionId: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  userRole: UserRole;
+  institution: string;
+  assignedProjects: string[];
+  environment: EnvironmentType;
+  tokenExpiresAt: string;
+  lastActivityAt: string;
+  sessionDurationMinutes: number;
+  mfaStatus: MFAStatus;
+  failedLoginAttempts: number;
+  isLockedOut: boolean;
+  lockoutUntil?: string;
+  currentIp: string;
+  currentBrowser: string;
+  currentOs: string;
+  deviceFingerprint: string;
+}
+
+export interface ConnectedDevice {
+  deviceId: string;
+  userId: string;
+  deviceName: string;
+  deviceType: 'MOBILE' | 'DESKTOP' | 'TABLET';
+  os: string;
+  browser: string;
+  ipAddress: string;
+  locationCity: string;
+  lastActive: string;
+  environment: EnvironmentType;
+  isCurrentDevice: boolean;
+  isRevoked: boolean;
+}
+
+export interface MFAConfiguration {
+  enabled: boolean;
+  type: 'TOTP' | 'SMS' | 'EMAIL';
+  maskedSecretKey: string;
+  backupCodesRemaining: number;
+  lastVerifiedAt: string;
+  requiresExternalProviderNotice: boolean;
+  externalProviderDocs: string;
+}
+
+export interface GranularModulePermission {
+  moduleKey: string;
+  moduleLabel: string;
+  canRead: boolean;
+  canCreate: boolean;
+  canUpdate: boolean;
+  canValidate: boolean;
+  canSoftDelete: boolean;
+  canHardDelete: boolean;
+  canExportFull: boolean;
+  canExportAnonymized: boolean;
+  canAdminister: boolean;
+}
+
+export interface RolePermissionMatrixEntry {
+  role: UserRole;
+  roleDescription: string;
+  modules: GranularModulePermission[];
+  projectAccessScope: 'ALL' | 'ASSIGNED_ONLY' | 'READ_ONLY_PUBLIC';
+}
+
+export interface DataPrivacyRule {
+  fieldKey: string;
+  fieldLabel: string;
+  category: 'IDENTITE' | 'GEOLOCALISATION' | 'CLINIQUE' | 'CONTACT';
+  isPII: boolean;
+  maskingStrategy: 'PSEUDONYMIZATION' | 'AGGREGATION' | 'REDACTION' | 'GEO_JITTER' | 'HASHING';
+  pseudonymPrefix?: string;
+  allowedRolesForRaw: UserRole[];
+  description: string;
+}
+
+export interface ExportSecurityPolicy {
+  exportId: string;
+  requestedBy: string;
+  userRole: UserRole;
+  projectId: string;
+  exportType: 'FULL' | 'ANONYMIZED' | 'PSEUDONYMIZED';
+  justification: string;
+  recordsCount: number;
+  sanitizedFields: string[];
+  sha256Checksum: string;
+  timestamp: string;
+  expiresAt: string;
+  status: 'AUTHORIZED' | 'PENDING_APPROVAL' | 'EXPIRED' | 'BLOCKED';
+  retentionDays: number;
+}
+
+export type SecurityAuditAction =
+  | 'LOGIN_SUCCESS'
+  | 'LOGIN_FAILED'
+  | 'LOGOUT'
+  | 'AUTH_LOGIN_FAILED'
+  | 'AUTH_LOGOUT'
+  | 'ACCOUNT_LOCKED'
+  | 'SESSION_EXPIRED'
+  | 'SESSION_REVOKED'
+  | 'MFA_ENABLED'
+  | 'MFA_CHALLENGE_FAILED'
+  | 'MFA_CHALLENGE_ISSUED'
+  | 'ROLE_CHANGED'
+  | 'PERMISSION_OVERRIDDEN'
+  | 'EXPORT_FULL'
+  | 'EXPORT_ANONYMIZED'
+  | 'SOFT_DELETE'
+  | 'HARD_DELETE'
+  | 'RESTORE_RECYCLE_BIN'
+  | 'RECYCLE_RESTORED'
+  | 'DATA_PURGED'
+  | 'BACKUP_CREATED'
+  | 'BACKUP_RESTORED'
+  | 'BACKUP_INTEGRITY_VERIFIED'
+  | 'STAGING_TEST_RESTORE'
+  | 'RESTORE_COMPLETED'
+  | 'DISASTER_RECOVERY_TRIGGERED'
+  | 'CONFIG_CHANGED'
+  | 'SYSTEM_HEALTH_CHECK'
+  | 'RATE_LIMIT_EXCEEDED'
+  | 'UNAUTHORIZED_ACCESS_BLOCKED'
+  | 'SECRETS_INTEGRITY_CHECK'
+  | 'ENV_SWITCH';
+
+export interface SecurityAuditLogEntry {
+  id: string;
+  timestamp: string;
+  action: SecurityAuditAction;
+  severity: 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+  userId: string;
+  userName: string;
+  userRole: UserRole;
+  ipAddress: string;
+  environment: EnvironmentType;
+  resourceTarget?: string;
+  resource?: string;
+  status?: 'SUCCESS' | 'FAILURE' | 'BLOCKED';
+  details: string;
+  isImmutable?: boolean;
+  isSanitized?: boolean;
+}
+
+export interface BackupRecord {
+  backupId: string;
+  name: string;
+  backupType: 'MANUAL' | 'SCHEDULED_DAILY' | 'SCHEDULED_WEEKLY' | 'PRE_MIGRATION_SNAPSHOT';
+  createdAt: string;
+  createdBy: string;
+  environmentSource: EnvironmentType;
+  fileSizeBytes: number;
+  sha256Hash: string;
+  tablesIncluded: string[];
+  recordCounts: {
+    projects: number;
+    datasets: number;
+    surveys: number;
+    models: number;
+    protocols: number;
+    validations: number;
+  };
+  status: 'COMPLETED' | 'VERIFIED' | 'CORRUPTED' | 'RESTORING' | 'FAILED';
+  verifiedAt?: string;
+  verificationStatus: 'NEVER_TESTED' | 'PASSED' | 'FAILED' | 'REVIEW_NEEDED';
+  retentionDays: number;
+  isEncrypted: boolean;
+  downloadUrlMasked: string;
+}
+
+export interface DisasterRecoveryStep {
+  stepNumber: number;
+  title: string;
+  roleResponsible: string;
+  expectedDurationMinutes: number;
+  instructions: string;
+  verificationCriteria: string;
+}
+
+export interface DisasterRecoveryPlan {
+  rpoTargetMinutes: number; // Recovery Point Objective target (e.g. 60 min)
+  rpoEstimatedMinutes: number;
+  rtoTargetMinutes: number; // Recovery Time Objective target (e.g. 30 min)
+  rtoEstimatedMinutes: number;
+  lastDrTestDate: string;
+  drTestResult: 'SUCCESS' | 'FAILED' | 'PARTIAL' | 'NOT_YET_EXECUTED';
+  responsibleTeam: string;
+  emergencyHotline: string;
+  procedures: DisasterRecoveryStep[];
+  contingencyContacts: { role: string; name: string; contact: string; escalationTier: number }[];
+}
+
+export interface RecycleBinItem {
+  itemId: string;
+  itemType: 'SURVEY_RECORD' | 'HEALTH_ENTRY' | 'DATASET_ROW' | 'STUDY_PROJECT' | 'PROTOCOL_DRAFT' | 'MODEL_CONFIG';
+  title: string;
+  deletedBy: string;
+  deletedAt: string;
+  reason: string;
+  projectId: string;
+  originalData: any;
+  isPermanentDeletable: boolean;
+  expiresAt: string;
+}
+
+export interface SystemHealthMetric {
+  status: 'OPERATIONAL' | 'DEGRADED' | 'UNAVAILABLE';
+  uptimePercentage: number;
+  backendApiLatencyMs: number;
+  dbConnectionStatus: 'CONNECTED' | 'RECONNECTING' | 'DISCONNECTED';
+  storageUsedMb: number;
+  storageTotalMb: number;
+  storageWarningThresholdMb: number;
+  isStorageLow: boolean;
+  syncQueuePendingCount: number;
+  syncFailureRatePercent: number;
+  offlineCacheSizeMb: number;
+  lastSuccessfulSync: string;
+  activeErrorsCount: number;
+  serverClockSyncOffsetMs: number;
+}
+
+export interface CentralSystemError {
+  errorId: string;
+  timestamp: string;
+  module: string;
+  severity: 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+  userMessage: string;
+  sanitizedTechnicalCode: string;
+  resolutionStatus: 'OPEN' | 'INVESTIGATING' | 'RESOLVED';
+  reportedBy?: string;
+  remedyAction?: string;
+}
+
+export interface ProductionCheckItem {
+  id: string;
+  category: 'SECURITY' | 'DATA' | 'TECHNICAL' | 'SCIENTIFIC';
+  title: string;
+  description: string;
+  isSatisfied: boolean;
+  blocker: boolean;
+  verificationDetails: string;
+}
+
+export interface ProductionReadinessReport {
+  overallScore: number;
+  isProductionReady: boolean;
+  blockingIssuesCount: number;
+  categories: {
+    category: 'SECURITY' | 'DATA' | 'TECHNICAL' | 'SCIENTIFIC';
+    label: string;
+    score: number;
+    items: ProductionCheckItem[];
+  }[];
+  verdictExplanation: string[];
+}
+
+export interface FeatureFlag {
+  key: string;
+  label: string;
+  description: string;
+  isEnabled: boolean;
+  isExperimental: boolean;
+  category: 'MODELISATION' | 'SURVEILLANCE' | 'SYNC' | 'GEO_ANALYTICS';
+  impactRisk: 'FAIBLE' | 'MOYEN' | 'ELEVE';
+}
+
+export interface MaintenanceConfig {
+  isMaintenanceActive: boolean;
+  reason: string;
+  scheduledStart: string;
+  scheduledEnd: string;
+  allowedBypassRoles: UserRole[];
+  noticeBannerText: string;
+}
+
+export interface DataRetentionPolicy {
+  policyId: string;
+  dataType: string;
+  retentionPeriodDays: number;
+  autoArchive: boolean;
+  purgePolicy: 'SOFT_DELETE_ONLY' | 'ANONYMIZE_AFTER' | 'NEVER_PURGE';
+  lastExecution: string;
+  nextScheduledRun: string;
+}
+
+export interface V120SecurityScenarioTest {
+  id: number;
+  code: string;
+  title: string;
+  category:
+    | 'TEST_AUTHENTIFICATION_BRUTE_FORCE'
+    | 'TEST_SESSION_EXPIRATION_REVOCATION'
+    | 'TEST_RBAC_MOINDRE_PRIVILEGE'
+    | 'TEST_ISOLATION_PROJETS_SEPARATION'
+    | 'TEST_PROTECTION_SECRETS_FRONTEND'
+    | 'TEST_ANONYMISATION_EXPORT'
+    | 'TEST_SAUVEGARDE_INTEGRITE_SHA256'
+    | 'TEST_RESTAURATION_STAGING'
+    | 'TEST_CORBEILLE_SUPPRESSION_LOGIQUE'
+    | 'TEST_MONITORING_SANTE_ERREURS'
+    | 'TEST_NON_REGRESSION_OFFLINE_V1_V19';
+  description: string;
+  status: 'PASSED' | 'FAILED' | 'PENDING';
+  steps: string[];
+  expectedOutcome: string;
+  actualOutcome?: string;
+  lastRunDate: string;
+}
 
 

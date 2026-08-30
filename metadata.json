@@ -1,6 +1,6 @@
 {
-  "name": "One Health Kindu",
-  "description": "Plateforme One Health de collecte, contrôle qualité, normalisation et modélisation spatio-temporelle des risques sanitaires et climatiques à Kindu (Maniema, RDC)",
+  "name": "ONE HEALTH MANIEMA",
+  "description": "Plateforme intégrée de données, recherche, analyse et surveillance One Health en Province du Maniema (République Démocratique du Congo)",
   "requestFramePermissions": [
     "camera",
     "geolocation"

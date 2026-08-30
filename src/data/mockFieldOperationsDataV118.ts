@@ -1,0 +1,1451 @@
+import {
+  FieldCampaign,
+  FieldTeam,
+  FieldEnumerator,
+  FieldAssignment,
+  FieldFormRecord,
+  FieldSyncQueueItem,
+  FieldDataConflict,
+  FieldAuditLogEntry,
+  V118FieldScenarioTest,
+  FieldUserRole,
+  FieldCampaignStatus,
+  FieldFormStatus
+} from '../types';
+
+// ============================================================================
+// 1. CAMPAGNES MULTI-PATHOLOGIES & MULTI-PÉRIODES
+// ============================================================================
+
+export const MOCK_FIELD_CAMPAIGNS: FieldCampaign[] = [
+  {
+    id: 'CAMP-2027-01',
+    name: 'Campagne Opérationnelle One Health Kindu-Maniema (Série 2027)',
+    description: 'Enquête ménages & investigations communautaires multi-pathologies conjointe (Paludisme, Fièvre Typhoïde et Eau/Assainissement).',
+    project: 'Projet Recherche-Action One Health Maniema',
+    protocol: 'PROT-OH-MN-2027-V2',
+    pathologies: ['PALUDISME', 'FIEVRE_TYPHOIDE', 'AUTRE_ENTERO'],
+    pathologyLabels: ['Paludisme (Plasmodium)', 'Fièvre Typhoïde (S. typhi)', 'Gastro-entérites hydriques'],
+    territory: 'Kindu & Territoires limitrophes (Maniema)',
+    targetHealthZones: ['Kindu', 'Alunguli', 'Kasongo', 'Pangi'],
+    periods: [
+      {
+        id: 'PER-2027-S1',
+        name: 'Série 1 - Grande Saison des Pluies (Fév-Mai 2027)',
+        year: 2027,
+        startDate: '2027-02-01',
+        endDate: '2027-05-31',
+        isCurrent: true,
+        targetCount: 600
+      },
+      {
+        id: 'PER-2027-S2',
+        name: 'Série 2 - Petite Saison Sèche & Transition (Juin-Août 2027)',
+        year: 2027,
+        startDate: '2027-06-01',
+        endDate: '2027-08-31',
+        isCurrent: false,
+        targetCount: 400
+      },
+      {
+        id: 'PER-2027-S3',
+        name: 'Série 3 - Petite Saison des Pluies (Sept-Nov 2027)',
+        year: 2027,
+        startDate: '2027-09-01',
+        endDate: '2027-11-30',
+        isCurrent: false,
+        targetCount: 500
+      }
+    ],
+    startDate: '2027-02-01',
+    endDate: '2027-11-30',
+    managerName: 'Dr. Mukendi K. (Coordonnateur Terrain)',
+    managerId: 'USR-MGR-01',
+    status: 'ACTIVE',
+    targetQuestionnaires: 1500,
+    completedQuestionnaires: 985,
+    isDemonstrationData: true,
+    createdAt: '2027-01-15 08:30',
+    updatedAt: '2027-08-28 17:45'
+  },
+  {
+    id: 'CAMP-2028-02',
+    name: 'Campagne Prospective Multi-Centrique Maniema (Série 2028)',
+    description: 'Extension aux zones enclavées et suivi longitudinal de la transmission vectorielle et hydrique post-inondations.',
+    project: 'Projet Recherche-Action One Health Maniema',
+    protocol: 'PROT-OH-MN-2028-V1',
+    pathologies: ['PALUDISME', 'FIEVRE_TYPHOIDE', 'CHOLERA'],
+    pathologyLabels: ['Paludisme', 'Fièvre Typhoïde', 'Choléra & Diarrhées aiguës'],
+    territory: 'Province du Maniema (Kindu, Kailo, Punia, Kasongo)',
+    targetHealthZones: ['Kindu', 'Kailo', 'Punia', 'Kasongo'],
+    periods: [
+      {
+        id: 'PER-2028-S1',
+        name: 'Série 1 - Surveillance Précoce 2028',
+        year: 2028,
+        startDate: '2028-01-10',
+        endDate: '2028-04-30',
+        isCurrent: false,
+        targetCount: 800
+      },
+      {
+        id: 'PER-2028-S2',
+        name: 'Série 2 - Surveillance Saisonnière 2028',
+        year: 2028,
+        startDate: '2028-05-01',
+        endDate: '2028-09-30',
+        isCurrent: false,
+        targetCount: 800
+      }
+    ],
+    startDate: '2028-01-10',
+    endDate: '2028-09-30',
+    managerName: 'Prof. Kalume T. (Investigateur Principal)',
+    managerId: 'USR-MGR-02',
+    status: 'PREPARATION',
+    targetQuestionnaires: 1600,
+    completedQuestionnaires: 0,
+    isDemonstrationData: true,
+    createdAt: '2027-06-10 10:00',
+    updatedAt: '2027-08-20 14:00'
+  }
+];
+
+// ============================================================================
+// 2. ÉQUIPES DE TERRAIN
+// ============================================================================
+
+export const MOCK_FIELD_TEAMS: FieldTeam[] = [
+  {
+    id: 'EQ-01',
+    name: 'Équipe Alpha - Kindu Nord & Centre (Kasuku)',
+    supervisorId: 'USR-SUP-01',
+    supervisorName: 'Dr. Ilunga Mwamba (Superviseur Nord)',
+    membersIds: ['ENQ-0001', 'ENQ-0002'],
+    membersNames: ['Enquêteur KND-01 (J.M.)', 'Enquêteur KND-02 (A.K.)'],
+    territory: 'Zone de Santé de Kindu (Kasuku, Tokolote, Basoko)',
+    healthZones: ['Kindu'],
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne Opérationnelle One Health Kindu-Maniema (Série 2027)',
+    status: 'ACTIVE',
+    assignedAreasCount: 4,
+    targetHouseholds: 500,
+    completedFormsCount: 360
+  },
+  {
+    id: 'EQ-02',
+    name: 'Équipe Beta - Kindu Sud & Périphérie (Mikelenge)',
+    supervisorId: 'USR-SUP-02',
+    supervisorName: 'Mme Jeanne Kasongo (Superviseur Sud)',
+    membersIds: ['ENQ-0003', 'ENQ-0004'],
+    membersNames: ['Enquêteur KND-03 (P.N.)', 'Enquêteur KND-04 (M.S.)'],
+    territory: 'Zone de Santé de Kindu (Mikelenge, Rive droite)',
+    healthZones: ['Kindu'],
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne Opérationnelle One Health Kindu-Maniema (Série 2027)',
+    status: 'ACTIVE',
+    assignedAreasCount: 3,
+    targetHouseholds: 500,
+    completedFormsCount: 345
+  },
+  {
+    id: 'EQ-03',
+    name: 'Équipe Gamma - Rive Gauche & Fleuve (Alunguli)',
+    supervisorId: 'USR-SUP-03',
+    supervisorName: 'Dr. Thomas Assani (Superviseur Alunguli)',
+    membersIds: ['ENQ-0005', 'ENQ-0006'],
+    membersNames: ['Enquêteur KND-05 (E.L.)', 'Enquêteur KND-06 (B.T.)'],
+    territory: 'Zone de Santé d Alunguli (Zones inondables fleuve Congo)',
+    healthZones: ['Alunguli'],
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne Opérationnelle One Health Kindu-Maniema (Série 2027)',
+    status: 'ACTIVE',
+    assignedAreasCount: 3,
+    targetHouseholds: 500,
+    completedFormsCount: 280
+  }
+];
+
+// ============================================================================
+// 3. ENQUÊTEURS (AVEC IDENTIFIANTS STRICTS & CONFIDENTIALITÉ)
+// ============================================================================
+
+export const MOCK_FIELD_ENUMERATORS: FieldEnumerator[] = [
+  {
+    id: 'ENQ-0001',
+    displayName: 'Enquêteur KND-01 (J.M.)',
+    internalCode: 'AG-7391-JM',
+    teamId: 'EQ-01',
+    teamName: 'Équipe Alpha - Kindu Nord',
+    role: 'ENQUETEUR',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    assignedZones: ['Kindu'],
+    assignedHealthAreas: ['Kasuku', 'Basoko'],
+    status: 'ACTIF',
+    assignedHouseholdsTarget: 250,
+    completedForms: 185,
+    draftsCount: 2,
+    pendingSyncCount: 3,
+    lastSyncTimestamp: '2027-08-29 11:20',
+    connectionState: 'ONLINE',
+    batteryLevel: 88,
+    appVersion: 'v1.18.2-field-pwa',
+    currentLatitude: -2.9515,
+    currentLongitude: 25.9520,
+    accuracyMeters: 4.8,
+    isLocationPrivate: false
+  },
+  {
+    id: 'ENQ-0002',
+    displayName: 'Enquêteur KND-02 (A.K.)',
+    internalCode: 'AG-8422-AK',
+    teamId: 'EQ-01',
+    teamName: 'Équipe Alpha - Kindu Nord',
+    role: 'ENQUETEUR',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    assignedZones: ['Kindu'],
+    assignedHealthAreas: ['Tokolote', 'Lwama'],
+    status: 'ACTIF',
+    assignedHouseholdsTarget: 250,
+    completedForms: 175,
+    draftsCount: 1,
+    pendingSyncCount: 1,
+    lastSyncTimestamp: '2027-08-29 10:45',
+    connectionState: 'ONLINE',
+    batteryLevel: 74,
+    appVersion: 'v1.18.2-field-pwa',
+    currentLatitude: -2.9460,
+    currentLongitude: 25.9480,
+    accuracyMeters: 6.2,
+    isLocationPrivate: false
+  },
+  {
+    id: 'ENQ-0003',
+    displayName: 'Enquêteur KND-03 (P.N.)',
+    internalCode: 'AG-9104-PN',
+    teamId: 'EQ-02',
+    teamName: 'Équipe Beta - Kindu Sud',
+    role: 'ENQUETEUR',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    assignedZones: ['Kindu'],
+    assignedHealthAreas: ['Mikelenge Centre', 'Kimbombo'],
+    status: 'ACTIF',
+    assignedHouseholdsTarget: 250,
+    completedForms: 180,
+    draftsCount: 3,
+    pendingSyncCount: 4,
+    lastSyncTimestamp: '2027-08-29 08:30',
+    connectionState: 'UNSTABLE',
+    batteryLevel: 55,
+    appVersion: 'v1.18.2-field-pwa',
+    currentLatitude: -2.9680,
+    currentLongitude: 25.9610,
+    accuracyMeters: 12.5,
+    isLocationPrivate: false
+  },
+  {
+    id: 'ENQ-0004',
+    displayName: 'Enquêteur KND-04 (M.S.)',
+    internalCode: 'AG-5519-MS',
+    teamId: 'EQ-02',
+    teamName: 'Équipe Beta - Kindu Sud',
+    role: 'ENQUETEUR',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    assignedZones: ['Kindu'],
+    assignedHealthAreas: ['Mikelenge Sud', 'Kitemba'],
+    status: 'ACTIF',
+    assignedHouseholdsTarget: 250,
+    completedForms: 165,
+    draftsCount: 0,
+    pendingSyncCount: 0,
+    lastSyncTimestamp: '2027-08-29 11:40',
+    connectionState: 'ONLINE',
+    batteryLevel: 92,
+    appVersion: 'v1.18.2-field-pwa',
+    currentLatitude: -2.9730,
+    currentLongitude: 25.9580,
+    accuracyMeters: 5.1,
+    isLocationPrivate: false
+  },
+  {
+    id: 'ENQ-0005',
+    displayName: 'Enquêteur KND-05 (E.L.)',
+    internalCode: 'AG-3801-EL',
+    teamId: 'EQ-03',
+    teamName: 'Équipe Gamma - Alunguli',
+    role: 'ENQUETEUR',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    assignedZones: ['Alunguli'],
+    assignedHealthAreas: ['Alunguli Centre', 'Port Fluvial'],
+    status: 'EN_MISSION',
+    assignedHouseholdsTarget: 250,
+    completedForms: 140,
+    draftsCount: 4,
+    pendingSyncCount: 8,
+    lastSyncTimestamp: '2027-08-28 16:30',
+    connectionState: 'OFFLINE',
+    batteryLevel: 41,
+    appVersion: 'v1.18.2-field-pwa',
+    currentLatitude: -2.9390,
+    currentLongitude: 25.9320,
+    accuracyMeters: 8.4,
+    isLocationPrivate: false
+  },
+  {
+    id: 'ENQ-0006',
+    displayName: 'Enquêteur KND-06 (B.T.)',
+    internalCode: 'AG-4428-BT',
+    teamId: 'EQ-03',
+    teamName: 'Équipe Gamma - Alunguli',
+    role: 'ENQUETEUR',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    assignedZones: ['Alunguli'],
+    assignedHealthAreas: ['Makalamba', 'Ibanda'],
+    status: 'ACTIF',
+    assignedHouseholdsTarget: 250,
+    completedForms: 140,
+    draftsCount: 1,
+    pendingSyncCount: 2,
+    lastSyncTimestamp: '2027-08-29 09:15',
+    connectionState: 'ONLINE',
+    batteryLevel: 68,
+    appVersion: 'v1.18.2-field-pwa',
+    currentLatitude: -2.9320,
+    currentLongitude: 25.9280,
+    accuracyMeters: 7.0,
+    isLocationPrivate: false
+  }
+];
+
+// ============================================================================
+// 4. AFFECTATIONS DES ZONES & RÉPARTITION ÉQUILIBRÉE
+// ============================================================================
+
+export const MOCK_FIELD_ASSIGNMENTS: FieldAssignment[] = [
+  {
+    id: 'AFF-2027-001',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-01',
+    teamName: 'Équipe Alpha - Kindu Nord',
+    enumeratorId: 'ENQ-0001',
+    enumeratorName: 'Enquêteur KND-01 (J.M.)',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Kasuku',
+    neighborhood: 'Kasuku Ouest',
+    avenueStreet: 'Av. du 4 Janvier & Av. Mobutu',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 125,
+    completedHouseholdsCount: 95,
+    estimatedWorkloadHours: 32,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9515, lng: 25.9520, radiusMeters: 800 }
+  },
+  {
+    id: 'AFF-2027-002',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-01',
+    teamName: 'Équipe Alpha - Kindu Nord',
+    enumeratorId: 'ENQ-0001',
+    enumeratorName: 'Enquêteur KND-01 (J.M.)',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Basoko',
+    neighborhood: 'Basoko Port',
+    avenueStreet: 'Av. Lumumba & Quai Fluvial',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 125,
+    completedHouseholdsCount: 90,
+    estimatedWorkloadHours: 32,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9480, lng: 25.9540, radiusMeters: 750 }
+  },
+  {
+    id: 'AFF-2027-003',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-01',
+    teamName: 'Équipe Alpha - Kindu Nord',
+    enumeratorId: 'ENQ-0002',
+    enumeratorName: 'Enquêteur KND-02 (A.K.)',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Tokolote',
+    neighborhood: 'Tokolote Résidentiel',
+    avenueStreet: 'Av. Maniema & Av. de l Hôpital',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 130,
+    completedHouseholdsCount: 90,
+    estimatedWorkloadHours: 35,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9460, lng: 25.9480, radiusMeters: 800 }
+  },
+  {
+    id: 'AFF-2027-004',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-01',
+    teamName: 'Équipe Alpha - Kindu Nord',
+    enumeratorId: 'ENQ-0002',
+    enumeratorName: 'Enquêteur KND-02 (A.K.)',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Lwama',
+    neighborhood: 'Lwama Mission',
+    avenueStreet: 'Axe Kindu-Lwama',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 120,
+    completedHouseholdsCount: 85,
+    estimatedWorkloadHours: 30,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9380, lng: 25.9550, radiusMeters: 900 }
+  },
+  {
+    id: 'AFF-2027-005',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-02',
+    teamName: 'Équipe Beta - Kindu Sud',
+    enumeratorId: 'ENQ-0003',
+    enumeratorName: 'Enquêteur KND-03 (P.N.)',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Mikelenge Centre',
+    neighborhood: 'Mikelenge I',
+    avenueStreet: 'Av. Kasongo & Av. Commerciale',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 125,
+    completedHouseholdsCount: 95,
+    estimatedWorkloadHours: 32,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9680, lng: 25.9610, radiusMeters: 850 }
+  },
+  {
+    id: 'AFF-2027-006',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-02',
+    teamName: 'Équipe Beta - Kindu Sud',
+    enumeratorId: 'ENQ-0004',
+    enumeratorName: 'Enquêteur KND-04 (M.S.)',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Mikelenge Sud',
+    neighborhood: 'Kitemba',
+    avenueStreet: 'Av. des Pêcheurs',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 125,
+    completedHouseholdsCount: 85,
+    estimatedWorkloadHours: 32,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9730, lng: 25.9580, radiusMeters: 800 }
+  },
+  {
+    id: 'AFF-2027-007',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-03',
+    teamName: 'Équipe Gamma - Alunguli',
+    enumeratorId: 'ENQ-0005',
+    enumeratorName: 'Enquêteur KND-05 (E.L.)',
+    territory: 'Alunguli',
+    healthZone: 'Alunguli',
+    healthArea: 'Alunguli Centre',
+    neighborhood: 'Quartier Fleuve',
+    avenueStreet: 'Av. du Port & Berges',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 130,
+    completedHouseholdsCount: 75,
+    estimatedWorkloadHours: 36,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9390, lng: 25.9320, radiusMeters: 1000 }
+  },
+  {
+    id: 'AFF-2027-008',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    teamId: 'EQ-03',
+    teamName: 'Équipe Gamma - Alunguli',
+    enumeratorId: 'ENQ-0006',
+    enumeratorName: 'Enquêteur KND-06 (B.T.)',
+    territory: 'Alunguli',
+    healthZone: 'Alunguli',
+    healthArea: 'Makalamba',
+    neighborhood: 'Makalamba Ouest',
+    avenueStreet: 'Route Pangi / Sentiers',
+    formType: 'MENAGE_ONE_HEALTH',
+    periodId: 'PER-2027-S1',
+    periodName: 'Série 1 - 2027',
+    plannedHouseholdsCount: 120,
+    completedHouseholdsCount: 65,
+    estimatedWorkloadHours: 34,
+    status: 'EN_COURS',
+    assignedDate: '2027-02-05',
+    geofenceCenter: { lat: -2.9320, lng: 25.9280, radiusMeters: 950 }
+  }
+];
+
+// ============================================================================
+// 5. QUESTIONNAIRES TERRAIN (EXHAUSTIFS, DOUBLE ID LOCAL/SERVEUR, STATUTS)
+// ============================================================================
+
+export const MOCK_FIELD_FORMS: FieldFormRecord[] = [
+  {
+    localId: 'LOCAL-2027-000001',
+    serverId: 'SRV-2027-000101',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'MULTI_PATHOLOGIE',
+    enumeratorId: 'ENQ-0001',
+    enumeratorName: 'Enquêteur KND-01 (J.M.)',
+    teamId: 'EQ-01',
+    assignmentId: 'AFF-2027-001',
+    status: 'VALIDE',
+    syncStatus: 'SYNCED',
+    syncAttempts: 1,
+    lastSyncAttemptDate: '2027-08-29 11:20',
+    createdAtDevice: '2027-08-29 09:15',
+    lastModifiedDevice: '2027-08-29 09:38',
+    completedAtDevice: '2027-08-29 09:38',
+    synchronizedAtServer: '2027-08-29 11:20',
+    validatedAt: '2027-08-29 11:45',
+    validatedBy: 'Dr. Ilunga Mwamba (Superviseur Nord)',
+    lockedAt: '2027-08-29 11:45',
+    lockedBy: 'Dr. Ilunga Mwamba (Superviseur Nord)',
+    durationMinutes: 23,
+    startTime: '09:15',
+    endTime: '09:38',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Kasuku',
+    neighborhood: 'Kasuku Ouest',
+    streetName: 'Av. du 4 Janvier, Parcelle 14',
+    householdCode: 'MEN-KND-001',
+    gps: {
+      latitude: -2.95148,
+      longitude: 25.95212,
+      accuracy: 4.5,
+      capturedAt: '2027-08-29 09:16',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: true,
+      distanceFromZoneCenterMeters: 25
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 38,
+      respondentMaritalStatus: 'MARIE',
+      headGender: 'M',
+      householdSize: 6,
+      childrenUnder5: 2,
+      children5To14: 2,
+      adults15Plus: 2,
+      hadMalariaLast30Days: true,
+      casesCountMalaria: 2,
+      mosquitoNetAvailable: true,
+      mosquitoNetImpregnated: true,
+      stagnantWaterNearHouse: true,
+      hadTyphoidLast30Days: false,
+      casesCountTyphoid: 0,
+      waterSource: 'Borne fontaine REGIDESO',
+      waterTreatmentMethod: 'CHLORE_AQUATABS',
+      waterStorageType: 'BIDON_FERME',
+      latrineType: 'FOSSE_SIMPLE_DALLE',
+      solidWasteDisposal: 'FOSSE_PARCELLE',
+      distanceToWasteMeters: 15,
+      notes: 'Ménage coopératif. Moustiquaires bien installées au-dessus des lits des enfants.'
+    },
+    qualityChecks: {
+      completenessScore: 100,
+      hasInconsistencies: false,
+      inconsistencyList: [],
+      durationSuspicion: false,
+      isFlaggedForAudit: false
+    },
+    isDemoData: true
+  },
+  {
+    localId: 'LOCAL-2027-000002',
+    serverId: 'SRV-2027-000102',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'MULTI_PATHOLOGIE',
+    enumeratorId: 'ENQ-0001',
+    enumeratorName: 'Enquêteur KND-01 (J.M.)',
+    teamId: 'EQ-01',
+    assignmentId: 'AFF-2027-001',
+    status: 'VALIDE',
+    syncStatus: 'SYNCED',
+    syncAttempts: 1,
+    lastSyncAttemptDate: '2027-08-29 11:20',
+    createdAtDevice: '2027-08-29 09:45',
+    lastModifiedDevice: '2027-08-29 10:10',
+    completedAtDevice: '2027-08-29 10:10',
+    synchronizedAtServer: '2027-08-29 11:20',
+    validatedAt: '2027-08-29 11:46',
+    validatedBy: 'Dr. Ilunga Mwamba (Superviseur Nord)',
+    lockedAt: '2027-08-29 11:46',
+    lockedBy: 'Dr. Ilunga Mwamba (Superviseur Nord)',
+    durationMinutes: 25,
+    startTime: '09:45',
+    endTime: '10:10',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Kasuku',
+    neighborhood: 'Kasuku Ouest',
+    streetName: 'Av. du 4 Janvier, Parcelle 18',
+    householdCode: 'MEN-KND-002',
+    gps: {
+      latitude: -2.95170,
+      longitude: 25.95230,
+      accuracy: 5.1,
+      capturedAt: '2027-08-29 09:46',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: true,
+      distanceFromZoneCenterMeters: 45
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 42,
+      respondentMaritalStatus: 'MARIE',
+      headGender: 'F',
+      householdSize: 5,
+      childrenUnder5: 1,
+      children5To14: 2,
+      adults15Plus: 2,
+      hadMalariaLast30Days: false,
+      casesCountMalaria: 0,
+      mosquitoNetAvailable: true,
+      mosquitoNetImpregnated: true,
+      stagnantWaterNearHouse: false,
+      hadTyphoidLast30Days: true,
+      casesCountTyphoid: 1,
+      waterSource: 'Puits non protégé',
+      waterTreatmentMethod: 'AUCUN',
+      waterStorageType: 'SEAU_OUVERT',
+      latrineType: 'FOSSE_SANS_DALLE',
+      solidWasteDisposal: 'RUE',
+      distanceToWasteMeters: 8,
+      notes: 'Cas suspect de fièvre typhoïde chez adolescent 12 ans traité au centre de santé de Kasuku.'
+    },
+    qualityChecks: {
+      completenessScore: 100,
+      hasInconsistencies: false,
+      inconsistencyList: [],
+      durationSuspicion: false,
+      isFlaggedForAudit: false
+    },
+    isDemoData: true
+  },
+  {
+    localId: 'LOCAL-2027-000003',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'MULTI_PATHOLOGIE',
+    enumeratorId: 'ENQ-0001',
+    enumeratorName: 'Enquêteur KND-01 (J.M.)',
+    teamId: 'EQ-01',
+    assignmentId: 'AFF-2027-001',
+    status: 'EN_ATTENTE_SYNCHRONISATION',
+    syncStatus: 'PENDING',
+    syncAttempts: 0,
+    createdAtDevice: '2027-08-29 10:20',
+    lastModifiedDevice: '2027-08-29 10:44',
+    completedAtDevice: '2027-08-29 10:44',
+    durationMinutes: 24,
+    startTime: '10:20',
+    endTime: '10:44',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Kasuku',
+    neighborhood: 'Kasuku Ouest',
+    streetName: 'Av. Mobutu, Parcelle 07',
+    householdCode: 'MEN-KND-003',
+    gps: {
+      latitude: -2.95210,
+      longitude: 25.95190,
+      accuracy: 6.0,
+      capturedAt: '2027-08-29 10:21',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: true,
+      distanceFromZoneCenterMeters: 70
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 29,
+      respondentMaritalStatus: 'CELIBATAIRE',
+      headGender: 'M',
+      householdSize: 4,
+      childrenUnder5: 1,
+      children5To14: 1,
+      adults15Plus: 2,
+      hadMalariaLast30Days: true,
+      casesCountMalaria: 1,
+      mosquitoNetAvailable: false,
+      mosquitoNetImpregnated: false,
+      stagnantWaterNearHouse: true,
+      hadTyphoidLast30Days: false,
+      casesCountTyphoid: 0,
+      waterSource: 'Borne fontaine',
+      waterTreatmentMethod: 'EBULLITION',
+      waterStorageType: 'BIDON_FERME',
+      latrineType: 'FOSSE_SIMPLE_DALLE',
+      solidWasteDisposal: 'FOSSE_PARCELLE',
+      distanceToWasteMeters: 12,
+      notes: 'Demande de dotation en moustiquaires imprégnées.'
+    },
+    qualityChecks: {
+      completenessScore: 100,
+      hasInconsistencies: false,
+      inconsistencyList: [],
+      durationSuspicion: false,
+      isFlaggedForAudit: false
+    },
+    isDemoData: true
+  },
+  {
+    localId: 'LOCAL-2027-000004',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'PALUDISME',
+    enumeratorId: 'ENQ-0001',
+    enumeratorName: 'Enquêteur KND-01 (J.M.)',
+    teamId: 'EQ-01',
+    assignmentId: 'AFF-2027-001',
+    status: 'BROUILLON',
+    syncStatus: 'PENDING',
+    syncAttempts: 0,
+    createdAtDevice: '2027-08-29 11:05',
+    lastModifiedDevice: '2027-08-29 11:15',
+    durationMinutes: 10,
+    startTime: '11:05',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Kasuku',
+    neighborhood: 'Kasuku Ouest',
+    streetName: 'Av. Mobutu, Parcelle 12',
+    householdCode: 'MEN-KND-004',
+    gps: {
+      latitude: -2.95230,
+      longitude: 25.95175,
+      accuracy: 5.5,
+      capturedAt: '2027-08-29 11:06',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: true,
+      distanceFromZoneCenterMeters: 90
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 51,
+      respondentMaritalStatus: 'MARIE',
+      headGender: 'M',
+      householdSize: 7,
+      childrenUnder5: 2,
+      children5To14: 3,
+      adults15Plus: 2,
+      hadMalariaLast30Days: true,
+      casesCountMalaria: 2,
+      mosquitoNetAvailable: true,
+      mosquitoNetImpregnated: true,
+      stagnantWaterNearHouse: true,
+      hadTyphoidLast30Days: false,
+      casesCountTyphoid: 0,
+      waterSource: '',
+      waterTreatmentMethod: '',
+      waterStorageType: '',
+      latrineType: '',
+      solidWasteDisposal: '',
+      distanceToWasteMeters: 0,
+      notes: 'Brouillon en cours de remplissage - section WASH à finaliser.'
+    },
+    qualityChecks: {
+      completenessScore: 55,
+      hasInconsistencies: false,
+      inconsistencyList: ['Section WASH incomplète'],
+      durationSuspicion: false,
+      isFlaggedForAudit: false
+    },
+    isDemoData: true
+  },
+  {
+    localId: 'LOCAL-2027-000005',
+    serverId: 'SRV-2027-000105',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'MULTI_PATHOLOGIE',
+    enumeratorId: 'ENQ-0003',
+    enumeratorName: 'Enquêteur KND-03 (P.N.)',
+    teamId: 'EQ-02',
+    assignmentId: 'AFF-2027-005',
+    status: 'EN_CONTROLE',
+    syncStatus: 'SYNCED',
+    syncAttempts: 1,
+    lastSyncAttemptDate: '2027-08-29 08:30',
+    createdAtDevice: '2027-08-28 14:10',
+    lastModifiedDevice: '2027-08-28 14:14',
+    completedAtDevice: '2027-08-28 14:14',
+    synchronizedAtServer: '2027-08-29 08:30',
+    durationMinutes: 4, // Durée suspectement courte (< 5 min)
+    startTime: '14:10',
+    endTime: '14:14',
+    territory: 'Kindu',
+    healthZone: 'Kindu',
+    healthArea: 'Mikelenge Centre',
+    neighborhood: 'Mikelenge I',
+    streetName: 'Av. Commerciale, Parcelle 03',
+    householdCode: 'MEN-MIK-005',
+    gps: {
+      latitude: -2.96810,
+      longitude: 25.96120,
+      accuracy: 14.2,
+      capturedAt: '2027-08-28 14:11',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: true,
+      distanceFromZoneCenterMeters: 30
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 6, // Incohérence intentionnelle pour test (6 ans mais chef de ménage)
+      respondentMaritalStatus: 'MARIE',
+      headGender: 'M',
+      householdSize: 8,
+      childrenUnder5: 3,
+      children5To14: 3,
+      adults15Plus: 2,
+      hadMalariaLast30Days: false,
+      casesCountMalaria: 0,
+      mosquitoNetAvailable: true,
+      mosquitoNetImpregnated: true,
+      stagnantWaterNearHouse: false,
+      hadTyphoidLast30Days: false,
+      casesCountTyphoid: 0,
+      waterSource: 'Régie distribution',
+      waterTreatmentMethod: 'CHLORE',
+      waterStorageType: 'BIDON_FERME',
+      latrineType: 'FOSSE_SIMPLE_DALLE',
+      solidWasteDisposal: 'COLLECTE',
+      distanceToWasteMeters: 25,
+      notes: 'Contrôle requis : Âge répondant incohérent (6 ans) et durée très brève (4 min).'
+    },
+    qualityChecks: {
+      completenessScore: 90,
+      hasInconsistencies: true,
+      inconsistencyList: [
+        'Incohérence : Âge du répondant (6 ans) incompatible avec statut marié/chef de ménage',
+        'Signal qualité : Durée de collecte anormalement courte (4 minutes)'
+      ],
+      durationSuspicion: true,
+      isFlaggedForAudit: true,
+      auditReason: 'Contrôle de cohérence automatique : âge et durée atypiques.'
+    },
+    isDemoData: true
+  },
+  {
+    localId: 'LOCAL-2027-000006',
+    serverId: 'SRV-2027-000106',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'MULTI_PATHOLOGIE',
+    enumeratorId: 'ENQ-0005',
+    enumeratorName: 'Enquêteur KND-05 (E.L.)',
+    teamId: 'EQ-03',
+    assignmentId: 'AFF-2027-007',
+    status: 'SYNCHRONISE',
+    syncStatus: 'CONFLICT', // Formulaire en conflit
+    syncAttempts: 2,
+    lastSyncAttemptDate: '2027-08-29 07:10',
+    syncErrorMessage: 'Conflit de version détecté : données modifiées sur serveur et sur terminal.',
+    createdAtDevice: '2027-08-28 15:30',
+    lastModifiedDevice: '2027-08-28 16:45',
+    completedAtDevice: '2027-08-28 16:45',
+    synchronizedAtServer: '2027-08-28 18:00',
+    durationMinutes: 28,
+    startTime: '15:30',
+    endTime: '15:58',
+    territory: 'Alunguli',
+    healthZone: 'Alunguli',
+    healthArea: 'Alunguli Centre',
+    neighborhood: 'Quartier Fleuve',
+    streetName: 'Av. du Port, Parcelle 41',
+    householdCode: 'MEN-ALU-006',
+    gps: {
+      latitude: -2.93920,
+      longitude: 25.93240,
+      accuracy: 7.8,
+      capturedAt: '2027-08-28 15:31',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: true,
+      distanceFromZoneCenterMeters: 40
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 45,
+      respondentMaritalStatus: 'MARIE',
+      headGender: 'F',
+      householdSize: 6,
+      childrenUnder5: 2,
+      children5To14: 2,
+      adults15Plus: 2,
+      hadMalariaLast30Days: true,
+      casesCountMalaria: 3, // Sur le serveur c'était 2
+      mosquitoNetAvailable: true,
+      mosquitoNetImpregnated: false,
+      stagnantWaterNearHouse: true,
+      hadTyphoidLast30Days: true,
+      casesCountTyphoid: 2,
+      waterSource: 'Fleuve Congo',
+      waterTreatmentMethod: 'AUCUN',
+      waterStorageType: 'SEAU_OUVERT',
+      latrineType: 'FOSSE_SANS_DALLE',
+      solidWasteDisposal: 'RIVIERE_FLEUVE',
+      distanceToWasteMeters: 5,
+      notes: 'Berge inondable, proximité gîte larvaire anophélien et rejets fluviaux directs.'
+    },
+    qualityChecks: {
+      completenessScore: 100,
+      hasInconsistencies: false,
+      inconsistencyList: [],
+      durationSuspicion: false,
+      isFlaggedForAudit: true,
+      auditReason: 'Conflit de version en attente de résolution manuelle par le superviseur.'
+    },
+    isDemoData: true
+  },
+  {
+    localId: 'LOCAL-2027-000007',
+    campaignId: 'CAMP-2027-01',
+    campaignName: 'Campagne One Health 2027',
+    formType: 'MENAGE_ONE_HEALTH',
+    pathology: 'MULTI_PATHOLOGIE',
+    enumeratorId: 'ENQ-0005',
+    enumeratorName: 'Enquêteur KND-05 (E.L.)',
+    teamId: 'EQ-03',
+    assignmentId: 'AFF-2027-007',
+    status: 'EN_ATTENTE_SYNCHRONISATION',
+    syncStatus: 'ERROR',
+    syncAttempts: 3,
+    lastSyncAttemptDate: '2027-08-29 07:15',
+    syncErrorMessage: 'Erreur réseau (Timeout 504) : coupure de transmission lors de l envoi.',
+    createdAtDevice: '2027-08-28 16:50',
+    lastModifiedDevice: '2027-08-28 17:15',
+    completedAtDevice: '2027-08-28 17:15',
+    durationMinutes: 25,
+    startTime: '16:50',
+    endTime: '17:15',
+    territory: 'Alunguli',
+    healthZone: 'Alunguli',
+    healthArea: 'Alunguli Centre',
+    neighborhood: 'Quartier Fleuve',
+    streetName: 'Av. du Port, Parcelle 47',
+    householdCode: 'MEN-ALU-007',
+    gps: {
+      latitude: -2.97500, // Coordonnée volontairement éloignée (> 4 km) pour test geofencing
+      longitude: 25.98000,
+      accuracy: 28.0, // Précision médiocre
+      capturedAt: '2027-08-28 16:51',
+      source: 'DEVICE_HARDWARE',
+      isWithinAssignedZone: false,
+      distanceFromZoneCenterMeters: 4200,
+      geofenceWarning: 'Position potentiellement hors zone assignée (distance > 4 km du centre)'
+    },
+    formData: {
+      respondentConsent: true,
+      respondentAge: 33,
+      respondentMaritalStatus: 'CELIBATAIRE',
+      headGender: 'M',
+      householdSize: 4,
+      childrenUnder5: 1,
+      children5To14: 1,
+      adults15Plus: 2,
+      hadMalariaLast30Days: true,
+      casesCountMalaria: 1,
+      mosquitoNetAvailable: true,
+      mosquitoNetImpregnated: true,
+      stagnantWaterNearHouse: true,
+      hadTyphoidLast30Days: false,
+      casesCountTyphoid: 0,
+      waterSource: 'Borne fontaine',
+      waterTreatmentMethod: 'EBULLITION',
+      waterStorageType: 'BIDON_FERME',
+      latrineType: 'FOSSE_SIMPLE_DALLE',
+      solidWasteDisposal: 'FOSSE_PARCELLE',
+      distanceToWasteMeters: 10,
+      notes: 'GPS capturé sous couvert végétal dense avec signal faible.'
+    },
+    qualityChecks: {
+      completenessScore: 100,
+      hasInconsistencies: false,
+      inconsistencyList: ['Avertissement GPS : Précision 28m > 20m et hors zone assignée'],
+      durationSuspicion: false,
+      isFlaggedForAudit: true,
+      auditReason: 'GPS hors zone assignée & précision faible.'
+    },
+    isDemoData: true
+  }
+];
+
+// ============================================================================
+// 6. FILE D'ATTENTE DE SYNCHRONISATION
+// ============================================================================
+
+export const MOCK_SYNC_QUEUE: FieldSyncQueueItem[] = [
+  {
+    id: 'SYNC-Q-001',
+    localId: 'LOCAL-2027-000003',
+    formType: 'MENAGE_ONE_HEALTH',
+    enumeratorId: 'ENQ-0001',
+    timestamp: '2027-08-29 10:44',
+    status: 'PENDING',
+    retryCount: 0,
+    payloadSizeKb: 4.2
+  },
+  {
+    id: 'SYNC-Q-002',
+    localId: 'LOCAL-2027-000004',
+    formType: 'MENAGE_ONE_HEALTH',
+    enumeratorId: 'ENQ-0001',
+    timestamp: '2027-08-29 11:15',
+    status: 'PENDING',
+    retryCount: 0,
+    payloadSizeKb: 2.8
+  },
+  {
+    id: 'SYNC-Q-003',
+    localId: 'LOCAL-2027-000006',
+    serverId: 'SRV-2027-000106',
+    formType: 'MENAGE_ONE_HEALTH',
+    enumeratorId: 'ENQ-0005',
+    timestamp: '2027-08-29 07:10',
+    status: 'CONFLICT',
+    errorReason: 'Différence détectée entre version locale (dernière modif 16:45) et serveur (18:00)',
+    retryCount: 2,
+    payloadSizeKb: 4.6
+  },
+  {
+    id: 'SYNC-Q-004',
+    localId: 'LOCAL-2027-000007',
+    formType: 'MENAGE_ONE_HEALTH',
+    enumeratorId: 'ENQ-0005',
+    timestamp: '2027-08-29 07:15',
+    status: 'ERROR',
+    errorReason: 'Network timeout (504 Gateway Timeout)',
+    retryCount: 3,
+    payloadSizeKb: 4.1
+  }
+];
+
+// ============================================================================
+// 7. GESTION DES CONFLITS DE DONNÉES
+// ============================================================================
+
+export const MOCK_DATA_CONFLICTS: FieldDataConflict[] = [
+  {
+    id: 'CONF-2027-01',
+    localId: 'LOCAL-2027-000006',
+    serverId: 'SRV-2027-000106',
+    formType: 'MENAGE_ONE_HEALTH',
+    enumeratorId: 'ENQ-0005',
+    enumeratorName: 'Enquêteur KND-05 (E.L.)',
+    conflictDetectedAt: '2027-08-29 07:10',
+    localData: {
+      formData: {
+        respondentConsent: true,
+        headGender: 'F',
+        householdSize: 6,
+        childrenUnder5: 2,
+        children5To14: 2,
+        adults15Plus: 2,
+        hadMalariaLast30Days: true,
+        casesCountMalaria: 3, // Modification locale
+        mosquitoNetAvailable: true,
+        mosquitoNetImpregnated: false,
+        stagnantWaterNearHouse: true,
+        hadTyphoidLast30Days: true,
+        casesCountTyphoid: 2,
+        waterSource: 'Fleuve Congo',
+        waterTreatmentMethod: 'AUCUN',
+        waterStorageType: 'SEAU_OUVERT',
+        latrineType: 'FOSSE_SANS_DALLE',
+        solidWasteDisposal: 'RIVIERE_FLEUVE',
+        distanceToWasteMeters: 5,
+        notes: 'Mise à jour suite à visite de suivi le soir même (3 cas confirmés au TDR).'
+      },
+      lastModifiedDevice: '2027-08-28 16:45'
+    },
+    serverData: {
+      formData: {
+        respondentConsent: true,
+        headGender: 'F',
+        householdSize: 6,
+        childrenUnder5: 2,
+        children5To14: 2,
+        adults15Plus: 2,
+        hadMalariaLast30Days: true,
+        casesCountMalaria: 2, // Version initiale serveur
+        mosquitoNetAvailable: true,
+        mosquitoNetImpregnated: true,
+        stagnantWaterNearHouse: true,
+        hadTyphoidLast30Days: true,
+        casesCountTyphoid: 1,
+        waterSource: 'Fleuve Congo',
+        waterTreatmentMethod: 'AUCUN',
+        waterStorageType: 'SEAU_OUVERT',
+        latrineType: 'FOSSE_SANS_DALLE',
+        solidWasteDisposal: 'RIVIERE_FLEUVE',
+        distanceToWasteMeters: 5,
+        notes: 'Saisie initiale.'
+      },
+      synchronizedAtServer: '2027-08-28 18:00'
+    },
+    conflictingFields: [
+      {
+        field: 'formData.casesCountMalaria',
+        label: 'Nombre de cas de paludisme déclarés',
+        localValue: 3,
+        serverValue: 2
+      },
+      {
+        field: 'formData.mosquitoNetImpregnated',
+        label: 'Moustiquaire imprégnée d insecticide',
+        localValue: 'Non',
+        serverValue: 'Oui'
+      },
+      {
+        field: 'formData.casesCountTyphoid',
+        label: 'Nombre de cas de fièvre typhoïde',
+        localValue: 2,
+        serverValue: 1
+      },
+      {
+        field: 'formData.notes',
+        label: 'Notes de terrain de l enquêteur',
+        localValue: 'Mise à jour suite à visite de suivi le soir même (3 cas confirmés au TDR).',
+        serverValue: 'Saisie initiale.'
+      }
+    ],
+    resolutionStatus: 'UNRESOLVED'
+  }
+];
+
+// ============================================================================
+// 8. JOURNAL D'AUDIT TERRAIN (IMMUABLE)
+// ============================================================================
+
+export const MOCK_FIELD_AUDIT_LOG: FieldAuditLogEntry[] = [
+  {
+    id: 'AUD-FLD-001',
+    timestamp: '2027-08-29 11:46:12',
+    eventType: 'VERROUILLAGE',
+    entityType: 'FORMULAIRE',
+    entityId: 'LOCAL-2027-000002',
+    localId: 'LOCAL-2027-000002',
+    serverId: 'SRV-2027-000102',
+    userId: 'USR-SUP-01',
+    userName: 'Dr. Ilunga Mwamba',
+    userRole: 'SUPERVISEUR',
+    description: 'Validation et verrouillage médical du questionnaire ménage Kasuku MEN-KND-002.',
+    isDemoData: true
+  },
+  {
+    id: 'AUD-FLD-002',
+    timestamp: '2027-08-29 11:45:00',
+    eventType: 'VALIDATION_SUPERVISEUR',
+    entityType: 'FORMULAIRE',
+    entityId: 'LOCAL-2027-000001',
+    localId: 'LOCAL-2027-000001',
+    serverId: 'SRV-2027-000101',
+    userId: 'USR-SUP-01',
+    userName: 'Dr. Ilunga Mwamba',
+    userRole: 'SUPERVISEUR',
+    description: 'Validation de conformité du questionnaire ménage Kasuku MEN-KND-001.',
+    isDemoData: true
+  },
+  {
+    id: 'AUD-FLD-003',
+    timestamp: '2027-08-29 11:20:15',
+    eventType: 'SYNCHRONISATION_REUSSIE',
+    entityType: 'SYNCHRONISATION',
+    entityId: 'SYNC-LOT-084',
+    userId: 'ENQ-0001',
+    userName: 'Enquêteur KND-01 (J.M.)',
+    userRole: 'ENQUETEUR',
+    description: 'Synchronisation montante réussie pour 2 formulaires (LOCAL-2027-000001, LOCAL-2027-000002).',
+    details: { formsCount: 2, uploadedKb: 8.7 },
+    isDemoData: true
+  },
+  {
+    id: 'AUD-FLD-004',
+    timestamp: '2027-08-29 07:15:30',
+    eventType: 'ERREUR_SYNCHRONISATION',
+    entityType: 'SYNCHRONISATION',
+    entityId: 'SYNC-ERR-019',
+    localId: 'LOCAL-2027-000007',
+    userId: 'ENQ-0005',
+    userName: 'Enquêteur KND-05 (E.L.)',
+    userRole: 'ENQUETEUR',
+    description: 'Échec de transmission (504 Gateway Timeout). Données conservées intactes dans le stockage local.',
+    isDemoData: true
+  },
+  {
+    id: 'AUD-FLD-005',
+    timestamp: '2027-08-29 07:10:04',
+    eventType: 'DETECTION_CONFLIT',
+    entityType: 'CONFLIT',
+    entityId: 'CONF-2027-01',
+    localId: 'LOCAL-2027-000006',
+    serverId: 'SRV-2027-000106',
+    userId: 'SYS-SYNC-ENGINE',
+    userName: 'Moteur de Synchronisation Automatique',
+    userRole: 'ADMINISTRATEUR',
+    description: 'Détection d un conflit de version entre le terminal ENQ-0005 et le serveur pour le questionnaire LOCAL-2027-000006.',
+    isDemoData: true
+  },
+  {
+    id: 'AUD-FLD-006',
+    timestamp: '2027-08-28 14:14:22',
+    eventType: 'CONTROLE_QUALITE',
+    entityType: 'FORMULAIRE',
+    entityId: 'LOCAL-2027-000005',
+    localId: 'LOCAL-2027-000005',
+    serverId: 'SRV-2027-000105',
+    userId: 'SYS-QUALITY-ENGINE',
+    userName: 'Moteur de Contrôle Qualité',
+    userRole: 'CONTROLEUR_QUALITE',
+    description: 'Signalement automatique : Âge incohérent (6 ans) et durée atypique (4 min). Questionnaire placé EN_CONTROLE.',
+    isDemoData: true
+  },
+  {
+    id: 'AUD-FLD-007',
+    timestamp: '2027-02-05 08:30:00',
+    eventType: 'REPARTITION_LOT',
+    entityType: 'AFFECTATION',
+    entityId: 'AFF-LOT-2027',
+    userId: 'USR-MGR-01',
+    userName: 'Dr. Mukendi K.',
+    userRole: 'RESPONSABLE_CAMPAGNE',
+    description: 'Attribution équilibrée des zones et quotas aux 6 enquêteurs pour la Série 1 (2027).',
+    isDemoData: true
+  }
+];
+
+// ============================================================================
+// 9. BANC DE TESTS V1.18 (10 SCÉNARIOS TERRAIN & OFFLINE)
+// ============================================================================
+
+export const MOCK_FIELD_TESTS_V118: V118FieldScenarioTest[] = [
+  {
+    id: 1,
+    code: 'TEST-FLD-01',
+    title: 'Collecte Hors-Ligne & Persistance Locale (Mode Avion)',
+    category: 'TEST_OFFLINE_COLLECTE_RESUME',
+    description: 'Vérifier que l enquêteur peut ouvrir, remplir, enregistrer des brouillons et finaliser des questionnaires en mode avion sans connexion, puis retrouver ses données intactes après fermeture/réouverture du navigateur.',
+    status: 'PASSED',
+    steps: [
+      'Activer la simulation Mode Hors Connexion / Avion',
+      'Créer un nouveau questionnaire ménage avec local_id LOCAL-2027-000003',
+      'Saisir les variables démographiques, paludisme et eau',
+      'Fermer la session et recharger la page locale',
+      'Vérifier que le formulaire est récupéré à 100% sans perte'
+    ],
+    expectedOutcome: 'Toutes les données saisies localement sont restaurées depuis le stockage persistant sans altération.',
+    actualOutcome: 'Conforme : Restauration locale instantanée, identifiant LOCAL-2027-000003 et statut PENDING préservés.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 2,
+    code: 'TEST-FLD-02',
+    title: 'Reprise Automatique après Interruption de Synchronisation',
+    category: 'TEST_SYNCHRO_INTERROMPUE',
+    description: 'Vérifier qu une perte soudaine du signal Internet pendant l envoi d un lot ne détruit aucune donnée locale et permet la reprise exacte des éléments restants.',
+    status: 'PASSED',
+    steps: [
+      'Lancer une synchronisation d un lot de 5 questionnaires',
+      'Interrompre le réseau après le transfert de 2 questionnaires',
+      'Constater le statut : 2 synchronisés, 3 en attente/erreur',
+      'Rétablir la connexion et relancer la synchronisation',
+      'Vérifier que seuls les 3 éléments restants sont envoyés'
+    ],
+    expectedOutcome: 'Zéro perte de données, affichage exact (2 synchronisés, 3 restants), reprise ciblée sans duplicatas.',
+    actualOutcome: 'Conforme : 2 confirmés avec server_id, 3 réémis avec succès au deuxième essai.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 3,
+    code: 'TEST-FLD-03',
+    title: 'Contrôle & Prévention des Doublons sur le Terrain',
+    category: 'TEST_DETECTION_DOUBLON',
+    description: 'Vérifier qu une tentative de double envoi d un même formulaire (même local_id ou même combinaison ménage/date/enquêteur) est interceptée sans écrasement silencieux.',
+    status: 'PASSED',
+    steps: [
+      'Soumettre le formulaire LOCAL-2027-000001 (déjà synchronisé)',
+      'Tenter un renvoi immédiat de la même charge utile',
+      'Vérifier l interception par la clé d unicité combinée localId + householdCode'
+    ],
+    expectedOutcome: 'Alerte doublon déclenchée, enregistrement existant préservé, demande de justification si modification volontaire.',
+    actualOutcome: 'Conforme : Doublon intercepté, conservation de la version validée sans duplication dans la base.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 4,
+    code: 'TEST-FLD-04',
+    title: 'Résolution Manuelle des Conflits de Données',
+    category: 'TEST_RESOLUTION_CONFLIT',
+    description: 'Tester l interface de comparaison et de résolution lorsqu un même formulaire a été modifié simultanément sur le terminal local et sur le serveur.',
+    status: 'PASSED',
+    steps: [
+      'Identifier le formulaire LOCAL-2027-000006 en état CONFLICT',
+      'Ouvrir le module de résolution des conflits',
+      'Comparer les champs divergents (cas de paludisme : 3 local vs 2 serveur)',
+      'Sélectionner l option "Conserver la version locale avec justification"'
+    ],
+    expectedOutcome: 'Présentation claire des écarts champ par champ, traçabilité de la décision et mise à jour du journal d audit.',
+    actualOutcome: 'Conforme : Diff visuel côte-à-côte, application de la version choisie et entrée d audit enregistrée.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 5,
+    code: 'TEST-FLD-05',
+    title: 'GPS Hors-Ligne & Détection de Géofencing (Hors Zone)',
+    category: 'TEST_GPS_GEOFENCING',
+    description: 'Tester l enregistrement des coordonnées GPS sans connexion et la détection d un point situé hors de la zone d affectation assignée à l enquêteur.',
+    status: 'PASSED',
+    steps: [
+      'Simuler une capture GPS avec coordonnées distantes de 4.2 km de la zone assignée',
+      'Vérifier le calcul de précision et la comparaison au périmètre géofencé',
+      'Vérifier l apparition de l alerte d avertissement sans blocage strict'
+    ],
+    expectedOutcome: 'Mention explicite "Position potentiellement hors zone assignée", enregistrement de l écart en mètres et conservation des coordonnées.',
+    actualOutcome: 'Conforme : Alerte jaune affichée, justification enregistrée, coordonnées sauvegardées avec précision 28m.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 6,
+    code: 'TEST-FLD-06',
+    title: 'Sauvegarde Automatique Continue & Reprise de Brouillon',
+    category: 'TEST_BROUILLON_AUTOSAVE',
+    description: 'Vérifier que chaque saisie de champ déclenche une sauvegarde locale en arrière-plan sans attendre le clic sur le bouton Terminer.',
+    status: 'PASSED',
+    steps: [
+      'Ouvrir un nouveau formulaire et renseigner 3 champs',
+      'Quitter brutalement vers un autre module',
+      'Revenir dans l onglet Enquêtes',
+      'Vérifier la présence du formulaire en statut BROUILLON avec progression 55%'
+    ],
+    expectedOutcome: 'Aucune frappe perdue, reprise immédiate à l étape exacte d interruption.',
+    actualOutcome: 'Conforme : Brouillon disponible dans la liste avec date de dernière modification et bouton "Reprendre".',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 7,
+    code: 'TEST-FLD-07',
+    title: 'Blocage des Formulaires Incomplets en Validation',
+    category: 'TEST_BLOCAGE_NON_VALIDE',
+    description: 'Vérifier qu un questionnaire incomplet ou contenant des anomalies bloquantes ne peut pas passer au statut VALIDE.',
+    status: 'PASSED',
+    steps: [
+      'Sélectionner le formulaire LOCAL-2027-000005 (incohérence âge 6 ans)',
+      'Tenter une validation directe sans correction',
+      'Vérifier le refus du système et le maintien du statut EN_CONTROLE'
+    ],
+    expectedOutcome: 'Refus de validation avec liste explicite des contrôles de cohérence non satisfaits.',
+    actualOutcome: 'Conforme : Blocage effectif avec notification des 2 incohérences détectées par le moteur qualité.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 8,
+    code: 'TEST-FLD-08',
+    title: 'Permissions par Rôle & Verrouillage Post-Validation',
+    category: 'TEST_ROLES_PERMISSIONS_VERROU',
+    description: 'Vérifier qu un enquêteur standard ne peut pas modifier un formulaire verrouillé, et que seul un superviseur/administrateur peut le déverrouiller avec justification obligatoire.',
+    status: 'PASSED',
+    steps: [
+      'Basculer sur le rôle ENQUETEUR et tenter d éditer LOCAL-2027-000001 (VERROUILLE)',
+      'Constater le verrouillage en lecture seule',
+      'Basculer sur le rôle SUPERVISEUR et utiliser la commande Déverrouiller',
+      'Saisir le motif obligatoire et vérifier l écriture dans l audit log'
+    ],
+    expectedOutcome: 'Isolation stricte des privilèges, interdiction de modification pour l enquêteur, traçabilité du déverrouillage.',
+    actualOutcome: 'Conforme : Formulaire protégé, déverrouillage conditionné au motif avec horodatage superviseur.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 9,
+    code: 'TEST-FLD-09',
+    title: 'Algorithme de Répartition Équilibrée de la Charge',
+    category: 'TEST_REPARTITION_EQUILIBREE',
+    description: 'Vérifier que la fonction de répartition calcule équitablement le nombre de ménages et le volume horaire estimé entre les enquêteurs actifs.',
+    status: 'PASSED',
+    steps: [
+      'Générer un lot de 600 ménages cibles à répartir entre 6 enquêteurs',
+      'Lancer le calcul d équilibrage géographique et démographique',
+      'Vérifier que chaque enquêteur reçoit entre 95 et 105 ménages selon la densité'
+    ],
+    expectedOutcome: 'Distribution équilibrée de la charge sans modification automatique des affectations déjà validées.',
+    actualOutcome: 'Conforme : Écart-type de charge < 5%, respect strict de l intégrité des affectations en cours.',
+    lastRunDate: '2027-08-29 11:50'
+  },
+  {
+    id: 10,
+    code: 'TEST-FLD-10',
+    title: 'Intégration Complète & Non-Régression V1.0 à V1.17',
+    category: 'TEST_NON_REGRESSION_PIPELINE',
+    description: 'Vérifier que les données validées issues du terrain alimentent directement le pipeline RAW -> Nettoyage -> Dataset Analytique -> V1.15 Modélisation -> V1.16 Validation -> V1.17 Surveillance.',
+    status: 'PASSED',
+    steps: [
+      'Sélectionner les formulaires validés V1.18',
+      'Exécuter l injection vers le dataset analytique',
+      'Vérifier la compatibilité des variables de dénombrement paludisme et WASH avec les modèles GLM-NB V1.15 et les signaux V1.17'
+    ],
+    expectedOutcome: 'Fluidité totale du pipeline One Health, aucune rupture de schéma de données, non-régression validée.',
+    actualOutcome: 'Conforme : Intégration directe dans la base spatio-temporelle, reconnaissance automatique des indicateurs par les modules V1.15-V1.17.',
+    lastRunDate: '2027-08-29 11:50'
+  }
+];
+
+// Aliases for TerrainModule and consumer components
+export const MOCK_FIELD_AUDIT_LOGS = MOCK_FIELD_AUDIT_LOG;
+export const initialCampaignsV118 = MOCK_FIELD_CAMPAIGNS;
+export const initialTeamsV118 = MOCK_FIELD_TEAMS;
+export const initialEnumeratorsV118 = MOCK_FIELD_ENUMERATORS;
+export const initialAssignmentsV118 = MOCK_FIELD_ASSIGNMENTS;
+export const initialFormsV118 = MOCK_FIELD_FORMS;
+export const initialSyncQueueV118 = MOCK_SYNC_QUEUE;
+export const initialConflictsV118 = MOCK_DATA_CONFLICTS;
+export const initialAuditLogsV118 = MOCK_FIELD_AUDIT_LOG;
+export const v118FieldScenarioTestsData = MOCK_FIELD_TESTS_V118;
+
+

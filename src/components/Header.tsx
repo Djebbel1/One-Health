@@ -13,11 +13,18 @@ import {
   Building2,
   FileSpreadsheet,
   CloudSun,
-  Sparkles
+  Sparkles,
+  Shield,
+  Server,
+  Lock,
+  Info,
+  Globe
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { exportToFullExcel } from '../utils/exportUtils';
 import { AppModule } from '../types';
+import { APP_CONFIG } from '../config/appConfig';
+import { OneHealthLogo } from './common/OneHealthLogo';
 
 interface HeaderProps {
   currentModule?: AppModule;
@@ -26,6 +33,9 @@ interface HeaderProps {
   setActiveModule?: (m: AppModule) => void;
   onOpenExport?: () => void;
   onOpenAuth?: () => void;
+  onOpenAbout?: () => void;
+  activeEnvironment?: string;
+  maintenanceNotice?: string | null;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -34,7 +44,10 @@ export const Header: React.FC<HeaderProps> = ({
   activeModule,
   setActiveModule,
   onOpenExport,
-  onOpenAuth
+  onOpenAuth,
+  onOpenAbout,
+  activeEnvironment = 'PRODUCTION',
+  maintenanceNotice
 }) => {
   const active = currentModule || activeModule || 'ACCUEIL';
 
@@ -87,6 +100,24 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navItems: { id: AppModule; label: string; icon: any; count?: number; badgeColor?: string }[] = [
     { id: 'ACCUEIL', label: 'Accueil', icon: Building2 },
+    {
+      id: 'SECURITE_PRODUCTION',
+      label: '🛡️ Sécurité & Prod V1.20',
+      icon: Shield,
+      badgeColor: 'bg-emerald-700 text-white shadow-sm ring-2 ring-emerald-400/40'
+    },
+    {
+      id: 'PROJETS_GOUVERNANCE',
+      label: '🏛️ Projets & Gouvernance V1.19',
+      icon: Sparkles,
+      badgeColor: 'bg-teal-700 text-white shadow-sm ring-2 ring-teal-400/40'
+    },
+    {
+      id: 'TERRAIN',
+      label: '🧭 Opérations Terrain V1.18',
+      icon: Sparkles,
+      badgeColor: 'bg-teal-600 text-white shadow-sm ring-2 ring-teal-400/40'
+    },
     {
       id: 'SURVEILLANCE_ONE_HEALTH_V117',
       label: '🚨 Surveillance One Health V1.17',
@@ -166,12 +197,6 @@ export const Header: React.FC<HeaderProps> = ({
       badgeColor: 'bg-emerald-500 text-white'
     },
     {
-      id: 'MANIEMA_MULTI_PATHOLOGY_V110',
-      label: '🌍 Extension Maniema & Multi-Pathologies V1.10',
-      icon: Activity,
-      badgeColor: 'bg-teal-600 text-white'
-    },
-    {
       id: 'CONTROLE_QUALITE',
       label: 'Contrôle Qualité V1',
       icon: AlertTriangle,
@@ -192,9 +217,14 @@ export const Header: React.FC<HeaderProps> = ({
 
   const isTabActive = (itemId: AppModule, activeId: AppModule) => {
     if (itemId === activeId) return true;
+    if ((itemId === 'SECURITE_PRODUCTION' || itemId === 'SECURITE_PRODUCTION_V120') && (activeId === 'SECURITE_PRODUCTION' || activeId === 'SECURITE_PRODUCTION_V120')) return true;
+    if ((itemId === 'PROJETS_GOUVERNANCE' || itemId === 'GOUVERNANCE_DONNEES' || itemId === 'PROJETS_ETUDES' || itemId === 'DICTIONNAIRE_VARIABLES' || itemId === 'DATA_LINEAGE_V119' || itemId === 'REPRODUCTIBILITE_V119') && (activeId === 'PROJETS_GOUVERNANCE' || activeId === 'GOUVERNANCE_DONNEES' || activeId === 'PROJETS_ETUDES' || activeId === 'DICTIONNAIRE_VARIABLES' || activeId === 'DATA_LINEAGE_V119' || activeId === 'REPRODUCTIBILITE_V119')) return true;
+    if ((itemId === 'TERRAIN' || itemId === 'GESTION_TERRAIN_V118' || itemId === 'TERRAIN_V118' || itemId === 'CAMPAGNES_TERRAIN' || itemId === 'ENQUETES_TERRAIN' || itemId === 'COLLECTE_OFFLINE') && (activeId === 'TERRAIN' || activeId === 'GESTION_TERRAIN_V118' || activeId === 'TERRAIN_V118' || activeId === 'CAMPAGNES_TERRAIN' || activeId === 'ENQUETES_TERRAIN' || activeId === 'COLLECTE_OFFLINE')) return true;
+    if ((itemId === 'SURVEILLANCE_ONE_HEALTH_V117' || itemId === 'SURVEILLANCE' || itemId === 'SURVEILLANCE_MODULE') && (activeId === 'SURVEILLANCE_ONE_HEALTH_V117' || activeId === 'SURVEILLANCE' || activeId === 'SURVEILLANCE_MODULE')) return true;
     if ((itemId === 'VALIDATION_SCIENTIFIQUE' || itemId === 'SCIENTIFIC_VALIDATION') && (activeId === 'VALIDATION_SCIENTIFIQUE' || activeId === 'SCIENTIFIC_VALIDATION')) return true;
     if ((itemId === 'MODELISATION' || itemId === 'MODELISATION_STATISTIQUE' || itemId === 'MODELISATION_V115' || itemId === 'STATISTICAL_MODELING') && (activeId === 'MODELISATION' || activeId === 'MODELISATION_STATISTIQUE' || activeId === 'MODELISATION_V115' || activeId === 'STATISTICAL_MODELING')) return true;
     if ((itemId === 'LABORATOIRE_ANALYSE' || itemId === 'LABORATOIRE_ANALYSE_V114' || itemId === 'LAB_ANALYSE') && (activeId === 'LABORATOIRE_ANALYSE' || activeId === 'LABORATOIRE_ANALYSE_V114' || activeId === 'LAB_ANALYSE')) return true;
+    if ((itemId === 'DIAGNOSTIC_SCIENTIFIQUE' || itemId === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || itemId === 'DIAGNOSTIC_DONNEES') && (activeId === 'DIAGNOSTIC_SCIENTIFIQUE' || activeId === 'DIAGNOSTIC_SCIENTIFIQUE_V113' || activeId === 'DIAGNOSTIC_DONNEES')) return true;
     if ((itemId === 'TABLEAU_BORD' || itemId === 'DASHBOARD') && (activeId === 'TABLEAU_BORD' || activeId === 'DASHBOARD')) return true;
     if ((itemId === 'ENQUETES_MENAGES' || itemId === 'SURVEY') && (activeId === 'ENQUETES_MENAGES' || activeId === 'SURVEY')) return true;
     if ((itemId === 'OBSERVATIONS_ENV' || itemId === 'ENV') && (activeId === 'OBSERVATIONS_ENV' || activeId === 'ENV')) return true;
@@ -215,6 +245,14 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="bg-slate-900 text-slate-100 border-b border-slate-800 sticky top-0 z-40 shadow-sm">
+      {/* Maintenance Notification Banner if active */}
+      {maintenanceNotice && (
+        <div className="bg-amber-500 text-slate-950 px-4 py-1.5 text-xs font-bold text-center flex items-center justify-center gap-2 border-b border-amber-600">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>{maintenanceNotice}</span>
+        </div>
+      )}
+
       {/* Top Banner / Identity Bar */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
         {/* Logo & Project Title */}
@@ -222,29 +260,46 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => handleModuleChange('ACCUEIL')}
-            className="flex items-center gap-3 text-left focus:outline-hidden"
+            className="flex items-center gap-3 text-left focus:outline-hidden group"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-cyan-500 flex items-center justify-center text-white font-bold shadow-md ring-2 ring-emerald-500/30">
-              <Activity className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
-                  ONE HEALTH KINDU
-                  <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    RDC • Maniema
-                  </span>
-                </h1>
-              </div>
-              <p className="text-xs text-slate-400 hidden sm:block">
-                Modélisation spatio-temporelle : Paludisme, Fièvre typhoïde & Climat
-              </p>
-            </div>
+            <OneHealthLogo size="md" variant="full" showTagline={false} showTerritoryBadge={true} />
           </button>
         </div>
 
-        {/* Global Action Bar: Network, User Role, Quick Export */}
+        {/* Global Action Bar: Environment Badge, À Propos, Network, User Role, Quick Export */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* About One Health Maniema Button */}
+          {onOpenAbout && (
+            <button
+              onClick={onOpenAbout}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/90 hover:bg-slate-750 text-slate-300 hover:text-white rounded-lg text-xs font-semibold border border-slate-700 transition"
+              title="En savoir plus sur la plateforme One Health Maniema (V1.21)"
+            >
+              <Info className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">À Propos</span>
+            </button>
+          )}
+
+          {/* Environment Status Badge */}
+          <button
+            onClick={() => handleModuleChange('SECURITE_PRODUCTION')}
+            title="Cliquez pour gérer la sécurité et les environnements"
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition border ${
+              activeEnvironment === 'PRODUCTION'
+                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/60 ring-1 ring-emerald-500/30'
+                : activeEnvironment === 'STAGING'
+                ? 'bg-amber-950/80 text-amber-300 border-amber-600/60'
+                : 'bg-sky-950/80 text-sky-300 border-sky-600/60'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>
+              {activeEnvironment === 'PRODUCTION'
+                ? 'ENVIRONNEMENT DE PRODUCTION'
+                : `ENV : ${activeEnvironment}`}
+            </span>
+          </button>
+
           {/* Offline / Online Switcher Badge */}
           <div className="flex items-center bg-slate-800/80 rounded-lg p-1 border border-slate-700">
             <button

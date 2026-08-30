@@ -42,7 +42,7 @@ export const ReportTab: React.FC = () => {
   };
 
   const handleExportSummaryText = () => {
-    let content = `RAPPORT D'ANALYSE EXPLORATOIRE SPATIO-TEMPORELLE (V1.9) - ONE HEALTH KINDU\n`;
+    let content = `RAPPORT D'ANALYSE EXPLORATOIRE SPATIO-TEMPORELLE (V1.9) - ONE HEALTH MANIEMA\n`;
     content += `Généré le : ${v19ExploratoryReport.generated_at}\n`;
     content += `Jeu de données : ${v19ExploratoryReport.dataset_version}\n`;
     content += `Avertissement : ${v19ExploratoryReport.causality_disclaimer}\n\n`;

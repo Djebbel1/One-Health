@@ -23,7 +23,7 @@ export const AnonymizationWarning: React.FC<AnonymizationWarningProps> = ({
     <div className="rounded-xl border border-teal-200 bg-teal-50/80 p-3.5 text-xs text-teal-900 shadow-xs space-y-1.5">
       <div className="flex items-center gap-2 font-bold text-teal-950">
         <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0" />
-        <span>Protocole d'Anonymisation Recherche Scientifique (One Health Kindu)</span>
+        <span>Protocole d'Anonymisation Recherche Scientifique (One Health Maniema)</span>
       </div>
       <p className="text-teal-800 leading-relaxed">
         Conformément aux normes éthiques universitaires, la saisie des noms, prénoms, numéros de téléphone et coordonnées personnelles des patients et enquêtés est <strong>strictement interdite</strong>. Utilisez uniquement les codes anonymisés générés automatiquement.
