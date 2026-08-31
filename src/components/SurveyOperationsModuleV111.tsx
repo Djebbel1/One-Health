@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, Component, ErrorInfo, ReactNode } from 'react';
 import { useData } from '../context/DataContext';
 import {
   SurveyCreationWizard
@@ -33,42 +33,121 @@ import {
   CheckCircle2,
   Lock,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  AlertTriangle
 } from 'lucide-react';
 import { FieldSurvey, SurveyQuestionnaire } from '../types';
 
-export const SurveyOperationsModuleV111: React.FC = () => {
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class SurveyModuleErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = {
+    hasError: false,
+    error: null
+  };
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('SurveyOperationsModuleV111 caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-8 bg-white rounded-2xl border-2 border-rose-200 shadow-md text-center flex flex-col items-center justify-center gap-4">
+          <div className="p-4 bg-rose-100 text-rose-700 rounded-2xl">
+            <AlertTriangle className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-slate-900">
+              Récupération du Module Opérations V1.11
+            </h3>
+            <p className="text-xs text-slate-500 max-w-md mt-1">
+              Une anomalie ponctuelle a été interceptée lors du rendu des données locales.
+            </p>
+            {this.state.error && (
+              <pre className="text-[11px] font-mono text-rose-800 bg-rose-50 p-2.5 rounded-lg mt-2 max-w-lg overflow-x-auto text-left">
+                {this.state.error.message}
+              </pre>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-1.5"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Réinitialiser l'affichage V1.11
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export const SurveyOperationsModuleV111Content: React.FC = () => {
+  const data = useData() || {};
+
   const {
-    fieldSurveys,
-    addFieldSurvey,
-    updateFieldSurvey,
-    deleteFieldSurvey,
-    surveyQuestionnaires,
-    addSurveyQuestionnaire,
-    updateSurveyQuestionnaire,
-    publishQuestionnaireVersion,
-    createNextQuestionnaireVersion,
-    collectionSessions,
-    addCollectionSession,
-    updateCollectionSession,
-    submitCollectionSession,
-    validateCollectionSession,
-    requestCorrectionCollectionSession,
-    rejectCollectionSession,
-    addSupervisorCommentToSession,
-    fieldPlanItems,
-    healthRegistryRecords,
-    addHealthRegistryRecord,
-    bulkAddHealthRegistryRecords,
-    surveyAuditLogs,
-    v111ValidationTests,
-    runAutomatedValidationV111,
-    maniemaGeoUnits,
-    pathologies,
-    oneHealthProjects,
+    fieldSurveys = [],
+    addFieldSurvey = () => {},
+    updateFieldSurvey = () => {},
+    deleteFieldSurvey = () => {},
+    surveyQuestionnaires = [],
+    addSurveyQuestionnaire = () => {},
+    updateSurveyQuestionnaire = () => {},
+    publishQuestionnaireVersion = () => {},
+    createNextQuestionnaireVersion = () => {},
+    collectionSessions = [],
+    addCollectionSession = () => {},
+    updateCollectionSession = () => {},
+    submitCollectionSession = () => {},
+    validateCollectionSession = () => {},
+    requestCorrectionCollectionSession = () => {},
+    rejectCollectionSession = () => {},
+    addSupervisorCommentToSession = () => {},
+    fieldPlanItems = [],
+    healthRegistryRecords = [],
+    addHealthRegistryRecord = () => {},
+    bulkAddHealthRegistryRecords = () => {},
+    surveyAuditLogs = [],
+    v111ValidationTests = [],
+    runAutomatedValidationV111 = () => {},
+    maniemaGeoUnits = [],
+    pathologies = [],
+    oneHealthProjects = [],
     userSession,
-    isDemoMode
-  } = useData();
+    isDemoMode = false
+  } = data;
+
+  const safeFieldSurveys = useMemo(() => (Array.isArray(fieldSurveys) ? fieldSurveys : []), [fieldSurveys]);
+  const safeQuestionnaires = useMemo(() => (Array.isArray(surveyQuestionnaires) ? surveyQuestionnaires : []), [surveyQuestionnaires]);
+  const safeSessions = useMemo(() => (Array.isArray(collectionSessions) ? collectionSessions : []), [collectionSessions]);
+  const safePlans = useMemo(() => (Array.isArray(fieldPlanItems) ? fieldPlanItems : []), [fieldPlanItems]);
+  const safeRegistries = useMemo(() => (Array.isArray(healthRegistryRecords) ? healthRegistryRecords : []), [healthRegistryRecords]);
+  const safeAuditLogs = useMemo(() => (Array.isArray(surveyAuditLogs) ? surveyAuditLogs : []), [surveyAuditLogs]);
+  const safeTests = useMemo(() => (Array.isArray(v111ValidationTests) ? v111ValidationTests : []), [v111ValidationTests]);
+  const safeGeoUnits = useMemo(() => (Array.isArray(maniemaGeoUnits) ? maniemaGeoUnits : []), [maniemaGeoUnits]);
+  const safePathologies = useMemo(() => (Array.isArray(pathologies) ? pathologies : []), [pathologies]);
+  const safeProjects = useMemo(() => (Array.isArray(oneHealthProjects) ? oneHealthProjects : []), [oneHealthProjects]);
+
+  const safeUserSession = useMemo(() => {
+    return userSession || {
+      id: 'USR_ONEHEALTH',
+      name: 'Superviseur One Health',
+      role: 'SUPERVISEUR'
+    };
+  }, [userSession]);
 
   const [activeSubTab, setActiveSubTab] = useState<
     | 'CAMPAIGNS'
@@ -87,8 +166,8 @@ export const SurveyOperationsModuleV111: React.FC = () => {
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
   const [selectedSurveyForCollection, setSelectedSurveyForCollection] = useState<FieldSurvey | null>(null);
 
-  const testsPassed = v111ValidationTests.filter(t => t.status === 'PASSED').length;
-  const testsFailed = v111ValidationTests.filter(t => t.status === 'FAILED').length;
+  const testsPassed = safeTests.filter(t => t?.status === 'PASSED').length;
+  const testsFailed = safeTests.filter(t => t?.status === 'FAILED').length;
 
   const handleOpenMobileForm = (survey: FieldSurvey) => {
     setSelectedSurveyForCollection(survey);
@@ -143,12 +222,12 @@ export const SurveyOperationsModuleV111: React.FC = () => {
       {/* Sub-Tabs Ribbon */}
       <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-1.5 overflow-x-auto">
         {[
-          { id: 'CAMPAIGNS', label: 'Enquêtes & Campagnes', icon: ClipboardList, count: fieldSurveys.length },
+          { id: 'CAMPAIGNS', label: 'Enquêtes & Campagnes', icon: ClipboardList, count: safeFieldSurveys.length },
           { id: 'COLLECTION_MOBILE', label: 'Collecte Mobile / Tablette', icon: Smartphone },
-          { id: 'SUPERVISION', label: 'Supervision & Contrôle', icon: UserCheck, count: collectionSessions.filter(s => s.status === 'SOUMISE').length },
-          { id: 'QUESTIONNAIRES', label: 'Questionnaires & Versions', icon: FileCode2, count: surveyQuestionnaires.length },
-          { id: 'REGISTRIES', label: 'Registres FOSA', icon: Stethoscope, count: healthRegistryRecords.length },
-          { id: 'AUDIT', label: 'Journal d’Audit', icon: History, count: surveyAuditLogs.length },
+          { id: 'SUPERVISION', label: 'Supervision & Contrôle', icon: UserCheck, count: safeSessions.filter(s => s?.status === 'SOUMISE').length },
+          { id: 'QUESTIONNAIRES', label: 'Questionnaires & Versions', icon: FileCode2, count: safeQuestionnaires.length },
+          { id: 'REGISTRIES', label: 'Registres FOSA', icon: Stethoscope, count: safeRegistries.length },
+          { id: 'AUDIT', label: 'Journal d’Audit', icon: History, count: safeAuditLogs.length },
           { id: 'VALIDATION_TESTS', label: 'Banc de 15 Tests V1.11', icon: ShieldCheck, badge: `${testsPassed}/15` }
         ].map(tab => {
           const Icon = tab.icon;
@@ -194,11 +273,13 @@ export const SurveyOperationsModuleV111: React.FC = () => {
       {activeSubTab === 'CAMPAIGNS' && (
         <div className="flex flex-col gap-6 animate-in fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {fieldSurveys.map(survey => {
-              const matchedQ = surveyQuestionnaires.find(q => q.id === survey.questionnaireId);
+            {safeFieldSurveys.map(survey => {
+              const matchedQ = safeQuestionnaires.find(q => q.id === survey.questionnaireId);
+              const target = survey.targetSampleCount || 1;
+              const completed = survey.completedSampleCount || 0;
               const progressPct =
-                survey.targetSampleCount > 0
-                  ? Math.min(100, Math.round((survey.completedSampleCount / survey.targetSampleCount) * 100))
+                target > 0
+                  ? Math.min(100, Math.round((completed / target) * 100))
                   : 0;
 
               return (
@@ -253,7 +334,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Aires de santé :</span>
-                        <strong>{survey.geographicUnitIds.length} ciblées</strong>
+                        <strong>{(survey.geographicUnitIds || []).length} ciblées</strong>
                       </div>
                     </div>
 
@@ -270,8 +351,8 @@ export const SurveyOperationsModuleV111: React.FC = () => {
                         />
                       </div>
                       <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
-                        <span>Complété : {survey.completedSampleCount} / {survey.targetSampleCount}</span>
-                        <span>Validé : {survey.validatedSampleCount}</span>
+                        <span>Complété : {survey.completedSampleCount || 0} / {survey.targetSampleCount || 0}</span>
+                        <span>Validé : {survey.validatedSampleCount || 0}</span>
                       </div>
                     </div>
                   </div>
@@ -319,7 +400,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 mt-2">
-            {fieldSurveys.map(s => (
+            {safeFieldSurveys.map(s => (
               <button
                 key={s.id}
                 type="button"
@@ -336,18 +417,18 @@ export const SurveyOperationsModuleV111: React.FC = () => {
       {/* SUB-TAB 3: Supervision & Contrôle Qualité */}
       {activeSubTab === 'SUPERVISION' && (
         <SupervisionDashboard
-          sessions={collectionSessions}
-          surveys={fieldSurveys}
-          questionnaires={surveyQuestionnaires}
-          fieldPlans={fieldPlanItems}
-          healthRegistries={healthRegistryRecords}
-          auditLogs={surveyAuditLogs}
+          sessions={safeSessions}
+          surveys={safeFieldSurveys}
+          questionnaires={safeQuestionnaires}
+          fieldPlans={safePlans}
+          healthRegistries={safeRegistries}
+          auditLogs={safeAuditLogs}
           onValidateSession={validateCollectionSession}
           onRequestCorrection={requestCorrectionCollectionSession}
           onRejectSession={rejectCollectionSession}
           onAddComment={addSupervisorCommentToSession}
-          currentUserId={userSession.id}
-          currentUserName={userSession.name}
+          currentUserId={safeUserSession.id}
+          currentUserName={safeUserSession.name}
         />
       )}
 
@@ -367,7 +448,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                if (surveyQuestionnaires[0]) handleOpenBuilder(surveyQuestionnaires[0]);
+                if (safeQuestionnaires[0]) handleOpenBuilder(safeQuestionnaires[0]);
               }}
               className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm"
             >
@@ -376,52 +457,58 @@ export const SurveyOperationsModuleV111: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {surveyQuestionnaires.map(q => (
-              <div
-                key={q.id}
-                className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-900">{q.name}</span>
-                      <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full border border-emerald-300">
-                        v{q.version}
-                      </span>
+            {safeQuestionnaires.map(q => {
+              const sectionsCount = (q?.sections || []).length;
+              const questionsCount = (q?.sections || []).reduce((acc, s) => acc + (s?.questions?.length || 0), 0);
+              const updatedDate = q?.updatedAt ? new Date(q.updatedAt).toLocaleDateString() : 'N/A';
+
+              return (
+                <div
+                  key={q.id}
+                  className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between gap-4"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-slate-900">{q.name}</span>
+                        <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full border border-emerald-300">
+                          v{q.version}
+                        </span>
+                      </div>
+
+                      {q.isLocked ? (
+                        <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded text-[11px] font-semibold">
+                          <Lock className="w-3 h-3" /> Verrouillé (Publié)
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 border border-blue-300 rounded text-[11px] font-semibold">
+                          Brouillon
+                        </span>
+                      )}
                     </div>
 
-                    {q.isLocked ? (
-                      <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded text-[11px] font-semibold">
-                        <Lock className="w-3 h-3" /> Verrouillé (Publié)
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-800 border border-blue-300 rounded text-[11px] font-semibold">
-                        Brouillon
-                      </span>
-                    )}
+                    <p className="text-xs text-slate-500">{q.description}</p>
+
+                    <div className="grid grid-cols-2 gap-2 mt-4 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+                      <div>Sections : <strong>{sectionsCount}</strong></div>
+                      <div>Questions : <strong>{questionsCount}</strong></div>
+                      <div>Statut : <strong>{q.status}</strong></div>
+                      <div>Mise à jour : <strong>{updatedDate}</strong></div>
+                    </div>
                   </div>
 
-                  <p className="text-xs text-slate-500">{q.description}</p>
-
-                  <div className="grid grid-cols-2 gap-2 mt-4 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <div>Sections : <strong>{q.sections.length}</strong></div>
-                    <div>Questions : <strong>{q.sections.reduce((acc, s) => acc + s.questions.length, 0)}</strong></div>
-                    <div>Statut : <strong>{q.status}</strong></div>
-                    <div>Mise à jour : <strong>{new Date(q.updatedAt).toLocaleDateString()}</strong></div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenBuilder(q)}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-colors"
+                    >
+                      <FileCode2 className="w-3.5 h-3.5" /> Explorer & Gérer Version
+                    </button>
                   </div>
                 </div>
-
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenBuilder(q)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-colors"
-                  >
-                    <FileCode2 className="w-3.5 h-3.5" /> Explorer & Gérer Version
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -429,10 +516,10 @@ export const SurveyOperationsModuleV111: React.FC = () => {
       {/* SUB-TAB 5: Registres FOSA */}
       {activeSubTab === 'REGISTRIES' && (
         <HealthRegistriesModule
-          records={healthRegistryRecords}
-          surveys={fieldSurveys}
-          pathologies={pathologies}
-          geoUnits={maniemaGeoUnits}
+          records={safeRegistries}
+          surveys={safeFieldSurveys}
+          pathologies={safePathologies}
+          geoUnits={safeGeoUnits}
           onAddRecord={addHealthRegistryRecord}
           onBulkAdd={bulkAddHealthRegistryRecords}
           isDemoMode={isDemoMode}
@@ -452,7 +539,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
               </p>
             </div>
             <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg">
-              {surveyAuditLogs.length} logs enregistrés
+              {safeAuditLogs.length} logs enregistrés
             </span>
           </div>
 
@@ -468,10 +555,10 @@ export const SurveyOperationsModuleV111: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-800">
-                {surveyAuditLogs.map(log => (
+                {safeAuditLogs.map(log => (
                   <tr key={log.id} className="hover:bg-slate-50/80">
                     <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px]">
-                      {new Date(log.timestamp).toLocaleString()}
+                      {log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}
                     </td>
                     <td className="py-2.5 px-3 font-semibold">
                       {log.userName} ({log.userRole})
@@ -545,7 +632,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {v111ValidationTests.map(test => (
+            {safeTests.map(test => (
               <div
                 key={test.id}
                 className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-between gap-2"
@@ -567,7 +654,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
 
                 <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px] text-slate-500">
                   <span>Détails : <strong>{test.details}</strong></span>
-                  <span>Vérifié : {new Date(test.verifiedAt).toLocaleTimeString()}</span>
+                  <span>Vérifié : {test.verifiedAt ? new Date(test.verifiedAt).toLocaleTimeString() : 'N/A'}</span>
                 </div>
               </div>
             ))}
@@ -580,10 +667,10 @@ export const SurveyOperationsModuleV111: React.FC = () => {
         isOpen={showWizard}
         onClose={() => setShowWizard(false)}
         onSubmit={addFieldSurvey}
-        geoUnits={maniemaGeoUnits}
-        pathologies={pathologies}
-        projects={oneHealthProjects}
-        questionnaires={surveyQuestionnaires}
+        geoUnits={safeGeoUnits}
+        pathologies={safePathologies}
+        projects={safeProjects}
+        questionnaires={safeQuestionnaires}
         defaultIsDemo={isDemoMode}
       />
 
@@ -591,7 +678,7 @@ export const SurveyOperationsModuleV111: React.FC = () => {
       {selectedQuestionnaireForBuilder && (
         <QuestionnaireBuilderModal
           questionnaire={selectedQuestionnaireForBuilder}
-          pathologies={pathologies}
+          pathologies={safePathologies}
           isOpen={showBuilderModal}
           onClose={() => setShowBuilderModal(false)}
           onSave={updateSurveyQuestionnaire}
@@ -605,21 +692,28 @@ export const SurveyOperationsModuleV111: React.FC = () => {
         <MobileFieldFormModal
           survey={selectedSurveyForCollection}
           questionnaire={
-            surveyQuestionnaires.find(q => q.id === selectedSurveyForCollection.questionnaireId) ||
-            surveyQuestionnaires[0]
+            safeQuestionnaires.find(q => q.id === selectedSurveyForCollection.questionnaireId) ||
+            safeQuestionnaires[0]
           }
-          geoUnits={maniemaGeoUnits}
+          geoUnits={safeGeoUnits}
           isOpen={showMobileModal}
           onClose={() => setShowMobileModal(false)}
           onSaveDraft={addCollectionSession}
           onSubmitSession={session => {
             addCollectionSession(session);
-            // Auto submit
             submitCollectionSession(session.id || 'NEW');
           }}
-          currentSurveyorName={userSession.name}
+          currentSurveyorName={safeUserSession.name}
         />
       )}
     </div>
+  );
+};
+
+export const SurveyOperationsModuleV111: React.FC = () => {
+  return (
+    <SurveyModuleErrorBoundary>
+      <SurveyOperationsModuleV111Content />
+    </SurveyModuleErrorBoundary>
   );
 };

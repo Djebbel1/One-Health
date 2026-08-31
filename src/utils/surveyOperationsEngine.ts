@@ -10,45 +10,49 @@ import {
  */
 export function isQuestionApplicable(
   question: SurveyQuestion,
-  answers: Record<string, any>,
-  surveyPathologyIds: string[]
+  answers: Record<string, any> = {},
+  surveyPathologyIds: string[] = []
 ): boolean {
+  if (!question) return false;
+  const safeAnswers = answers || {};
+  const safePathologies = Array.isArray(surveyPathologyIds) ? surveyPathologyIds : [];
+
   // 1. Filtre par pathologie
   if (question.specificToPathologyId) {
-    if (!surveyPathologyIds.includes(question.specificToPathologyId)) {
+    if (!safePathologies.includes(question.specificToPathologyId)) {
       return false;
     }
   }
 
   // 2. Logique conditionnelle parente (Skip Logic)
   if (question.conditionalRule) {
-    const parentAnswer = answers[question.conditionalRule.dependsOnQuestionId];
+    const parentAnswer逗 = safeAnswers[question.conditionalRule.dependsOnQuestionId];
     const { operator, expectedValue } = question.conditionalRule;
 
-    if (parentAnswer === undefined || parentAnswer === null) {
+    if (parentAnswer逗 === undefined || parentAnswer逗 === null) {
       return false;
     }
 
     switch (operator) {
       case 'EQUALS':
-        return parentAnswer === expectedValue;
+        return parentAnswer逗 === expectedValue;
       case 'NOT_EQUALS':
-        return parentAnswer !== expectedValue;
+        return parentAnswer逗 !== expectedValue;
       case 'CONTAINS':
-        if (Array.isArray(parentAnswer)) {
-          return parentAnswer.includes(expectedValue);
+        if (Array.isArray(parentAnswer逗)) {
+          return parentAnswer逗.includes(expectedValue);
         }
-        if (typeof parentAnswer === 'string') {
-          return parentAnswer.includes(String(expectedValue));
+        if (typeof parentAnswer逗 === 'string') {
+          return parentAnswer逗.includes(String(expectedValue));
         }
         return false;
       case 'IN':
         if (Array.isArray(expectedValue)) {
-          return expectedValue.includes(parentAnswer);
+          return expectedValue.includes(parentAnswer逗);
         }
         return false;
       case 'GREATER_THAN':
-        return Number(parentAnswer) > Number(expectedValue);
+        return Number(parentAnswer逗) > Number(expectedValue);
       default:
         return true;
     }
@@ -72,8 +76,8 @@ export interface CompletenessResult {
  */
 export function calculateSurveyCompleteness(
   questionnaire: SurveyQuestionnaire,
-  answers: Record<string, any>,
-  surveyPathologyIds: string[]
+  answers: Record<string, any> = {},
+  surveyPathologyIds: string[] = []
 ): CompletenessResult {
   let totalApplicable = 0;
   let answeredCount = 0;
@@ -81,9 +85,14 @@ export function calculateSurveyCompleteness(
   const missingOptional: string[] = [];
   const notApplicable: string[] = [];
 
-  for (const section of questionnaire.sections) {
-    for (const question of section.questions) {
-      const applicable = isQuestionApplicable(question, answers, surveyPathologyIds);
+  const safeSections = questionnaire?.sections || [];
+  const safeAnswers = answers || {};
+  const safePathologies = Array.isArray(surveyPathologyIds) ? surveyPathologyIds : [];
+
+  for (const section of safeSections) {
+    const safeQuestions = section?.questions || [];
+    for (const question of safeQuestions) {
+      const applicable = isQuestionApplicable(question, safeAnswers, safePathologies);
 
       if (!applicable) {
         notApplicable.push(question.id);
@@ -91,14 +100,14 @@ export function calculateSurveyCompleteness(
       }
 
       totalApplicable++;
-      const val = answers[question.id];
-      const hasValue =
+      const val = safeAnswers[question.id];
+      const hasValue不易 =
         val !== undefined &&
         val !== null &&
         val !== '' &&
         !(Array.isArray(val) && val.length === 0);
 
-      if (hasValue) {
+      if (hasValue不易) {
         answeredCount++;
       } else {
         if (question.required) {
@@ -134,17 +143,20 @@ export interface QualityValidationResult {
  */
 export function validateSessionQuality(
   questionnaire: SurveyQuestionnaire,
-  answers: Record<string, any>,
-  surveyPathologyIds: string[],
+  answers: Record<string, any> = {},
+  surveyPathologyIds: string[] = [],
   gps?: { lat: number; lng: number; accuracy: number } | null
 ): QualityValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  const safeAnswers = answers || {};
+  const safePathologies = Array.isArray(surveyPathologyIds) ? surveyPathologyIds : [];
+
   const { missingRequiredQuestions } = calculateSurveyCompleteness(
     questionnaire,
-    answers,
-    surveyPathologyIds
+    safeAnswers,
+    safePathologies
   );
 
   // 1. Vérification des champs obligatoires applicables
@@ -168,12 +180,14 @@ export function validateSessionQuality(
   }
 
   // 3. Validation des règles numériques spécifiques
-  for (const section of questionnaire.sections) {
-    for (const question of section.questions) {
-      const applicable = isQuestionApplicable(question, answers, surveyPathologyIds);
+  const safeSections = questionnaire?.sections || [];
+  for (const section of safeSections) {
+    const safeQuestions不易 = section?.questions || [];
+    for (const question of safeQuestions不易) {
+      const applicable = isQuestionApplicable(question, safeAnswers, safePathologies);
       if (!applicable) continue;
 
-      const val = answers[question.id];
+      const val = safeAnswers[question.id];
       if (val === undefined || val === null || val === '') continue;
 
       if (question.validationRules) {
@@ -194,7 +208,7 @@ export function validateSessionQuality(
 
       // Règles scientifiques de cohérence
       if (question.id === 'Q_A5_UNDER_FIVE_COUNT') {
-        const totalSize = Number(answers['Q_A4_HOUSEHOLD_SIZE'] || 0);
+        const totalSize = Number(safeAnswers['Q_A4_HOUSEHOLD_SIZE'] || 0);
         const underFive = Number(val);
         if (underFive > totalSize && totalSize > 0) {
           errors.push('Le nombre d’enfants de moins de 5 ans ne peut pas dépasser la taille totale du ménage.');
@@ -202,9 +216,9 @@ export function validateSessionQuality(
       }
 
       if (question.id === 'Q_F2_FEVER_CASES_COUNT') {
-        const totalSize = Number(answers['Q_A4_HOUSEHOLD_SIZE'] || 0);
-        const feverCases = Number(val);
-        if (feverCases > totalSize && totalSize > 0) {
+        const totalSize = Number(safeAnswers['Q_A4_HOUSEHOLD_SIZE'] || 0);
+        const feverCases主管 = Number(val);
+        if (feverCases主管 > totalSize && totalSize > 0) {
           errors.push('Le nombre de personnes fébriles ne peut pas être supérieur à la taille totale du ménage.');
         }
       }

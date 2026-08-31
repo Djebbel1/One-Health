@@ -52,19 +52,23 @@ interface Props {
 }
 
 export const SupervisionDashboard: React.FC<Props> = ({
-  sessions,
-  surveys,
-  questionnaires,
-  fieldPlans,
-  healthRegistries,
-  auditLogs,
+  sessions = [],
+  surveys = [],
+  questionnaires = [],
+  fieldPlans = [],
+  healthRegistries = [],
+  auditLogs = [],
   onValidateSession,
   onRequestCorrection,
   onRejectSession,
   onAddComment,
   currentUserId,
-  currentUserName
+  currentUserName = 'Superviseur'
 }) => {
+  const safeSessions = useMemo(() => (Array.isArray(sessions) ? sessions : []), [sessions]);
+  const safeSurveys = useMemo(() => (Array.isArray(surveys) ? surveys : []), [surveys]);
+  const safeFieldPlans = useMemo(() => (Array.isArray(fieldPlans) ? fieldPlans : []), [fieldPlans]);
+
   const [selectedSurveyFilter, setSelectedSurveyFilter] = useState<string>('ALL');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -81,35 +85,36 @@ export const SupervisionDashboard: React.FC<Props> = ({
 
   // Filtering sessions
   const filteredSessions = useMemo(() => {
-    return sessions.filter(s => {
+    return safeSessions.filter(s => {
+      if (!s) return false;
       if (selectedSurveyFilter !== 'ALL' && s.surveyId !== selectedSurveyFilter) return false;
       if (selectedStatusFilter !== 'ALL' && s.status !== selectedStatusFilter) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchId = s.id.toLowerCase().includes(q);
-        const matchSurveyor = s.surveyorName.toLowerCase().includes(q);
+        const matchId = s.id?.toLowerCase().includes(q);
+        const matchSurveyor = s.surveyorName?.toLowerCase().includes(q);
         const matchAnon = s.anonymousSubjectId?.toLowerCase().includes(q);
         if (!matchId && !matchSurveyor && !matchAnon) return false;
       }
       return true;
     });
-  }, [sessions, selectedSurveyFilter, selectedStatusFilter, searchQuery]);
+  }, [safeSessions, selectedSurveyFilter, selectedStatusFilter, searchQuery]);
 
   // KPIs
   const stats = useMemo(() => {
-    const total = sessions.length;
-    const submitted = sessions.filter(s => s.status === 'SOUMISE').length;
-    const validated = sessions.filter(s => s.status === 'VALIDEE').length;
-    const toCorrect = sessions.filter(s => s.status === 'A_CORRIGER').length;
-    const rejected = sessions.filter(s => s.status === 'REJETEE').length;
-    const drafts = sessions.filter(s => s.status === 'BROUILLON').length;
+    const total = safeSessions.length;
+    const submitted = safeSessions.filter(s => s?.status === 'SOUMISE').length;
+    const validated = safeSessions.filter(s => s?.status === 'VALIDEE').length;
+    const toCorrect = safeSessions.filter(s => s?.status === 'A_CORRIGER').length;
+    const rejected = safeSessions.filter(s => s?.status === 'REJETEE').length;
+    const drafts = safeSessions.filter(s => s?.status === 'BROUILLON').length;
 
     const avgCompleteness =
       total > 0
-        ? Math.round(sessions.reduce((acc, s) => acc + s.completenessScore, 0) / total)
+        ? Math.round(safeSessions.reduce((acc, s) => acc + (s?.completenessScore || 0), 0) / total)
         : 100;
 
-    const gpsIssuesCount = sessions.filter(s => s.gps && s.gps.accuracy > 15).length;
+    const gpsIssuesCount = safeSessions.filter(s => s?.gps && s.gps.accuracy > 15).length;
 
     return {
       total,
@@ -122,7 +127,7 @@ export const SupervisionDashboard: React.FC<Props> = ({
       gpsIssuesCount,
       validationRate: total > 0 ? Math.round((validated / total) * 100) : 0
     };
-  }, [sessions]);
+  }, [safeSessions]);
 
   const handleOpenCorrection = (sessionId: string) => {
     setCorrectionTargetSessionId(sessionId);
@@ -259,7 +264,7 @@ export const SupervisionDashboard: React.FC<Props> = ({
               className="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-800"
             >
               <option value="ALL">Toutes les enquêtes</option>
-              {surveys.map(s => (
+              {safeSurveys.map(s => (
                 <option key={s.id} value={s.id}>
                   {s.code} - {s.name}
                 </option>
@@ -566,13 +571,15 @@ export const SupervisionDashboard: React.FC<Props> = ({
             </h3>
           </div>
           <span className="text-xs text-slate-500">
-            Objectif total : {fieldPlans.reduce((acc, p) => acc + p.plannedObservations, 0)} observations
+            Objectif total : {safeFieldPlans.reduce((acc, p) => acc + (p?.plannedObservations || 0), 0)} observations
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {fieldPlans.map(plan => {
-            const pct = Math.round((plan.completedObservations / plan.plannedObservations) * 100);
+          {safeFieldPlans.map(plan => {
+            const planned = plan?.plannedObservations || 1;
+            const completed = plan?.completedObservations || 0;
+            const pct = Math.min(100, Math.round((completed / planned) * 100));
             return (
               <div key={plan.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-2">
                 <div className="flex items-center justify-between">

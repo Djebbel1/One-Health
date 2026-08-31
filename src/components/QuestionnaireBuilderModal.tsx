@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SurveyQuestionnaire,
   SurveySection,
@@ -51,21 +51,27 @@ const QUESTION_TYPES: { type: SurveyQuestionType; label: string; icon: string }[
 
 export const QuestionnaireBuilderModal: React.FC<Props> = ({
   questionnaire,
-  pathologies,
+  pathologies = [],
   isOpen,
   onClose,
   onSave,
   onPublish,
   onCreateNewVersion
 }) => {
-  const [currentQ, setCurrentQ] = useState<SurveyQuestionnaire>({ ...questionnaire });
+  const [currentQ, setCurrentQ] = useState<SurveyQuestionnaire>(() => questionnaire ? { ...questionnaire } : ({} as any));
   const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
   const [newVersionInput, setNewVersionInput] = useState<string>('1.2');
   const [showVersionModal, setShowVersionModal] = useState<boolean>(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (questionnaire) {
+      setCurrentQ({ ...questionnaire, sections: questionnaire.sections || [] });
+    }
+  }, [questionnaire]);
 
-  const currentSection = currentQ.sections[selectedSectionIndex] || currentQ.sections[0];
+  if (!isOpen || !currentQ || !currentQ.sections) return null;
+
+  const currentSection = (currentQ.sections || [])[selectedSectionIndex] || (currentQ.sections || [])[0];
 
   const handleUpdateQuestion = (qIndex: number, updatedQuestion: Partial<SurveyQuestion>) => {
     if (currentQ.isLocked) return;

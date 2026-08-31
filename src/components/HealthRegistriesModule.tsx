@@ -33,14 +33,19 @@ interface Props {
 }
 
 export const HealthRegistriesModule: React.FC<Props> = ({
-  records,
-  surveys,
-  pathologies,
-  geoUnits,
+  records = [],
+  surveys = [],
+  pathologies = [],
+  geoUnits = [],
   onAddRecord,
   onBulkAdd,
   isDemoMode
 }) => {
+  const safeRecords = Array.isArray(records) ? records : [];
+  const safeSurveys = Array.isArray(surveys) ? surveys : [];
+  const safePathologies = Array.isArray(pathologies) ? pathologies : [];
+  const safeGeoUnits = Array.isArray(geoUnits) ? geoUnits : [];
+
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedPathology, setSelectedPathology] = useState<string>('ALL');
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
@@ -56,21 +61,22 @@ export const HealthRegistriesModule: React.FC<Props> = ({
   const [diagType, setDiagType] = useState<'CONFIRME_RDT' | 'CONFIRME_GE' | 'CONFIRME_WIDAL' | 'SUSPECT_CLINIQUE'>('CONFIRME_RDT');
   const [outcome, setOutcome] = useState<'GUERI' | 'TRANSFERE' | 'DECEDE' | 'EN_COURS'>('GUERI');
 
-  const filteredRecords = records.filter(r => {
+  const filteredRecords = safeRecords.filter(r => {
+    if (!r) return false;
     if (selectedPathology !== 'ALL' && r.pathologyCode !== selectedPathology) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      const matchPat = r.patientAnonymousId.toLowerCase().includes(q);
-      const matchFac = r.healthFacilityName.toLowerCase().includes(q);
+      const matchPat = r.patientAnonymousId?.toLowerCase().includes(q);
+      const matchFac = r.healthFacilityName?.toLowerCase().includes(q);
       if (!matchPat && !matchFac) return false;
     }
     return true;
   });
 
   const handleSubmitNew = () => {
-    const geo = geoUnits.find(g => g.id === geoUnitId);
+    const geo = safeGeoUnits.find(g => g.id === geoUnitId);
     onAddRecord({
-      surveyId: surveys[0]?.id || 'ENQ_RETRO_FOSA_01',
+      surveyId: safeSurveys[0]?.id || 'ENQ_RETRO_FOSA_01',
       healthFacilityName: facilityName,
       healthFacilityId: 'HF_KINDU_KASUKU',
       geographicUnitId: geoUnitId,
