@@ -42,8 +42,10 @@ import { DisasterRecoveryTab } from './DisasterRecoveryTab';
 import { SecurityLogsAndErrorsTab } from './SecurityLogsAndErrorsTab';
 import { ProductionReadinessTab } from './ProductionReadinessTab';
 import { SecurityTestRunnerTab } from './SecurityTestRunnerTab';
+import { ExploitationArchitectureTab } from './ExploitationArchitectureTab';
 
 export type SecurityTabKey =
+  | 'EXPLOITATION_V122'
   | 'ENV_STATUS'
   | 'AUTH_SESSIONS'
   | 'RBAC_PERMISSIONS'
@@ -170,6 +172,18 @@ export const SecurityAndProductionModule: React.FC<SecurityAndProductionModulePr
       {/* Main Tab Navigation Bar */}
       <div className="flex overflow-x-auto gap-1.5 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 scrollbar-none">
         <button
+          onClick={() => setActiveTab('EXPLOITATION_V122')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+            activeTab === 'EXPLOITATION_V122'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200'
+          }`}
+        >
+          <Server className="w-4 h-4 text-indigo-200" />
+          ⭐ Exploitation & Déploiement V1.22
+        </button>
+
+        <button
           onClick={() => setActiveTab('ENV_STATUS')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
             activeTab === 'ENV_STATUS'
@@ -279,6 +293,13 @@ export const SecurityAndProductionModule: React.FC<SecurityAndProductionModulePr
       </div>
 
       {/* Render Active Sub-Tab */}
+      {activeTab === 'EXPLOITATION_V122' && (
+        <ExploitationArchitectureTab
+          currentEnvironment={envConfig.activeEnvironment}
+          currentUserRole={currentUserRole}
+        />
+      )}
+
       {activeTab === 'ENV_STATUS' && (
         <EnvironmentStatusTab
           envConfig={envConfig}

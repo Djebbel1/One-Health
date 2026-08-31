@@ -6178,4 +6178,381 @@ export interface V120SecurityScenarioTest {
   lastRunDate: string;
 }
 
+// -------------------------------------------------------------
+// V1.22 EXPLOITATION & DEPLOYMENT ARCHITECTURE TYPES
+// -------------------------------------------------------------
+
+export type InfraStatusLevel = 'OPERATIONAL' | 'PARTIALLY_CONFIGURED' | 'NOT_CONFIGURED' | 'NOT_APPLICABLE';
+
+export interface InfrastructureComponentV122 {
+  id: string;
+  category: 'DOMAINE' | 'HTTPS' | 'HEBERGEMENT' | 'BACKEND' | 'DATABASE' | 'STORAGE' | 'SECRETS' | 'BACKUPS' | 'MONITORING' | 'DNS' | 'EMAIL';
+  name: string;
+  currentStatus: InfraStatusLevel;
+  provider: string;
+  currentConfiguration: string;
+  targetConfiguration: string;
+  isBlockerForProduction: boolean;
+  notes: string;
+  lastVerifiedAt?: string;
+}
+
+export interface DeploymentPipelineStage {
+  id: string;
+  stageNumber: number;
+  name: string;
+  description: string;
+  status: 'IDLE' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'SKIPPED';
+  requiredApprovalRole?: UserRole;
+  approvedBy?: string;
+  durationSec?: number;
+  executionLogs?: string[];
+  automatedChecks?: { checkName: string; passed: boolean; details: string }[];
+}
+
+export interface DatabaseMigrationV122 {
+  migrationId: string;
+  versionTag: string;
+  title: string;
+  description: string;
+  sourceVersion: string;
+  targetVersion: string;
+  executedAt: string;
+  executedBy: string;
+  status: 'APPLIED' | 'PENDING' | 'FAILED' | 'ROLLED_BACK';
+  checksumSha256: string;
+  rollbackScriptAvailable: boolean;
+  targetSchemaVersion: string;
+  affectedTables: string[];
+  downMigrationAvailable: boolean;
+  isBackwardCompatible: boolean;
+}
+
+export interface IncidentRecordV122 {
+  incidentId: string; // ex: INC-2026-000001
+  title: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  status: 'OPEN' | 'INVESTIGATING' | 'MITIGATED' | 'RESOLVED' | 'CLOSED';
+  startedAt: string;
+  resolvedAt?: string;
+  responsibleName: string;
+  responsibleRole: string;
+  affectedComponent: string;
+  environment: EnvironmentType;
+  impactSummary: string;
+  mitigationSteps: string[];
+  postMortemNotes?: string;
+  preventionPlan?: string;
+}
+
+export interface OperationsGuideSection {
+  id: string;
+  title: string;
+  icon: string;
+  summary: string;
+  category: 'ARCHITECTURE' | 'DEPLOYMENT' | 'UPDATE' | 'BACKUP' | 'RESTORE' | 'MONITORING' | 'INCIDENTS' | 'ROLLBACK' | 'REBUILD';
+  steps: string[];
+  criticalRules: string[];
+  responsibleRole: string;
+}
+
+export interface ResponsibilityMatrixEntry {
+  functionName: string;
+  primaryResponsible: string;
+  roleTitle: string;
+  alternateResponsible: string;
+  scopeDescription: string;
+  emergencyContact: string;
+}
+
+export interface InfrastructureCostResource {
+  id: string;
+  resourceType: string;
+  component: string;
+  suggestedProvider: string;
+  statusCost: 'A_CONFIGURER';
+  pricingModel: string;
+  estimationNotes: string;
+}
+
+export interface V122DeploymentReadinessCheck {
+  id: string;
+  category: 'INFRASTRUCTURE' | 'SECURITE' | 'DONNEES' | 'DEPLOIEMENT' | 'MONITORING' | 'SAUVEGARDE' | 'PERFORMANCE' | 'OFFLINE' | 'SYNCHRONISATION';
+  label: string;
+  description: string;
+  isReady: boolean;
+  isBlocker: boolean;
+  realStatus: InfraStatusLevel;
+  mitigationAction: string;
+}
+
+// -------------------------------------------------------------
+// V1.23 CLOUD ARCHITECTURE & READINESS TYPES
+// -------------------------------------------------------------
+
+export type CloudReadinessStatusLevel = 'READY' | 'PREPARED' | 'NOT_CONFIGURED';
+
+export type StorageProviderType = 'LOCAL_INDEXEDDB' | 'GOOGLE_CLOUD_STORAGE' | 'S3_COMPATIBLE' | 'SIMULATED_TEST';
+
+export interface FileMetadataRecordV123 {
+  fileId: string;
+  logicalPath: string; // ex: /projects/PRJ-MANIEMA-2026/surveys/SRV-001/media/photo_01.jpg
+  storageKey: string;
+  category: 'SURVEY_PHOTO' | 'GEOSPATIAL_RASTER' | 'EXPORT_ARCHIVE' | 'RESEARCH_DOCUMENT' | 'SYSTEM_ATTACHMENT';
+  mimeType: string;
+  sizeBytes: number;
+  uploadedBy: string;
+  projectId?: string;
+  surveyId?: string;
+  timestamp: string;
+  sha256Checksum: string;
+  syncStatus: 'LOCAL_ONLY' | 'PENDING_UPLOAD' | 'SYNCED' | 'UPLOAD_FAILED';
+  isEncrypted: boolean;
+  storageProvider: StorageProviderType;
+  dimensions?: { width: number; height: number };
+  geoCoordinates?: { latitude: number; longitude: number };
+}
+
+export interface PostgreSqlConfigV123 {
+  host: string;
+  port: number;
+  database: string;
+  sslMode: 'require' | 'verify-full' | 'disable';
+  maxPoolConnections: number;
+  idleTimeoutMillis: number;
+  connectionTimeoutMillis: number;
+  targetRegion: string; // ex: africa-south1 (Johannesburg)
+  isConfigured: boolean;
+  readReplicaAvailable: boolean;
+  notes: string;
+}
+
+export interface SyncQueueItemV123 {
+  id: string;
+  entityType: 'SURVEY_OBSERVATION' | 'CLIMATE_MEASURE' | 'ANIMAL_HEALTH_REPORT' | 'MEDIA_PHOTO' | 'GPS_TRACK';
+  entityId: string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE';
+  payloadSummary: string;
+  status: 'PENDING' | 'SYNCING' | 'SYNCED' | 'FAILED' | 'CONFLICT';
+  retryCount: number;
+  maxRetries: number;
+  backoffDelayMs: number;
+  lastAttemptAt?: string;
+  lastErrorMessage?: string;
+  conflictStrategy: 'SERVER_WINS' | 'CLIENT_WINS' | 'MANUAL_MERGE';
+  idempotencyKey: string;
+  createdAt: string;
+}
+
+export interface BackgroundJobV123 {
+  jobId: string;
+  type: 'GEO_RASTER_COMPUTE' | 'MASSIVE_EXPORT_JSON_CSV' | 'SEIR_SIMULATION_MULTI_ZONE' | 'IMAGE_COMPRESSION_TIFF' | 'BACKUP_SNAPSHOT';
+  status: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  progressPercent: number;
+  startedAt: string;
+  completedAt?: string;
+  durationMs?: number;
+  triggeredBy: string;
+  errorMessage?: string;
+  payloadSummary: string;
+  outputArtifactUrl?: string;
+}
+
+export interface CloudComponentReadinessV123 {
+  id: string;
+  category: 'COMPUTE' | 'DATABASE' | 'STORAGE' | 'SECRETS' | 'MONITORING' | 'LOGGING' | 'NETWORKING' | 'OFFLINE_SYNC' | 'CI_CD';
+  name: string;
+  gcpEquivalent: string;
+  status: CloudReadinessStatusLevel;
+  currentImplementation: string;
+  cloudTargetConfig: string;
+  region: string;
+  isBlocker: boolean;
+  notes: string;
+}
+
+export interface StructuredLogEntryV123 {
+  timestamp: string;
+  level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
+  service: string;
+  requestId: string;
+  environment: EnvironmentType;
+  message: string;
+  userId?: string;
+  durationMs?: number;
+  httpStatus?: number;
+  metadata?: Record<string, string | number | boolean>;
+}
+
+export interface InfrastructureAsCodeArtifact {
+  id: string;
+  filename: string;
+  language: 'dockerfile' | 'terraform' | 'yaml' | 'shell' | 'env';
+  description: string;
+  category: 'CONTAINER' | 'TERRAFORM_GCP' | 'SECRET_MANAGER' | 'HEALTH_CHECK';
+  content: string;
+  isDryRunOnly: boolean;
+}
+
+// ==========================================
+// V1.24 - V1.27 EXTENSIONS TYPES
+// ==========================================
+
+export type PathologyCategoryV124 =
+  | 'VECTOR_BORNE'
+  | 'WATERBORNE'
+  | 'ZOONOTIC'
+  | 'VIRAL_HEMORRHAGIC'
+  | 'RESPIRATORY'
+  | 'NUTRITIONAL_ENVIRONMENTAL'
+  | 'CUSTOM_ONE_HEALTH';
+
+export interface PathologyDefinitionV124 {
+  id: string;
+  code: string;
+  name: string;
+  category: PathologyCategoryV124;
+  scientificName?: string;
+  definition: string;
+  status: 'ACTIVE' | 'EXPERIMENTAL' | 'DEPRECATED';
+  incubationPeriodDays: { min: number; max: number };
+  vectorOrReservoir?: string;
+  environmentalTriggers: string[];
+  clinicalSymptoms: string[];
+  alertThresholdWeeklyCases: number;
+  r0Estimate: number;
+  configurableVariables: {
+    key: string;
+    label: string;
+    type: 'NUMBER' | 'BOOLEAN' | 'STRING' | 'SELECT';
+    options?: string[];
+    required: boolean;
+    defaultValue?: any;
+  }[];
+}
+
+export interface SyntheticSurveyRecordV124 {
+  id: string;
+  surveyCode: string;
+  projectId: string;
+  projectName: string;
+  healthZone: 'Kindu' | 'Kasongo' | 'Kibombo' | 'Punia' | 'Lubutu' | 'Pangi' | 'Kabambare';
+  healthArea: string;
+  collectorName: string;
+  collectorRole: UserRole;
+  collectionDate: string;
+  pathologyCode: string;
+  gpsCoordinates: {
+    latitude: number;
+    longitude: number;
+    altitudeMeters?: number;
+    accuracyMeters: number;
+    isValid: boolean;
+  };
+  humanHealthData: {
+    householdSize: number;
+    suspectedCases: number;
+    confirmedRdt: number;
+    hospitalizedCases: number;
+    ageGroupBreakdown: { under5: number; fiveTo14: number; adults: number };
+  };
+  environmentalData: {
+    waterSourceType: 'BOREHOLE' | 'UNPROTECTED_SPRING' | 'RIVER_STREAM' | 'RAINWATER' | 'TAP';
+    stagnantWaterNearby: boolean;
+    distanceToWaterStreamMeters: number;
+    vegetationDensityIndex: number; // 0 to 1 (NDVI surrogate)
+    wasteDisposalMethod: 'PIT' | 'OPEN_AIR' | 'BURIED' | 'COLLECTED';
+    ambientTemperatureC: number;
+    relativeHumidityPercent: number;
+  };
+  animalHealthData: {
+    livestockPresent: boolean;
+    animalSpecies: string[];
+    unexplainedAnimalMortalityCount: number;
+    wildlifeContactReported: boolean;
+  };
+  photosCount: number;
+  photoIds: string[];
+  offlineCreated: boolean;
+  syncState: 'PENDING' | 'SYNCING' | 'SYNCED' | 'FAILED' | 'CONFLICT';
+  idempotencyKey: string;
+  validationStatus: 'VALID' | 'WARNING_OUTLIER' | 'FLAGGED_INCONSISTENT';
+  dataIntegrityHash: string;
+}
+
+export type TestResultStatusV125 = 'PASSED' | 'FAILED' | 'WARNING' | 'SKIPPED';
+
+export interface TestCaseExecutionV125 {
+  id: string;
+  suiteId: 'FUNCTIONAL' | 'OFFLINE_SYNC' | 'SCIENTIFIC' | 'SECURITY_RBAC' | 'GEOSPATIAL' | 'PERFORMANCE' | 'RESILIENCE';
+  suiteName: string;
+  code: string;
+  name: string;
+  description: string;
+  targetRequirement: string;
+  status: TestResultStatusV125;
+  executionTimeMs: number;
+  assertionCount: number;
+  executedAt: string;
+  logOutput: string[];
+  remediationAdvice?: string;
+  isNonRegressionCheck: boolean;
+  versionIntroduced: string;
+}
+
+export interface NonRegressionVersionItemV125 {
+  version: string;
+  title: string;
+  featuresChecked: string[];
+  testedStatus: 'VERIFIED_COMPLIANT' | 'NEEDS_ATTENTION';
+  notes: string;
+}
+
+export type CloudReadinessStateV126 = 'READY' | 'PREPARED' | 'NOT_CONFIGURED';
+
+export interface CloudReadinessItemV126 {
+  id: string;
+  category: 'CONTAINER' | 'COMPUTE' | 'DATABASE' | 'STORAGE' | 'SECRETS' | 'IAM' | 'MONITORING' | 'BACKUP_RESTORE' | 'ROLLBACK' | 'DOMAIN_TLS';
+  name: string;
+  gcpService: string;
+  state: CloudReadinessStateV126;
+  stagingImplementation: string;
+  productionRequirement: string;
+  isBlockerForStaging: boolean;
+  isBlockerForProduction: boolean;
+  potentialCostEstimate: string;
+  technicalDetails: string;
+}
+
+export interface StagingEnvironmentConfigV127 {
+  environmentName: 'STAGING';
+  appUrl: string;
+  targetGcpRegion: string;
+  cloudRunServiceName: string;
+  cloudSqlInstanceName: string;
+  cloudStorageBucket: string;
+  secretManagerPrefix: string;
+  corsAllowedOrigins: string[];
+  rateLimitMaxRequestsPerMin: number;
+  isIsolatedFromProduction: boolean;
+  productionLocked: boolean;
+  syntheticDatasetSize: {
+    surveys: number;
+    users: number;
+    projects: number;
+    photos: number;
+  };
+  lastDeploymentCheck: {
+    timestamp: string;
+    passedChecks: number;
+    totalChecks: number;
+    status: 'HEALTHY' | 'WARNING' | 'CRITICAL';
+  };
+  simulatedIncidentCount: number;
+  resolvedIncidentCount: number;
+}
+
+
+
+
 

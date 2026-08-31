@@ -54,7 +54,7 @@ export const APP_CONFIG: AppBrandConfig = {
   primaryCity: 'Kindu',
   country: 'République Démocratique du Congo',
   approach: 'One Health (Santé Humaine, Santé Animale, Environnement, Climat)',
-  version: 'V1.21',
+  version: 'V1.23',
   releaseDate: '2026-08-30',
   demoNotice: 'Données scientifiques & opérationnelles — Environnement de Démonstration et Recherche Pilote',
   logoPlaceholderText: 'LOGO ONE HEALTH — Emplacement réservé pour fichier officiel',
@@ -114,6 +114,24 @@ export const APP_CONFIG: AppBrandConfig = {
     'Surveillance des co-infections fébriles'
   ],
   versionHistory: [
+    {
+      version: 'V1.23',
+      releaseDate: '2026-08-30',
+      name: 'ONE HEALTH MANIEMA',
+      tagline: 'Plateforme intégrée de données, recherche, analyse et surveillance One Health',
+      primaryRegion: 'Maniema (RDC)',
+      changesSummary: 'Adaptation à l\'architecture Cloud (Google Cloud Run, Cloud SQL PostgreSQL, Cloud Storage, Secret Manager, Cloud Logging/Monitoring région Johannesburg africa-south1) : abstraction StorageProvider, isolation des gros fichiers (photos/rasters), moteur de synchronisation résilient avec retry backoff exponentiel & gestion des conflits, audit de sécurité Cloud Readiness, générateur IaC (Dockerfile, Terraform DRY-RUN) et journalisation JSON structurée.',
+      author: 'Équipe Architecture Cloud & Systèmes Distribués One Health Maniema'
+    },
+    {
+      version: 'V1.22',
+      releaseDate: '2026-08-30',
+      name: 'ONE HEALTH MANIEMA',
+      tagline: 'Plateforme intégrée de données, recherche, analyse et surveillance One Health',
+      primaryRegion: 'Maniema (RDC)',
+      changesSummary: 'Architecture d\'exploitation & préparation au déploiement réel : isolation stricte DEV/STAGING/PROD, pipeline CI/CD de déploiement, migrations de schémas DB avec rollback, incident center (INC-2026-XXXX), health & readiness checks (/health), matrice de responsabilités, guide d\'exploitation et inventaire infrastructure réel.',
+      author: 'Équipe Architecture Système & Déploiement One Health Maniema'
+    },
     {
       version: 'V1.21',
       releaseDate: '2026-08-30',
