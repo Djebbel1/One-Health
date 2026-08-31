@@ -18,5 +18,10 @@ export default defineConfig(() => {
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
+    preview: {
+      allowedHosts: [
+        'one-health-maniema-github-715561326855.europe-west1.run.app',
+      ],
+    },
   };
 });
