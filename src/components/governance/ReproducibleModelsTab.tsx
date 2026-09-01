@@ -106,17 +106,17 @@ export const ReproducibleModelsTab: React.FC<ReproducibleModelsTabProps> = ({
                         <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100/70 px-2 py-0.5 rounded">
                           {m.modelId} ({m.version})
                         </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getStatusBadge(m.governanceStatus)}`}>
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getStatusBadge(m.governanceStatus)}`}>
                           {m.governanceStatus}
                         </span>
                       </div>
-                      <h5 className="text-xs font-bold text-slate-900 mt-1.5 line-clamp-1">
+                      <h5 className="text-sm font-bold text-slate-900 mt-1.5 line-clamp-1">
                         {m.name}
                       </h5>
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-mono">
+                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 font-mono">
                     <span>Algo : {m.algorithmType}</span>
                     <span className="text-teal-700 font-bold">{m.dependentVariable}</span>
                   </div>
@@ -202,10 +202,10 @@ export const ReproducibleModelsTab: React.FC<ReproducibleModelsTabProps> = ({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 font-mono text-xs">
                   {Object.entries(selectedModel.hyperparameters || {}).map(([k, v]) => (
                     <div key={k} className="p-2 bg-white rounded border border-slate-200">
-                      <span className="text-slate-400 block text-[10px] uppercase">{k}</span>
+                      <span className="text-slate-500 block text-xs uppercase">{k}</span>
                       <strong className="text-slate-800">{String(v)}</strong>
                     </div>
                   ))}
@@ -223,7 +223,7 @@ export const ReproducibleModelsTab: React.FC<ReproducibleModelsTabProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {Object.entries(selectedModel.performanceMetrics || {}).map(([mKey, mVal]) => (
                   <div key={mKey} className="p-3 bg-teal-50/50 rounded-xl border border-teal-200 text-xs space-y-0.5">
-                    <span className="text-slate-500 text-[10px] uppercase font-semibold">{mKey}</span>
+                    <span className="text-slate-500 text-xs uppercase font-semibold">{mKey}</span>
                     <p className="font-bold text-slate-900 text-sm font-mono">{String(mVal)}</p>
                   </div>
                 ))}

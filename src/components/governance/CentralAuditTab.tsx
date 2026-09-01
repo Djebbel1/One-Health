@@ -105,14 +105,14 @@ export const CentralAuditTab: React.FC<CentralAuditTabProps> = ({ logs, activePr
       {/* Audit Logs List */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+          <span className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
             Événements Enregistrés ({filteredLogs.length})
           </span>
-          <span className="text-[11px] font-mono text-slate-400">Scellement Temporel Automatique</span>
+          <span className="text-xs font-mono text-slate-400">Scellement Temporel Automatique</span>
         </div>
 
         {filteredLogs.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-xs">
+          <div className="p-8 text-center text-slate-400 text-sm">
             Aucun événement ne correspond aux critères de filtre.
           </div>
         ) : (
@@ -120,32 +120,32 @@ export const CentralAuditTab: React.FC<CentralAuditTabProps> = ({ logs, activePr
             {filteredLogs.map((log) => (
               <div
                 key={log.logId}
-                className="p-3.5 bg-slate-50 hover:bg-slate-100/70 transition-all rounded-xl border border-slate-200/80 text-xs space-y-1.5"
+                className="p-4 bg-slate-50 hover:bg-slate-100/70 transition-all rounded-xl border border-slate-200/80 text-xs sm:text-sm space-y-2"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] font-bold text-slate-500 bg-white px-1.5 py-0.5 rounded border">
+                    <span className="font-mono text-xs font-bold text-slate-500 bg-white px-2 py-0.5 rounded border">
                       {log.logId}
                     </span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getActionBadgeColor(log.actionType)}`}>
+                    <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${getActionBadgeColor(log.actionType)}`}>
                       {log.actionType.replace(/_/g, ' ')}
                     </span>
-                    <span className="font-mono text-[10px] text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded">
+                    <span className="font-mono text-xs text-teal-800 bg-teal-50 px-2 py-0.5 rounded">
                       {log.projectId}
                     </span>
                   </div>
 
-                  <span className="text-[11px] font-mono text-slate-500">{log.timestamp}</span>
+                  <span className="text-xs font-mono text-slate-500">{log.timestamp}</span>
                 </div>
 
-                <p className="text-slate-800 font-medium">
+                <p className="text-slate-800 font-medium text-sm">
                   {log.description}
                 </p>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 pt-1 border-t border-slate-200/50">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 pt-1.5 border-t border-slate-200/50">
                   <span>Auteur : <strong>{log.userName}</strong> ({log.userRole})</span>
                   {log.details && (
-                    <span className="font-mono text-[10px] text-slate-400">
+                    <span className="font-mono text-xs text-slate-400">
                       Détails : {JSON.stringify(log.details)}
                     </span>
                   )}

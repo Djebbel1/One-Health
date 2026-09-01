@@ -73,22 +73,22 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100/70 px-2 py-0.5 rounded">
+                        <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100/70 px-2.5 py-0.5 rounded">
                           {form.version}
                         </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                           form.status === 'ACTIF' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
                         }`}>
                           {form.status}
                         </span>
                       </div>
-                      <h5 className="text-xs font-bold text-slate-900 mt-1.5 line-clamp-1">
+                      <h5 className="text-sm font-bold text-slate-900 mt-1.5 line-clamp-1">
                         {form.name}
                       </h5>
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>{form.questionsCount} questions</span>
                     <span>Date : {form.releaseDate}</span>
                   </div>
@@ -97,13 +97,13 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
             })}
           </div>
 
-          <div className="p-4 bg-teal-900 text-teal-100 rounded-2xl border border-teal-800 text-xs space-y-1">
+          <div className="p-4 bg-teal-900 text-teal-100 rounded-2xl border border-teal-800 text-xs sm:text-sm space-y-1.5">
             <p className="font-bold text-white flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-teal-300" />
               Principe de Préservation Rétroactive
             </p>
-            <p className="text-teal-200 text-[11px]">
-              La publication d une version V1.1 ne détruit ni ne modifie jamais les fiches collectées sous la version V1.0.
+            <p className="text-teal-200 text-xs">
+              La publication d'une version V1.1 ne détruit ni ne modifie jamais les fiches collectées sous la version V1.0.
             </p>
           </div>
         </div>
@@ -125,7 +125,7 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
                 <h4 className="text-base font-bold text-slate-900 mt-2">
                   {selectedForm.name}
                 </h4>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                   Auteur : {selectedForm.author} | Déployé le : {selectedForm.releaseDate}
                 </p>
               </div>
@@ -139,12 +139,12 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
 
             {/* Compatibility Matrix with Datasets */}
             <div className="space-y-3">
-              <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h5 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <FileSpreadsheet className="w-4 h-4 text-teal-600" />
                 Matrice de Compatibilité avec les Types de Datasets
               </h5>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className={`p-3 rounded-xl border flex items-center gap-2 text-xs ${
+                <div className={`p-3.5 rounded-xl border flex items-center gap-2.5 text-xs sm:text-sm ${
                   selectedForm.compatibleDatasetTypes.includes('RAW')
                     ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     : 'bg-slate-50 text-slate-400 border-slate-200'
@@ -152,11 +152,11 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <div>
                     <p className="font-bold">Dataset RAW</p>
-                    <p className="text-[10px]">Ingestion directe 100%</p>
+                    <p className="text-xs text-emerald-700">Ingestion directe 100%</p>
                   </div>
                 </div>
 
-                <div className={`p-3 rounded-xl border flex items-center gap-2 text-xs ${
+                <div className={`p-3.5 rounded-xl border flex items-center gap-2.5 text-xs sm:text-sm ${
                   selectedForm.compatibleDatasetTypes.includes('CLEAN')
                     ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     : 'bg-slate-50 text-slate-400 border-slate-200'
@@ -164,11 +164,11 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <div>
                     <p className="font-bold">Dataset CLEAN</p>
-                    <p className="text-[10px]">Harmonisé & Nettoyé</p>
+                    <p className="text-xs text-emerald-700">Harmonisé & Nettoyé</p>
                   </div>
                 </div>
 
-                <div className={`p-3 rounded-xl border flex items-center gap-2 text-xs ${
+                <div className={`p-3.5 rounded-xl border flex items-center gap-2.5 text-xs sm:text-sm ${
                   selectedForm.compatibleDatasetTypes.includes('ANALYTIC')
                     ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     : 'bg-amber-50 text-amber-800 border-amber-200'
@@ -180,7 +180,7 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
                   )}
                   <div>
                     <p className="font-bold">Dataset ANALYTIC</p>
-                    <p className="text-[10px]">
+                    <p className="text-xs text-amber-700">
                       {selectedForm.compatibleDatasetTypes.includes('ANALYTIC')
                         ? 'Matrice directe'
                         : 'Nécessite transformation'}
@@ -192,7 +192,7 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
 
             {/* Variable Migration Rules */}
             <div className="space-y-3">
-              <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h5 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <GitBranch className="w-4 h-4 text-teal-600" />
                 Règles de Migration et Transformations Inter-Versions
               </h5>
@@ -200,24 +200,24 @@ export const FormsVersioningTab: React.FC<FormsVersioningTabProps> = ({
               {selectedForm.migrationRules && selectedForm.migrationRules.length > 0 ? (
                 <div className="space-y-2">
                   {selectedForm.migrationRules.map((rule, idx) => (
-                    <div key={idx} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+                    <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2 text-xs sm:text-sm">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-slate-600 bg-white px-2 py-0.5 rounded border">
+                          <span className="font-mono font-bold text-slate-600 bg-white px-2.5 py-0.5 rounded border">
                             {rule.fromVariable}
                           </span>
                           <ArrowRight className="w-3.5 h-3.5 text-teal-600" />
-                          <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                          <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200">
                             {rule.toVariable}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold font-mono bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200">
+                        <span className="text-xs font-bold font-mono bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200">
                           {rule.transformationType}
                         </span>
                       </div>
 
                       <p className="text-slate-700">{rule.description}</p>
-                      <div className="p-2 bg-white rounded border border-slate-200 font-mono text-[11px] text-slate-600">
+                      <div className="p-2.5 bg-white rounded border border-slate-200 font-mono text-xs text-slate-600">
                         {rule.formulaOrRule}
                       </div>
                     </div>

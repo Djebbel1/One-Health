@@ -112,8 +112,8 @@ export const ProjectPermissionsTab: React.FC<ProjectPermissionsTabProps> = ({
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs text-slate-900">{p.userName}</span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getRoleBadge(p.userRole)}`}>
+                        <span className="font-bold text-sm text-slate-900">{p.userName}</span>
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getRoleBadge(p.userRole)}`}>
                           {p.userRole.replace(/_/g, ' ')}
                         </span>
                       </div>
@@ -121,7 +121,7 @@ export const ProjectPermissionsTab: React.FC<ProjectPermissionsTabProps> = ({
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-mono">
+                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 font-mono">
                     <span>Projet : <strong>{p.projectId}</strong></span>
                     <span className="text-teal-700 font-semibold">{p.grantedBy}</span>
                   </div>
@@ -130,12 +130,12 @@ export const ProjectPermissionsTab: React.FC<ProjectPermissionsTabProps> = ({
             })}
           </div>
 
-          <div className="p-4 bg-teal-900 text-teal-100 rounded-2xl border border-teal-800 text-xs space-y-1">
+          <div className="p-4 bg-teal-900 text-teal-100 rounded-2xl border border-teal-800 text-xs sm:text-sm space-y-1.5">
             <p className="font-bold text-white flex items-center gap-1.5">
               <Lock className="w-4 h-4 text-teal-300" />
               Principe du Moindre Privilège
             </p>
-            <p className="text-teal-200 text-[11px]">
+            <p className="text-teal-200 text-xs">
               Un utilisateur sans assignation à un projet ne peut ni lire, ni exporter, ni injecter de données dans ce projet.
             </p>
           </div>
@@ -158,7 +158,7 @@ export const ProjectPermissionsTab: React.FC<ProjectPermissionsTabProps> = ({
                 <h4 className="text-base font-bold text-slate-900 mt-2">
                   {selectedUser.userName} — Projet : <span className="font-mono text-teal-700">{selectedUser.projectId}</span>
                 </h4>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                   Droits accordés le {selectedUser.grantedAt} par {selectedUser.grantedBy}
                 </p>
               </div>
@@ -166,12 +166,12 @@ export const ProjectPermissionsTab: React.FC<ProjectPermissionsTabProps> = ({
 
             {/* Granular Module Access Switches */}
             <div className="space-y-3">
-              <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h5 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Shield className="w-4 h-4 text-teal-600" />
                 Matrice des Droits Applicatifs par Module
               </h5>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                 {permKeys.map(({ key, label, desc }) => {
                   const isAllowed = Boolean(selectedUser[key]);
                   return (
@@ -185,8 +185,8 @@ export const ProjectPermissionsTab: React.FC<ProjectPermissionsTabProps> = ({
                       }`}
                     >
                       <div>
-                        <p className="font-bold">{label}</p>
-                        <p className="text-[10px] text-slate-500">{desc}</p>
+                        <p className="font-bold text-slate-900">{label}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
                       </div>
 
                       <div className="shrink-0 ml-2">

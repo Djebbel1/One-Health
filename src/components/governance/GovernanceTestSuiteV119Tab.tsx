@@ -60,12 +60,12 @@ export const GovernanceTestSuiteV119Tab: React.FC<GovernanceTestSuiteV119TabProp
       <div className="bg-gradient-to-r from-teal-950 to-slate-900 text-white p-6 rounded-3xl border border-teal-800 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-teal-300 bg-teal-800/80 px-2.5 py-0.5 rounded-full border border-teal-700 font-mono">
+            <span className="text-xs font-bold text-teal-300 bg-teal-800/80 px-3 py-1 rounded-full border border-teal-700 font-mono">
               SUITE DE CONFORMITÉ SCIENTIFIQUE V1.19
             </span>
           </div>
-          <h2 className="text-xl font-bold text-white">Banc de Tests Automatisés de Gouvernance</h2>
-          <p className="text-xs text-teal-100/90 max-w-xl">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Banc de Tests Automatisés de Gouvernance</h2>
+          <p className="text-xs sm:text-sm text-teal-100/90 max-w-xl">
             Validation automatique des 10 exigences cardinales : isolation multi-projets, non-écrasement, traçabilité ascendante, immutabilité et reproductibilité.
           </p>
         </div>
@@ -74,15 +74,15 @@ export const GovernanceTestSuiteV119Tab: React.FC<GovernanceTestSuiteV119TabProp
           <button
             onClick={handleResetTests}
             disabled={isRunningAll}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700"
+            className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-semibold border border-slate-700"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-4 h-4" />
           </button>
 
           <button
             onClick={handleRunAllTests}
             disabled={isRunningAll}
-            className="px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition-all shadow-md flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs sm:text-sm font-bold transition-all shadow-md flex items-center gap-2"
           >
             {isRunningAll ? (
               <>
@@ -106,12 +106,12 @@ export const GovernanceTestSuiteV119Tab: React.FC<GovernanceTestSuiteV119TabProp
             <Award className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-slate-900">
+            <h4 className="text-base font-bold text-slate-900">
               Statut Global de Conformité : {passedCount}/{tests.length} Scénarios Validés
             </h4>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs sm:text-sm text-slate-500">
               {passedCount === 10
-                ? 'Conformité totale certifiée : L architecture respecte scrupuleusement le cahier des charges V1.19.'
+                ? 'Conformité totale certifiée : L\'architecture respecte scrupuleusement le cahier des charges V1.19.'
                 : 'Cliquez sur « Lancer Tous les Tests » pour exécuter le banc de vérification.'}
             </p>
           </div>
@@ -132,7 +132,7 @@ export const GovernanceTestSuiteV119Tab: React.FC<GovernanceTestSuiteV119TabProp
           return (
             <div
               key={test.id}
-              className={`p-4 rounded-2xl border transition-all text-xs space-y-2 ${
+              className={`p-4 sm:p-5 rounded-2xl border transition-all text-xs sm:text-sm space-y-2.5 ${
                 test.status === 'PASSED'
                   ? 'bg-emerald-50/50 border-emerald-300 text-emerald-950 shadow-2xs'
                   : isCurrent
@@ -150,14 +150,14 @@ export const GovernanceTestSuiteV119Tab: React.FC<GovernanceTestSuiteV119TabProp
                     <div className="w-5 h-5 rounded-full border-2 border-slate-300 shrink-0" />
                   )}
                   <div>
-                    <span className="font-mono font-bold text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 mr-2">
+                    <span className="font-mono font-bold text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-700 mr-2">
                       {test.id}
                     </span>
-                    <strong className="text-sm text-slate-900">{test.title}</strong>
+                    <strong className="text-sm sm:text-base text-slate-900">{test.title}</strong>
                   </div>
                 </div>
 
-                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                <span className={`text-xs font-bold px-3 py-1 rounded-full ${
                   test.status === 'PASSED'
                     ? 'bg-emerald-100 text-emerald-800 font-mono'
                     : isCurrent
@@ -168,11 +168,11 @@ export const GovernanceTestSuiteV119Tab: React.FC<GovernanceTestSuiteV119TabProp
                 </span>
               </div>
 
-              <p className="text-slate-600 pl-7">{test.description}</p>
+              <p className="text-slate-600 pl-7 text-xs sm:text-sm">{test.description}</p>
 
               {test.status === 'PASSED' && (
                 <div className="pl-7 pt-1">
-                  <div className="p-2.5 bg-white/80 rounded-xl border border-emerald-200 text-[11px] text-emerald-900 font-medium">
+                  <div className="p-3 bg-white/80 rounded-xl border border-emerald-200 text-xs sm:text-sm text-emerald-900 font-medium">
                     <span className="font-bold">Résultat Validé : </span>
                     {test.expectedResult}
                   </div>

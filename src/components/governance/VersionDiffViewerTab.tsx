@@ -60,20 +60,20 @@ export const VersionDiffViewerTab: React.FC<VersionDiffViewerTabProps> = ({ diff
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                           {d.targetType}
                         </span>
                         <span className="text-xs font-mono font-bold text-teal-800">
                           {d.versionA} ➔ {d.versionB}
                         </span>
                       </div>
-                      <h5 className="text-xs font-bold text-slate-900 mt-1.5 line-clamp-1">
+                      <h5 className="text-sm font-bold text-slate-900 mt-1.5 line-clamp-1">
                         {d.targetName}
                       </h5>
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
                     <span className="text-emerald-700 font-bold">+{d.summary.addedCount} ajouts</span>
                     <span className="text-amber-700 font-bold">~{d.summary.modifiedCount} modifs</span>
                     <span className="text-rose-700 font-bold">-{d.summary.deletedCount} suppr</span>
@@ -91,10 +91,10 @@ export const VersionDiffViewerTab: React.FC<VersionDiffViewerTabProps> = ({ diff
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold bg-teal-800 text-white px-2.5 py-1 rounded">
+                  <span className="text-xs font-bold bg-teal-800 text-white px-3 py-1 rounded-lg">
                     {selectedDiff.targetType} : {selectedDiff.targetName}
                   </span>
-                  <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded border">
+                  <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border">
                     {selectedDiff.versionA} ➔ {selectedDiff.versionB}
                   </span>
                 </div>
@@ -105,13 +105,13 @@ export const VersionDiffViewerTab: React.FC<VersionDiffViewerTabProps> = ({ diff
 
               {/* Summary Badges */}
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs">
+                <span className="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs">
                   +{selectedDiff.summary.addedCount} Ajouts
                 </span>
-                <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 font-bold text-xs">
+                <span className="px-3 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 font-bold text-xs">
                   ~{selectedDiff.summary.modifiedCount} Modifiés
                 </span>
-                <span className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-800 border border-rose-200 font-bold text-xs">
+                <span className="px-3 py-1 rounded-lg bg-rose-50 text-rose-800 border border-rose-200 font-bold text-xs">
                   -{selectedDiff.summary.deletedCount} Supprimés
                 </span>
               </div>
@@ -132,29 +132,29 @@ export const VersionDiffViewerTab: React.FC<VersionDiffViewerTabProps> = ({ diff
                 }
 
                 return (
-                  <div key={index} className={`p-4 rounded-xl border space-y-2 text-xs ${cardStyle}`}>
+                  <div key={index} className={`p-4 sm:p-5 rounded-xl border space-y-2.5 text-xs sm:text-sm ${cardStyle}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {badge}
                         <span className="font-mono font-bold">{change.fieldOrVariable}</span>
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/80 border border-black/10">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-white/80 border border-black/10">
                           {change.type}
                         </span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-[11px]">
-                      <div className="p-2 bg-white/80 rounded border border-black/10">
-                        <span className="text-slate-400 block font-mono text-[10px]">Ancienne Version ({selectedDiff.versionA}) :</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+                      <div className="p-3 bg-white/80 rounded-lg border border-black/10">
+                        <span className="text-slate-400 block font-mono text-xs">Ancienne Version ({selectedDiff.versionA}) :</span>
                         <span className="font-mono text-slate-700">{change.oldValue || '— (Inexistant)'}</span>
                       </div>
-                      <div className="p-2 bg-white/80 rounded border border-black/10">
-                        <span className="text-slate-400 block font-mono text-[10px]">Nouvelle Version ({selectedDiff.versionB}) :</span>
+                      <div className="p-3 bg-white/80 rounded-lg border border-black/10">
+                        <span className="text-slate-400 block font-mono text-xs">Nouvelle Version ({selectedDiff.versionB}) :</span>
                         <span className="font-mono font-bold text-teal-800">{change.newValue || '— (Supprimé)'}</span>
                       </div>
                     </div>
 
-                    <p className="text-[11px] text-slate-600 italic pt-0.5">
+                    <p className="text-xs sm:text-sm text-slate-600 italic pt-0.5">
                       Commentaire : {change.comment}
                     </p>
                   </div>

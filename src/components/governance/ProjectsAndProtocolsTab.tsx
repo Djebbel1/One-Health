@@ -236,7 +236,7 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                   >
                     <span className={`w-2 h-2 rounded-full ${prj.status === 'ACTIF' ? 'bg-emerald-400' : prj.status === 'ARCHIVE' ? 'bg-slate-400' : 'bg-amber-400'}`} />
                     {prj.code}
-                    {selectedProject.id === prj.id && <span className="text-[10px] bg-teal-800/60 px-1.5 py-0.5 rounded">En cours</span>}
+                    {selectedProject.id === prj.id && <span className="text-xs bg-teal-800/60 px-1.5 py-0.5 rounded">En cours</span>}
                   </button>
                 ))}
               </div>
@@ -244,10 +244,10 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
 
             <button
               onClick={() => setShowNewProjectModal(true)}
-              className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-all"
+              className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-all"
             >
               <Plus className="w-4 h-4" />
-              Nouveau Projet d Étude
+              Nouveau Projet d'Étude
             </button>
           </div>
 
@@ -272,7 +272,7 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                           <span className="text-xs font-bold text-teal-800 bg-teal-100/70 px-2 py-0.5 rounded-md font-mono">
                             {project.code}
                           </span>
-                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                             project.status === 'ACTIF'
                               ? 'bg-emerald-100 text-emerald-800'
                               : project.status === 'ARCHIVE'
@@ -288,12 +288,12 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed">
                       {project.description}
                     </p>
 
                     {/* Metadata & Leader */}
-                    <div className="space-y-1.5 pt-2 border-t border-slate-100 text-xs text-slate-600">
+                    <div className="space-y-1.5 pt-2 border-t border-slate-100 text-xs sm:text-sm text-slate-600">
                       <div className="flex items-center justify-between">
                         <span className="text-slate-400">Responsable :</span>
                         <span className="font-medium text-slate-800">{project.leader}</span>
@@ -310,14 +310,14 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
 
                     {/* Target Pathologies */}
                     <div className="space-y-1.5">
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                         Pathologies Ciblées :
                       </span>
                       <div className="flex flex-wrap gap-1">
                         {project.targetPathologies.map((patho, idx) => (
                           <span
                             key={idx}
-                            className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium border border-slate-200/60"
+                            className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium border border-slate-200/60"
                           >
                             {patho}
                           </span>
@@ -327,10 +327,10 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
 
                     {/* Dimensions One Health status */}
                     <div className="space-y-1.5">
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                         Dimensions One Health :
                       </span>
-                      <div className="grid grid-cols-2 gap-1 text-[11px]">
+                      <div className="grid grid-cols-2 gap-1 text-xs">
                         <span className={`px-1.5 py-0.5 rounded ${project.dimensions.humanHealth ? 'bg-emerald-50 text-emerald-700 font-medium' : 'bg-slate-50 text-slate-400 line-through'}`}>
                           • Santé Humaine
                         </span>
@@ -370,7 +370,7 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                             onSelectProject(project);
                             handleStatusChange('ACTIF');
                           }}
-                          className="px-2 py-1 text-[11px] font-semibold rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                          className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
                         >
                           Activer
                         </button>
@@ -381,7 +381,7 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                             onSelectProject(project);
                             handleStatusChange('ARCHIVE');
                           }}
-                          className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
+                          className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
                         >
                           Archiver
                         </button>
@@ -506,23 +506,23 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
 
             {/* Temporal Series & Study Periods */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-teal-600" />
-                2. Séries Temporelles et Périodes d Étude Multi-Années
+                2. Séries Temporelles et Périodes d'Étude Multi-Années
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {currentProtocol.periods.map((period, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5 text-xs">
-                    <span className="font-mono text-[10px] font-bold text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded">
+                  <div key={idx} className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5 text-xs sm:text-sm">
+                    <span className="font-mono text-xs font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded">
                       {period.seriesId}
                     </span>
                     <h5 className="font-bold text-slate-900 line-clamp-1">{period.label}</h5>
-                    <p className="text-slate-500 font-mono text-[11px]">
+                    <p className="text-slate-500 font-mono text-xs">
                       {period.startDate} ➔ {period.endDate}
                     </p>
                     <div className="pt-1 flex flex-wrap gap-1">
                       {period.seasonsCovered.map((s, si) => (
-                        <span key={si} className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                        <span key={si} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
                           {s}
                         </span>
                       ))}
@@ -534,11 +534,11 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
 
             {/* Integrity Rules */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-teal-600" />
-                3. Règles d Intégrité et de Contrôle Qualité Scientifique
+                3. Règles d'Intégrité et de Contrôle Qualité Scientifique
               </h4>
-              <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-200/60 space-y-2 text-xs">
+              <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-200/60 space-y-2 text-xs sm:text-sm">
                 {currentProtocol.integrityRules.map((rule, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-amber-900">
                     <span className="font-bold text-amber-700">R{idx + 1}.</span>
@@ -557,7 +557,7 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
           <div className="flex items-center justify-between">
             <div>
               <h4 className="text-base font-bold text-slate-900">Registre Historique des Versions & Amendements</h4>
-              <p className="text-xs text-slate-500">Traçabilité légale et scientifique : toute modification majeure produit une version incrémentale.</p>
+              <p className="text-xs sm:text-sm text-slate-500">Traçabilité légale et scientifique : toute modification majeure produit une version incrémentale.</p>
             </div>
             <span className="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1 rounded-lg border border-slate-200 font-semibold">
               {currentProtocol.history.length} versions archivées
@@ -569,18 +569,18 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
               <div key={index} className="relative space-y-2">
                 <div className="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-teal-600 ring-4 ring-white border-2 border-teal-700" />
                 
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2 text-xs sm:text-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold font-mono px-2 py-0.5 rounded bg-teal-800 text-white">
+                      <span className="text-xs font-bold font-mono px-2.5 py-0.5 rounded bg-teal-800 text-white">
                         Version {ver.version}
                       </span>
                       {ver.isMajorChange && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
                           AMENDEMENT MAJEUR
                         </span>
                       )}
-                      <span className="text-slate-500 font-mono">{ver.date}</span>
+                      <span className="text-slate-500 font-mono text-xs">{ver.date}</span>
                     </div>
                     <span className="text-slate-600 font-medium">Auteur : {ver.author}</span>
                   </div>
@@ -590,7 +590,7 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                   </p>
 
                   <div className="bg-white p-3 rounded-lg border border-slate-200 text-slate-600 space-y-1">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                       Justification Scientifique :
                     </span>
                     <p>{ver.justification}</p>
@@ -744,55 +744,55 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
               </button>
             </div>
 
-            <div className="space-y-4 text-xs">
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 space-y-1">
+            <div className="space-y-4 text-xs sm:text-sm">
+              <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 space-y-1">
                 <p className="font-bold">Règle de Non-Écrasement (V1.19)</p>
-                <p className="text-[11px]">
-                  Toute modification scientifique (population, variable clé, méthode) crée une nouvelle version identifiée. L ancienne version reste accessible dans l historique.
+                <p className="text-xs text-amber-800">
+                  Toute modification scientifique (population, variable clé, méthode) crée une nouvelle version identifiée. L'ancienne version reste accessible dans l'historique.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Nouvelle Version</label>
+                  <label className="block font-semibold text-slate-700 mb-1 text-xs">Nouvelle Version</label>
                   <input
                     type="text"
                     value={amendVersion}
                     onChange={(e) => setAmendVersion(e.target.value)}
                     placeholder="V1.3"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Auteur de l Amendement</label>
+                  <label className="block font-semibold text-slate-700 mb-1 text-xs">Auteur de l'Amendement</label>
                   <input
                     type="text"
                     value={amendAuthor}
                     onChange={(e) => setAmendAuthor(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Résumé des Modifications</label>
+                <label className="block font-semibold text-slate-700 mb-1 text-xs">Résumé des Modifications</label>
                 <textarea
                   rows={2}
                   value={amendSummary}
                   onChange={(e) => setAmendSummary(e.target.value)}
                   placeholder="Ex : Ajout de la station météo Mettelsat et modification du seuil Widal..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Justification Scientifique Obligatoire</label>
+                <label className="block font-semibold text-slate-700 mb-1 text-xs">Justification Scientifique Obligatoire</label>
                 <textarea
                   rows={3}
                   value={amendJustification}
                   onChange={(e) => setAmendJustification(e.target.value)}
                   placeholder="Motivation méthodologique validée par le comité de pilotage..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none"
                 />
               </div>
 
@@ -803,8 +803,8 @@ export const ProjectsAndProtocolsTab: React.FC<ProjectsAndProtocolsTabProps> = (
                   onChange={(e) => setIsMajorChange(e.target.checked)}
                 />
                 <div>
-                  <span className="font-bold text-slate-800">Changement Majeur de Protocole</span>
-                  <p className="text-[11px] text-slate-500">Modifie la population, une variable clé ou un critère d inclusion.</p>
+                  <span className="font-bold text-slate-800 text-xs sm:text-sm">Changement Majeur de Protocole</span>
+                  <p className="text-xs text-slate-500">Modifie la population, une variable clé ou un critère d'inclusion.</p>
                 </div>
               </label>
             </div>

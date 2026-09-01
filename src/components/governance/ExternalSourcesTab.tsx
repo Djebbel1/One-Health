@@ -100,12 +100,12 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
       <div className="bg-gradient-to-r from-slate-900 to-teal-950 text-white p-6 rounded-2xl border border-slate-800 shadow-md space-y-4">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-teal-300 bg-teal-900/60 px-2 py-0.5 rounded border border-teal-700 font-mono">
+            <span className="text-xs font-bold text-teal-300 bg-teal-900/60 px-3 py-1 rounded-full border border-teal-700 font-mono">
               RÈGLE ANTI-DOUBLONS V1.19
             </span>
-            <h4 className="text-sm font-bold text-white">Contrôle d Intégrité et Détection Non-Destructive des Doublons</h4>
-            <p className="text-xs text-slate-300">
-              Avant ingestion dans un dataset RAW, chaque fichier est analysé. En cas d empreinte SHA-256 déjà connue, une alerte est émise sans suppression arbitraire.
+            <h4 className="text-base sm:text-lg font-bold text-white">Contrôle d'Intégrité et Détection Non-Destructive des Doublons</h4>
+            <p className="text-xs sm:text-sm text-slate-300">
+              Avant ingestion dans un dataset RAW, chaque fichier est analysé. En cas d'empreinte SHA-256 déjà connue, une alerte est émise sans suppression arbitraire.
             </p>
           </div>
         </div>
@@ -114,14 +114,14 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
         <div className="pt-2 flex flex-wrap items-center gap-3">
           <button
             onClick={() => handleSimulatedFileUpload('METTELSAT_KINDU_SERIES_2026_Q1_Q2.xlsx', '9e7b23c84f1a23e49afbf4c8996fb92427ae41e4649b934ca495991b7852ff11')}
-            className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs sm:text-sm font-bold transition-all shadow-xs flex items-center gap-1.5"
           >
             <AlertTriangle className="w-4 h-4" />
-            Tester l Ingestion d un Fichier Existant (Test Doublon)
+            Tester l'Ingestion d'un Fichier Existant (Test Doublon)
           </button>
           <button
             onClick={() => handleSimulatedFileUpload(`chirps_precip_semaine_${Math.floor(Math.random() * 40)}.csv`, `sha256-${Math.random().toString(36).substring(2, 15)}`)}
-            className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs sm:text-sm font-bold transition-all shadow-xs flex items-center gap-1.5"
           >
             <UploadCloud className="w-4 h-4" />
             Ingérer un Fichier Inédit (Test Unique)
@@ -130,15 +130,15 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
 
         {/* Dynamic Feedback Banner */}
         {duplicateWarning && (
-          <div className="p-4 bg-amber-500/20 border border-amber-400 rounded-xl text-amber-200 text-xs space-y-1 animate-in fade-in">
+          <div className="p-4 bg-amber-500/20 border border-amber-400 rounded-xl text-amber-200 text-xs sm:text-sm space-y-1.5 animate-in fade-in">
             <div className="flex items-center gap-2 font-bold text-amber-300">
               <ShieldAlert className="w-4 h-4 text-amber-400" />
               Avertissement : Fichier Déjà Importé (Doublon Détecté)
             </div>
             <p>
-              Ce fichier possède exactement la même empreinte SHA-256 qu un fichier déjà validé :
+              Ce fichier possède exactement la même empreinte SHA-256 qu'un fichier déjà validé :
             </p>
-            <div className="p-2 bg-slate-900/80 rounded border border-amber-500/40 font-mono text-[11px] text-amber-200">
+            <div className="p-3 bg-slate-900/80 rounded-lg border border-amber-500/40 font-mono text-xs text-amber-200">
               • Référence existante : <strong>{duplicateWarning.importId}</strong> ({duplicateWarning.fileName})<br />
               • Importé le : {duplicateWarning.importDate} par {duplicateWarning.importedBy}<br />
               • Hash SHA-256 : {duplicateWarning.sha256Hash}
@@ -147,7 +147,7 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
         )}
 
         {importedFileSuccess && (
-          <div className="p-3 bg-emerald-500/20 border border-emerald-400 rounded-xl text-emerald-200 text-xs flex items-center gap-2 animate-in fade-in">
+          <div className="p-3.5 bg-emerald-500/20 border border-emerald-400 rounded-xl text-emerald-200 text-xs sm:text-sm flex items-center gap-2 animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{importedFileSuccess}</span>
           </div>
@@ -159,7 +159,7 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
         {/* Left: Sources Catalog */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <h4 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
               Flux & Sources Externes Partenaires
             </h4>
             <span className="text-xs text-slate-500 font-medium">{sources.length} sources actives</span>
@@ -167,22 +167,22 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
 
           <div className="space-y-3">
             {filteredSources.map((s) => (
-              <div key={s.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+              <div key={s.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2 text-xs sm:text-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-teal-800 bg-teal-100 px-2 py-0.5 rounded">
+                    <span className="font-mono font-bold text-teal-800 bg-teal-100 px-2.5 py-0.5 rounded">
                       {s.id}
                     </span>
-                    <h5 className="font-bold text-slate-900">{s.name}</h5>
+                    <h5 className="font-bold text-slate-900 text-sm sm:text-base">{s.name}</h5>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
                     Fiabilité {s.reliabilityScore}%
                   </span>
                 </div>
 
-                <p className="text-slate-600 text-[11px]">{s.scientificReference}</p>
+                <p className="text-slate-600 text-xs sm:text-sm">{s.scientificReference}</p>
 
-                <div className="pt-1 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-500">
+                <div className="pt-1.5 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-1 text-xs text-slate-500">
                   <span>Organisation : <strong>{s.organization}</strong></span>
                   <span>Fréquence : {s.temporalResolution}</span>
                 </div>
@@ -194,28 +194,28 @@ export const ExternalSourcesTab: React.FC<ExternalSourcesTabProps> = ({
         {/* Right: Import Audits History */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-              Journal d Audit des Fichiers Importés
+            <h4 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
+              Journal d'Audit des Fichiers Importés
             </h4>
             <span className="text-xs text-slate-500 font-mono">{fileImports.length} imports vérifiés</span>
           </div>
 
           <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
             {fileImports.map((imp) => (
-              <div key={imp.importId} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+              <div key={imp.importId} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-mono">
                     <span className="font-bold text-slate-800">{imp.fileName}</span>
-                    <span className="text-slate-400">({Math.round(imp.fileSizeBytes / 1024)} KB)</span>
+                    <span className="text-slate-400 text-xs">({Math.round(imp.fileSizeBytes / 1024)} KB)</span>
                   </div>
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${imp.isPotentialDuplicate ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${imp.isPotentialDuplicate ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}`}>
                     {imp.isPotentialDuplicate ? 'DOUBLON' : 'VALIDE'}
                   </span>
                 </div>
-                <div className="text-[10px] font-mono text-slate-500 break-all">
+                <div className="text-xs font-mono text-slate-500 break-all">
                   Hash: {imp.sha256Hash}
                 </div>
-                <div className="text-[11px] text-slate-500 flex items-center justify-between pt-1">
+                <div className="text-xs text-slate-500 flex items-center justify-between pt-1">
                   <span>Par : {imp.importedBy}</span>
                   <span>{imp.importDate}</span>
                 </div>

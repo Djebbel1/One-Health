@@ -212,34 +212,34 @@ export const DataDictionaryTab: React.FC<DataDictionaryTabProps> = ({
                         <span className="font-mono text-xs font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60">
                           {v.name}
                         </span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${domainInfo.color}`}>
+                        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${domainInfo.color}`}>
                           {domainInfo.label}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                        <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                           {v.type}
                         </span>
                         {v.unit && (
-                          <span className="text-[10px] font-mono font-semibold text-teal-700 bg-teal-100/50 px-1.5 py-0.5 rounded">
+                          <span className="text-xs font-mono font-semibold text-teal-700 bg-teal-100/50 px-2 py-0.5 rounded">
                             {v.unit}
                           </span>
                         )}
                         {v.isProxy && (
-                          <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-200">
-                            <Sparkles className="w-3 h-3" />
+                          <span className="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-amber-200">
+                            <Sparkles className="w-3.5 h-3.5" />
                             PROXY
                           </span>
                         )}
                       </div>
 
-                      <h4 className="text-xs font-bold text-slate-900 pt-0.5">
+                      <h4 className="text-sm font-bold text-slate-900 pt-0.5">
                         {v.label}
                       </h4>
-                      <p className="text-[11px] text-slate-500 line-clamp-1">
+                      <p className="text-xs sm:text-sm text-slate-500 line-clamp-1">
                         {v.description}
                       </p>
                     </div>
 
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${
+                    <span className={`text-xs font-bold px-2.5 py-0.5 rounded shrink-0 ${
                       v.obligation === 'OBLIGATOIRE'
                         ? 'bg-rose-50 text-rose-700 border border-rose-200'
                         : v.obligation === 'CONDITIONNEL'
@@ -261,10 +261,10 @@ export const DataDictionaryTab: React.FC<DataDictionaryTabProps> = ({
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs sticky top-20 space-y-4">
               <div className="flex items-start justify-between border-b border-slate-100 pb-3">
                 <div>
-                  <span className="text-[10px] font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  <span className="text-xs font-mono font-bold text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200">
                     {selectedVariable.variableId} (v{selectedVariable.version})
                   </span>
-                  <h4 className="text-sm font-bold text-slate-900 mt-1 font-mono">
+                  <h4 className="text-base font-bold text-slate-900 mt-1 font-mono">
                     {selectedVariable.name}
                   </h4>
                 </div>
@@ -276,33 +276,33 @@ export const DataDictionaryTab: React.FC<DataDictionaryTabProps> = ({
                 </button>
               </div>
 
-              <div className="space-y-3 text-xs">
+              <div className="space-y-3 text-xs sm:text-sm">
                 <div>
-                  <span className="text-slate-400 font-medium">Libellé d affichage :</span>
+                  <span className="text-slate-400 font-medium text-xs">Libellé d'affichage :</span>
                   <p className="font-bold text-slate-800">{selectedVariable.label}</p>
                 </div>
 
                 <div>
-                  <span className="text-slate-400 font-medium">Description Scientifique :</span>
+                  <span className="text-slate-400 font-medium text-xs">Description Scientifique :</span>
                   <p className="text-slate-700 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
                     {selectedVariable.description}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-1">
-                  <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase">Type de Donnée</span>
-                    <p className="font-bold text-slate-800 font-mono">{selectedVariable.type}</p>
+                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                    <span className="text-xs text-slate-400 uppercase font-semibold">Type de Donnée</span>
+                    <p className="font-bold text-slate-800 font-mono text-xs sm:text-sm">{selectedVariable.type}</p>
                   </div>
-                  <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase">Unité / Précision</span>
-                    <p className="font-bold text-slate-800 font-mono">{selectedVariable.unit || 'Sans unité'}</p>
+                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                    <span className="text-xs text-slate-400 uppercase font-semibold">Unité / Précision</span>
+                    <p className="font-bold text-slate-800 font-mono text-xs sm:text-sm">{selectedVariable.unit || 'Sans unité'}</p>
                   </div>
                 </div>
 
                 {selectedVariable.acceptableRange && (
                   <div>
-                    <span className="text-slate-400 font-medium">Plage Acceptable :</span>
+                    <span className="text-slate-400 font-medium text-xs">Plage Acceptable :</span>
                     <p className="font-mono text-slate-800">
                       [{selectedVariable.acceptableRange.min} à {selectedVariable.acceptableRange.max}] {selectedVariable.unit}
                     </p>
@@ -311,12 +311,12 @@ export const DataDictionaryTab: React.FC<DataDictionaryTabProps> = ({
 
                 {selectedVariable.categories && selectedVariable.categories.length > 0 && (
                   <div className="space-y-1.5 pt-1">
-                    <span className="text-slate-500 font-bold uppercase text-[10px]">
+                    <span className="text-slate-500 font-bold uppercase text-xs">
                       Modalités Catégorielles :
                     </span>
                     <div className="space-y-1 max-h-36 overflow-y-auto">
                       {selectedVariable.categories.map((cat, i) => (
-                        <div key={i} className="flex items-center justify-between p-1.5 bg-slate-50 rounded text-[11px]">
+                        <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded text-xs">
                           <span className="font-mono font-bold text-teal-800">{cat.code}</span>
                           <span className="text-slate-600">{cat.label}</span>
                         </div>
@@ -326,20 +326,20 @@ export const DataDictionaryTab: React.FC<DataDictionaryTabProps> = ({
                 )}
 
                 {selectedVariable.conditionRule && (
-                  <div className="p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-[11px] space-y-0.5">
-                    <span className="font-bold uppercase text-[10px]">Règle Conditionnelle :</span>
+                  <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs sm:text-sm space-y-0.5">
+                    <span className="font-bold uppercase text-xs">Règle Conditionnelle :</span>
                     <p>{selectedVariable.conditionRule}</p>
                   </div>
                 )}
 
                 {/* Proxy Inspector Card */}
                 {selectedVariable.isProxy && selectedVariable.proxyDetails && (
-                  <div className="p-3 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl border border-amber-200 text-amber-900 space-y-2 text-[11px]">
+                  <div className="p-3.5 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl border border-amber-200 text-amber-900 space-y-2 text-xs sm:text-sm">
                     <div className="flex items-center gap-1.5 font-bold text-amber-800">
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Sparkles className="w-4 h-4" />
                       Fiche Métadonnées Proxy (V1.19)
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 text-xs sm:text-sm">
                       <p><span className="font-semibold">Variable Originelle :</span> {selectedVariable.proxyDetails.originalVariable}</p>
                       <p><span className="font-semibold">Justification :</span> {selectedVariable.proxyDetails.justification}</p>
                       <p><span className="font-semibold">Source du Proxy :</span> {selectedVariable.proxyDetails.sourceName}</p>

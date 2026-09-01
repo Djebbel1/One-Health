@@ -132,28 +132,28 @@ export const MultiLevelValidationTab: React.FC<MultiLevelValidationTabProps> = (
           Pipeline de Validation à 4 Niveaux de Responsabilité
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1 text-xs">
-            <span className="text-[10px] font-bold text-slate-500 uppercase">Niveau 1</span>
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1 text-xs sm:text-sm">
+            <span className="text-xs font-bold text-slate-500 uppercase">Niveau 1</span>
             <h5 className="font-bold text-slate-900">Automatique & Technique</h5>
-            <p className="text-slate-500 text-[11px]">Format, types, plages et complétude.</p>
+            <p className="text-slate-600 text-xs">Format, types, plages et complétude.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 space-y-1 text-xs">
-            <span className="text-[10px] font-bold text-sky-600 uppercase">Niveau 2</span>
+          <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 space-y-1 text-xs sm:text-sm">
+            <span className="text-xs font-bold text-sky-600 uppercase">Niveau 2</span>
             <h5 className="font-bold text-sky-950">Superviseur de Terrain</h5>
-            <p className="text-sky-700 text-[11px]">Cohérence enquêteur, GPS et fiches papier.</p>
+            <p className="text-sky-700 text-xs">Cohérence enquêteur, GPS et fiches papier.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 space-y-1 text-xs">
-            <span className="text-[10px] font-bold text-teal-700 uppercase">Niveau 3</span>
+          <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 space-y-1 text-xs sm:text-sm">
+            <span className="text-xs font-bold text-teal-700 uppercase">Niveau 3</span>
             <h5 className="font-bold text-teal-950">Épidémiologiste Coordinateur</h5>
-            <p className="text-teal-700 text-[11px]">Conformité définition de cas et biologie.</p>
+            <p className="text-teal-700 text-xs">Conformité définition de cas et biologie.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 space-y-1 text-xs">
-            <span className="text-[10px] font-bold text-emerald-700 uppercase">Niveau 4</span>
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 space-y-1 text-xs sm:text-sm">
+            <span className="text-xs font-bold text-emerald-700 uppercase">Niveau 4</span>
             <h5 className="font-bold text-emerald-950">Direction Provinciale (DPS)</h5>
-            <p className="text-emerald-700 text-[11px]">Verrouillage et publication officielle.</p>
+            <p className="text-emerald-700 text-xs">Verrouillage et publication officielle.</p>
           </div>
         </div>
       </div>
@@ -181,20 +181,20 @@ export const MultiLevelValidationTab: React.FC<MultiLevelValidationTabProps> = (
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100/70 px-2 py-0.5 rounded">
+                        <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100/70 px-2.5 py-0.5 rounded">
                           {rec.recordId}
                         </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${getStatusBadge(rec.status)}`}>
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${getStatusBadge(rec.status)}`}>
                           {rec.status}
                         </span>
                       </div>
-                      <h5 className="text-xs font-bold text-slate-900 mt-1.5">
+                      <h5 className="text-sm font-bold text-slate-900 mt-1.5">
                         {rec.surveyCode} • {rec.healthArea}
                       </h5>
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Enquêteur : {rec.investigator}</span>
                     <span>Niveau {rec.currentValidationLevel}/4</span>
                   </div>
@@ -294,7 +294,7 @@ export const MultiLevelValidationTab: React.FC<MultiLevelValidationTabProps> = (
                       ) : (
                         <button
                           onClick={() => handleValidateLevel(lvl.level)}
-                          className="px-2 py-1 rounded bg-teal-700 hover:bg-teal-800 text-white font-bold text-[10px]"
+                          className="px-2.5 py-1 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs"
                         >
                           Valider Niveau {lvl.level}
                         </button>
@@ -302,12 +302,12 @@ export const MultiLevelValidationTab: React.FC<MultiLevelValidationTabProps> = (
                     </div>
 
                     {lvl.validated ? (
-                      <div className="text-[11px] text-emerald-800">
+                      <div className="text-xs text-emerald-800">
                         Validé par <strong>{lvl.validatedBy}</strong> le {lvl.validatedAt}
                         {lvl.notes && <p className="italic text-slate-600 mt-1">« {lvl.notes} »</p>}
                       </div>
                     ) : (
-                      <p className="text-[11px] text-slate-400">En attente de revue formelle.</p>
+                      <p className="text-xs text-slate-400">En attente de revue formelle.</p>
                     )}
                   </div>
                 ))}
@@ -330,19 +330,19 @@ export const MultiLevelValidationTab: React.FC<MultiLevelValidationTabProps> = (
               ) : (
                 <div className="space-y-2">
                   {selectedRecord.correctionHistory.map((c) => (
-                    <div key={c.correctionId} className="p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 text-xs space-y-1 text-amber-950">
+                    <div key={c.correctionId} className="p-3.5 bg-amber-50/60 rounded-xl border border-amber-200/80 text-xs sm:text-sm space-y-1 text-amber-950">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-amber-900 bg-amber-200/60 px-1.5 py-0.5 rounded">
+                          <span className="font-mono font-bold text-amber-900 bg-amber-200/60 px-2 py-0.5 rounded">
                             {c.field}
                           </span>
                           <span>
                             <span className="line-through text-slate-500">{c.oldValue}</span> ➔ <strong className="text-emerald-700">{c.newValue}</strong>
                           </span>
                         </div>
-                        <span className="text-slate-500 font-mono text-[10px]">{c.correctedAt}</span>
+                        <span className="text-slate-500 font-mono text-xs">{c.correctedAt}</span>
                       </div>
-                      <div className="text-[11px] text-slate-600 flex items-center justify-between pt-1">
+                      <div className="text-xs text-slate-600 flex items-center justify-between pt-1">
                         <span>Par : {c.correctedBy}</span>
                         <span className="italic">Motif : « {c.reason} »</span>
                       </div>
@@ -369,9 +369,9 @@ export const MultiLevelValidationTab: React.FC<MultiLevelValidationTabProps> = (
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px]">
-                Toute modification remplace la valeur analytique mais conserve l ancienne valeur et le motif dans l audit log.
+            <div className="space-y-3 text-xs sm:text-sm">
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-xs">
+                Toute modification remplace la valeur analytique mais conserve l'ancienne valeur et le motif dans l'audit log.
               </div>
 
               <div>

@@ -63,7 +63,7 @@ export const ScientificMetadataTab: React.FC<ScientificMetadataTabProps> = ({
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="font-mono text-[10px] font-bold text-teal-800 bg-teal-100/70 px-2 py-0.5 rounded">
+                      <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100/70 px-2.5 py-0.5 rounded">
                         {cd.id} (v{cd.version})
                       </span>
                       <h5 className="text-sm font-bold text-slate-900 mt-1">
@@ -112,14 +112,14 @@ export const ScientificMetadataTab: React.FC<ScientificMetadataTabProps> = ({
             {/* Comparability Break Warning Banner */}
             {selectedCase.comparabilityBreakNote && (
               <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 space-y-1.5">
-                <div className="flex items-center gap-2 font-bold text-amber-800 text-xs">
+                <div className="flex items-center gap-2 font-bold text-amber-800 text-xs sm:text-sm">
                   <ShieldAlert className="w-4 h-4 text-amber-600" />
                   Rupture Méthodologique de Comparabilité Temporelle (V1.19)
                 </div>
-                <p className="text-xs leading-relaxed">
+                <p className="text-xs sm:text-sm leading-relaxed">
                   {selectedCase.comparabilityBreakNote}
                 </p>
-                <div className="text-[11px] text-amber-800/80 font-medium">
+                <div className="text-xs text-amber-800 font-medium">
                   • Recommandation : Ne pas fusionner directement les séries chronologiques antérieures sans appliquer le facteur de correction diagnostique.
                 </div>
               </div>
@@ -127,22 +127,22 @@ export const ScientificMetadataTab: React.FC<ScientificMetadataTabProps> = ({
 
             {/* Suspect / Probable / Confirmed Levels */}
             <div className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1 text-xs">
-                <span className="font-bold text-amber-800 flex items-center gap-1.5 uppercase text-[11px]">
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1 text-xs sm:text-sm">
+                <span className="font-bold text-amber-800 flex items-center gap-1.5 uppercase text-xs">
                   • Cas Suspect :
                 </span>
                 <p className="text-slate-800">{selectedCase.suspect}</p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1 text-xs">
-                <span className="font-bold text-indigo-800 flex items-center gap-1.5 uppercase text-[11px]">
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1 text-xs sm:text-sm">
+                <span className="font-bold text-indigo-800 flex items-center gap-1.5 uppercase text-xs">
                   • Cas Probable :
                 </span>
                 <p className="text-slate-800">{selectedCase.probable}</p>
               </div>
 
-              <div className="p-4 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-1 text-xs">
-                <span className="font-bold text-emerald-800 flex items-center gap-1.5 uppercase text-[11px]">
+              <div className="p-4 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-1 text-xs sm:text-sm">
+                <span className="font-bold text-emerald-800 flex items-center gap-1.5 uppercase text-xs">
                   • Cas Confirmé :
                 </span>
                 <p className="text-emerald-950 font-medium">{selectedCase.confirmed}</p>
