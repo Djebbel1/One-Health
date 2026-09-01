@@ -38,7 +38,7 @@ export const DataDictionaryTab: React.FC<DataDictionaryTabProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<string>('TOUS');
   const [onlyProxies, setOnlyProxies] = useState(false);
-  const [selectedVariable, setSelectedVariable] = useState<DataDictionaryVariable | null>(null);
+  const [selectedVariable, setSelectedVariable] = useState<DataDictionaryVariable | null>(variables[0] || null);
   const [showAddModal, setShowAddModal] = useState(false);
 
   // Form State
