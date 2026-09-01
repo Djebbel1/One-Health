@@ -262,29 +262,29 @@ export const GovernanceModule: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4">
+    <div className="space-y-6 w-full pb-12">
       {/* Top Multi-Project Global Selector Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-teal-800 text-white font-bold text-xs">
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1.5 rounded-xl bg-teal-800 text-white font-bold text-xs tracking-wide">
               V1.19
             </span>
             <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                Projet d Étude Actif :
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                Projet d'Étude Actif :
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mt-0.5">
                 <select
                   value={selectedProject.id}
                   onChange={(e) => {
                     const found = projects.find(p => p.id === e.target.value);
                     if (found) {
                       setSelectedProject(found);
-                      handleAddAuditLog('SELECTION_PROJET', `Basculement vers le projet d étude ${found.code} (${found.name})`);
+                      handleAddAuditLog('SELECTION_PROJET', `Basculement vers le projet d'étude ${found.code} (${found.name})`);
                     }
                   }}
-                  className="font-bold text-sm text-slate-900 bg-transparent border-0 p-0 focus:ring-0 cursor-pointer pr-6 font-mono"
+                  className="font-bold text-sm sm:text-base text-slate-900 bg-transparent border-0 p-0 focus:ring-0 cursor-pointer pr-6 font-mono"
                 >
                   {projects.map(p => (
                     <option key={p.id} value={p.id}>
@@ -298,14 +298,14 @@ export const GovernanceModule: React.FC = () => {
         </div>
 
         {/* Global Context Indicators */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 font-medium border border-teal-200/60">
+        <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+          <span className="px-3 py-1.5 rounded-lg bg-teal-50 text-teal-800 font-medium border border-teal-200/60">
             Protocole : <strong>{protocols.find(p => p.projectId === selectedProject.id)?.currentVersion || 'V1.0'}</strong>
           </span>
-          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/60">
+          <span className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/60">
             Qualité Globale : {qualityScore.totalScore}%
           </span>
-          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-mono text-[11px] border border-slate-200">
+          <span className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-mono text-xs border border-slate-200">
             {selectedProject.geographicalScope?.territories?.join(', ') || 'Maniema, RDC'}
           </span>
         </div>
@@ -321,7 +321,7 @@ export const GovernanceModule: React.FC = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shrink-0 ${
+                className={`px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shrink-0 ${
                   isActive
                     ? 'bg-teal-700 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -331,7 +331,7 @@ export const GovernanceModule: React.FC = () => {
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold font-mono ${
+                    className={`text-xs px-2 py-0.5 rounded-full font-bold font-mono ${
                       isActive ? 'bg-teal-800/80 text-teal-100' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
